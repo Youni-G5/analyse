@@ -1,550 +1,909 @@
 {% comment %}
-  Wishlist Premium - Compatible avec le système existant
-  CLÉ STORAGE: wishlist-sig-items (PRESERVE LA COMPATIBILITE)
-  Améliorations: Grid responsive, micro-animations, toast, quick actions
+  Wishlist Premium Grid - Inspiré Nike/Adidas/Luxury Brands
+  Design: Grid cards, quick actions overlay, micro-animations premium
+  Compatible: 100% avec système existant (wishlist-sig-items)
 {% endcomment %}
 
-<section class="wishlist-sig-section" data-section-id="{{ section.id }}">
-  <div class="wishlist-sig-container page-width">
+<section class="wishlist-premium-grid" data-section-id="{{ section.id }}">
+  <div class="page-width">
 
-    {%- comment -%} Header avec icône et titre {%- endcomment -%}
-    <div class="wishlist-sig-header">
-      <svg class="wishlist-sig-header-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
-        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-      </svg>
-      <h1 class="wishlist-sig-title">{{ section.settings.title }}</h1>
-    </div>
-
-    {%- comment -%} Actions du haut {%- endcomment -%}
-    <div class="wishlist-sig-top-actions">
-      <a href="{{ routes.all_products_collection_url }}" class="wishlist-sig-back-link">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="15 18 9 12 15 6"></polyline>
+    {%- comment -%} Header moderne avec compteur {%- endcomment -%}
+    <header class="wl-header">
+      <div class="wl-header__main">
+        <svg class="wl-header__icon" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
         </svg>
-        Retourner à tous les produits
-      </a>
-    </div>
-
-    {%- comment -%} Container principal (Grid ou Liste selon préférence) {%- endcomment -%}
-    <div class="wishlist-sig-content-wrapper" data-wishlist-container>
-      {%- comment -%} Le JavaScript injectera les produits ici {%- endcomment -%}
-    </div>
-
-    {%- comment -%} Actions du bas (bulk) {%- endcomment -%}
-    <div class="wishlist-sig-footer-actions">
-      <div class="wishlist-sig-bulk-actions" data-bulk-actions>
-        <label for="bulk-action-select">Appliquer aux articles sélectionnés :</label>
-        <div class="wishlist-sig-bulk-controls">
-          <select id="bulk-action-select" class="wishlist-sig-bulk-select">
-            <option value="add">Ajouter au panier</option>
-            <option value="remove">Supprimer</option>
-          </select>
-          <button class="button button--secondary button--small" data-bulk-apply disabled>Appliquer</button>
-        </div>
+        <h1 class="wl-header__title">{{ section.settings.title }}</h1>
       </div>
+      <div class="wl-header__actions">
+        <span class="wl-count" data-count-display>0 articles</span>
+        <button class="wl-btn-clear" data-clear-all style="display:none;">Tout supprimer</button>
+      </div>
+    </header>
 
-      <div class="wishlist-sig-page-actions">
-        <button class="button button--primary" data-add-all-to-cart>Tout ajouter au panier</button>
-        <button class="button button--secondary" data-clear-wishlist>Vider la liste</button>
+    {%- comment -%} Grid principale (cartes produits) {%- endcomment -%}
+    <div class="wl-grid" data-wishlist-container>
+      {%- comment -%} JavaScript injecte les cartes ici {%- endcomment -%}
+    </div>
+
+    {%- comment -%} Empty state {%- endcomment -%}
+    <div class="wl-empty hidden" data-empty-state>
+      <div class="wl-empty__content">
+        <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+        </svg>
+        <h2>Votre liste d'envies est vide</h2>
+        <p>Découvrez nos collections et ajoutez vos coups de cœur</p>
+        <a href="{{ routes.all_products_collection_url }}" class="wl-btn wl-btn--primary">Explorer les produits</a>
+      </div>
+    </div>
+
+    {%- comment -%} Actions bulk (bottom sticky bar) {%- endcomment -%}
+    <div class="wl-bulk-bar hidden" data-bulk-bar>
+      <span class="wl-bulk-bar__count" data-selected-count>0 sélectionné(s)</span>
+      <div class="wl-bulk-bar__actions">
+        <button class="wl-btn wl-btn--secondary" data-bulk-add>Ajouter au panier</button>
+        <button class="wl-btn wl-btn--ghost" data-bulk-remove>Supprimer</button>
       </div>
     </div>
 
   </div>
 </section>
 
-<style>
-  /* === VARIABLES DYNAMIQUES === */
-  :root {
-    --sig-color-text: {{ section.settings.color_text | default: '#212121' }};
-    --sig-color-text-light: {{ section.settings.color_text_light | default: '#757575' }};
-    --sig-color-border: {{ section.settings.color_border | default: '#E0E0E0' }};
-    --sig-color-background: {{ section.settings.color_background | default: '#FFFFFF' }};
-    --sig-color-background-alt: {{ section.settings.color_background_alt | default: '#F5F5F5' }};
-    --sig-font-family: {{ settings.type_body_font.family }}, {{ settings.type_body_font.fallback_families }};
-    --sig-shadow: {{ section.settings.card_shadow | default: '0 4px 15px rgba(0, 0, 0, 0.07)' }};
-    --sig-radius: {{ section.settings.card_border_radius | default: 6 }}px;
-    --button-primary-bg: {{ section.settings.button_primary_bg | default: '#212121' }};
-    --button-primary-text: {{ section.settings.button_primary_text | default: '#FFFFFF' }};
+{%- comment -%} Toast notification {%- endcomment -%}
+<div class="wl-toast" data-toast>
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+    <polyline points="20 6 9 17 4 12"></polyline>
+  </svg>
+  <span>Action effectuée</span>
+</div>
+
+{% style %}
+  /* ========== DESIGN SYSTEM ========== */
+  .wishlist-premium-grid {
+    --wl-primary: #111;
+    --wl-text: #111;
+    --wl-text-light: #757575;
+    --wl-border: #e5e5e5;
+    --wl-bg: #ffffff;
+    --wl-bg-hover: #f5f5f5;
+    --wl-radius: 8px;
+    --wl-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    --wl-shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+    --wl-transition: cubic-bezier(0.4, 0, 0.2, 1);
+    padding: clamp(2rem, 5vw, 4rem) 0;
   }
 
-  /* Ces styles améliorent la version existante SANS casser la compatibilité */
-  /* Les styles de base.css restent valides, on ajoute juste du polish */
-  
-  /* Amélioration: Grid plus moderne (2-3-4 colonnes) */
-  .wishlist-sig-section .wishlist-sig-list {
+  /* ========== HEADER ========== */
+  .wl-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--wl-border);
+  }
+
+  .wl-header__main {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .wl-header__icon {
+    color: var(--wl-text);
+  }
+
+  .wl-header__title {
+    margin: 0;
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+
+  .wl-header__actions {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .wl-count {
+    color: var(--wl-text-light);
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+
+  .wl-btn-clear {
+    background: none;
+    border: none;
+    color: var(--wl-text);
+    text-decoration: underline;
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 0;
+    transition: opacity 0.2s;
+  }
+
+  .wl-btn-clear:hover {
+    opacity: 0.6;
+  }
+
+  /* ========== GRID MODERNE ========== */
+  .wl-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 2rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
   }
 
-  @media (min-width: 750px) and (max-width: 989px) {
-    .wishlist-sig-section .wishlist-sig-list {
-      grid-template-columns: repeat(2, 1fr);
+  @media (min-width: 750px) {
+    .wl-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
     }
   }
 
   @media (min-width: 990px) {
-    .wishlist-sig-section .wishlist-sig-list {
-      grid-template-columns: repeat(3, 1fr);
+    .wl-grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 2rem;
     }
   }
 
-  /* Amélioration: Cartes avec hover effect */
-  .wishlist-sig-section .wishlist-item-card {
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s;
-    will-change: transform;
+  /* ========== PRODUCT CARD (NIKE STYLE) ========== */
+  .wl-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    background: var(--wl-bg);
+    border-radius: var(--wl-radius);
+    overflow: hidden;
+    transition: transform 0.3s var(--wl-transition), box-shadow 0.3s var(--wl-transition);
   }
 
-  .wishlist-sig-section .wishlist-item-card:hover {
+  .wl-card:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    box-shadow: var(--wl-shadow-lg);
   }
 
-  /* Amélioration: Image avec zoom au hover */
-  .wishlist-sig-section .wishlist-item-card__image {
+  /* Checkbox sélection */
+  .wl-card__checkbox {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    width: 22px;
+    height: 22px;
+    z-index: 4;
+    cursor: pointer;
+    accent-color: var(--wl-primary);
+    border-radius: 4px;
+  }
+
+  /* Image avec aspect ratio */
+  .wl-card__media {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    background: #f7f7f7;
+    overflow: hidden;
+  }
+
+  .wl-card__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     transition: transform 0.5s ease;
   }
 
-  .wishlist-sig-section .wishlist-item-card:hover .wishlist-item-card__image {
+  .wl-card:hover .wl-card__image {
     transform: scale(1.05);
   }
 
-  /* Amélioration: Bouton remove plus visible */
-  .wishlist-sig-section .wishlist-item-card__remove-btn {
-    transition: color 0.2s, transform 0.2s;
+  /* Quick actions overlay (appear on hover) */
+  .wl-card__overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 60%);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    padding-bottom: 1rem;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 3;
   }
 
-  .wishlist-sig-section .wishlist-item-card__remove-btn:hover {
-    color: #dc2626;
+  .wl-card:hover .wl-card__overlay {
+    opacity: 1;
+  }
+
+  .wl-card__quick-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .wl-card__icon-btn {
+    background: rgba(255,255,255,0.95);
+    border: none;
+    border-radius: 50%;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
+  }
+
+  .wl-card__icon-btn:hover {
+    background: #fff;
     transform: scale(1.1);
   }
 
-  /* Amélioration: Animation skeleton plus douce */
-  @keyframes wishlist-pulse {
-    0%, 100% { opacity: 0.4; }
-    50% { opacity: 0.8; }
+  .wl-card__icon-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke: var(--wl-text);
+    stroke-width: 2;
   }
 
-  .wishlist-skeleton {
-    animation: wishlist-pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  /* Infos produit */
+  .wl-card__info {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
   }
-</style>
+
+  .wl-card__title {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    line-height: 1.3;
+    color: var(--wl-text);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .wl-card__title a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .wl-card__title a:hover {
+    text-decoration: underline;
+  }
+
+  .wl-card__meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9rem;
+  }
+
+  .wl-card__price {
+    font-weight: 600;
+    color: var(--wl-text);
+  }
+
+  .wl-card__stock {
+    font-size: 0.8rem;
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-weight: 500;
+  }
+
+  .wl-card__stock--in {
+    background: #e8f5e9;
+    color: #2e7d32;
+  }
+
+  .wl-card__stock--out {
+    background: #ffebee;
+    color: #c62828;
+  }
+
+  /* Quantité + Note */
+  .wl-card__footer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--wl-border);
+    margin-top: auto;
+  }
+
+  .wl-card__qty {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.85rem;
+  }
+
+  .wl-card__qty-label {
+    color: var(--wl-text-light);
+  }
+
+  .wl-card__qty-controls {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--wl-border);
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
+  .wl-card__qty-btn {
+    background: none;
+    border: none;
+    padding: 4px 12px;
+    cursor: pointer;
+    font-size: 1rem;
+    color: var(--wl-text-light);
+    transition: background 0.2s;
+  }
+
+  .wl-card__qty-btn:hover {
+    background: var(--wl-bg-hover);
+  }
+
+  .wl-card__qty-value {
+    padding: 0 12px;
+    font-weight: 600;
+    min-width: 30px;
+    text-align: center;
+  }
+
+  .wl-card__note {
+    font-size: 0.8rem;
+    color: var(--wl-text-light);
+    font-style: italic;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  /* Bouton ATC principal */
+  .wl-card__atc {
+    width: 100%;
+    margin-top: 0.75rem;
+  }
+
+  /* ========== BULK BAR (STICKY BOTTOM) ========== */
+  .wl-bulk-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--wl-primary);
+    color: white;
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 -4px 12px rgba(0,0,0,0.1);
+    z-index: 100;
+    transform: translateY(100%);
+    transition: transform 0.3s var(--wl-transition);
+  }
+
+  .wl-bulk-bar:not(.hidden) {
+    transform: translateY(0);
+  }
+
+  .wl-bulk-bar__count {
+    font-weight: 600;
+  }
+
+  .wl-bulk-bar__actions {
+    display: flex;
+    gap: 0.75rem;
+  }
+
+  /* ========== EMPTY STATE ========== */
+  .wl-empty {
+    text-align: center;
+    padding: 4rem 1rem;
+  }
+
+  .wl-empty__content {
+    max-width: 400px;
+    margin: 0 auto;
+  }
+
+  .wl-empty svg {
+    color: #ddd;
+    margin-bottom: 1.5rem;
+  }
+
+  .wl-empty h2 {
+    margin: 0 0 0.75rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+
+  .wl-empty p {
+    color: var(--wl-text-light);
+    margin-bottom: 2rem;
+    line-height: 1.5;
+  }
+
+  /* ========== SKELETON LOADING ========== */
+  .wl-skeleton {
+    animation: wl-pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+
+  .wl-skeleton__media {
+    aspect-ratio: 1 / 1;
+    background: #f0f0f0;
+    border-radius: var(--wl-radius) var(--wl-radius) 0 0;
+  }
+
+  .wl-skeleton__info {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .wl-skeleton__line {
+    height: 12px;
+    background: #f0f0f0;
+    border-radius: 4px;
+  }
+
+  @keyframes wl-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  /* ========== TOAST NOTIFICATION ========== */
+  .wl-toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--wl-primary);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    opacity: 0;
+    transition: transform 0.4s var(--wl-transition), opacity 0.4s;
+    z-index: 9999;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  }
+
+  .wl-toast.show {
+    transform: translateX(-50%) translateY(0);
+    opacity: 1;
+  }
+
+  /* ========== BUTTONS ========== */
+  .wl-btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--wl-radius);
+    border: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+  }
+
+  .wl-btn--primary {
+    background: var(--wl-primary);
+    color: white;
+  }
+
+  .wl-btn--primary:hover {
+    background: #000;
+  }
+
+  .wl-btn--secondary {
+    background: white;
+    color: var(--wl-primary);
+    border: 1px solid var(--wl-border);
+  }
+
+  .wl-btn--secondary:hover {
+    background: var(--wl-bg-hover);
+  }
+
+  .wl-btn--ghost {
+    background: transparent;
+    color: white;
+    border: 1px solid rgba(255,255,255,0.3);
+  }
+
+  .wl-btn--ghost:hover {
+    background: rgba(255,255,255,0.1);
+  }
+
+  .wl-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* ========== UTILITIES ========== */
+  .hidden {
+    display: none !important;
+  }
+
+  /* ========== RESPONSIVE MOBILE ========== */
+  @media (max-width: 749px) {
+    .wl-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    .wl-header__actions {
+      width: 100%;
+      justify-content: space-between;
+    }
+
+    .wl-card__overlay {
+      opacity: 1;
+      background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 50%);
+    }
+
+    .wl-card__quick-actions {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+    }
+
+    .wl-bulk-bar {
+      flex-direction: column;
+      gap: 0.75rem;
+      padding: 1rem;
+    }
+
+    .wl-bulk-bar__actions {
+      width: 100%;
+      flex-direction: column;
+    }
+
+    .wl-bulk-bar__actions .wl-btn {
+      width: 100%;
+    }
+  }
+{% endstyle %}
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-  class WishlistSig {
-    constructor(sectionEl) {
-      this.NAMESPACE = 'wishlist-sig-';
-      this.STORAGE_KEY = this.NAMESPACE + 'items'; // CLÉ ORIGINALE PRESERVEE
-      this.section = sectionEl;
-      if (!this.section) return;
+(function() {
+  'use strict';
 
-      this.container = this.section.querySelector('[data-wishlist-container]');
-      this.bulkActionsBar = this.section.querySelector('[data-bulk-actions]');
-      this.bulkActionSelect = this.section.querySelector('#bulk-action-select');
-      this.bulkApplyBtn = this.section.querySelector('[data-bulk-apply]');
-      this.addAllBtn = this.section.querySelector('[data-add-all-to-cart]');
-      this.clearBtn = this.section.querySelector('[data-clear-wishlist]');
+  class WishlistPremium {
+    constructor() {
+      this.NAMESPACE = 'wishlist-sig-';
+      this.STORAGE_KEY = this.NAMESPACE + 'items';
+      this.container = document.querySelector('[data-wishlist-container]');
+      this.emptyState = document.querySelector('[data-empty-state]');
+      this.countDisplay = document.querySelector('[data-count-display]');
+      this.clearBtn = document.querySelector('[data-clear-all]');
+      this.bulkBar = document.querySelector('[data-bulk-bar]');
+      this.selectedCountEl = document.querySelector('[data-selected-count]');
+      this.toast = document.querySelector('[data-toast]');
       
+      this.productsCache = {};
+      this.selectedItems = new Set();
       this.moneyFormat = {{ shop.money_format | json }};
-      this.state = { wishlist: [], products: {}, selectedItems: [] };
+      
+      if (!this.container) return;
       this.init();
     }
 
     init() {
       this.render();
+      this.attachEvents();
       window.addEventListener(this.NAMESPACE + 'updated', () => this.render());
-      this.attachGlobalListeners();
     }
 
-    async render() {
-      this.state.wishlist = this.getWishlist();
-      this.togglePageElements(this.state.wishlist.length > 0);
-      
-      if (this.state.wishlist.length === 0) {
-        this.container.innerHTML = this.getEmptyStateHTML();
-        return;
-      }
-      
-      this.renderSkeleton();
-      await this.fetchProductData();
-      const listHTML = this.state.wishlist.map(item => this.state.products[item.handle] ? this.createListRowHTML(item, this.state.products[item.handle]) : '').join('');
-      this.container.innerHTML = `<div class="wishlist-sig-list">${listHTML}</div>`;
-      this.updateBulkActionsUI();
-    }
-    
     getWishlist() {
       try {
         const items = JSON.parse(localStorage.getItem(this.STORAGE_KEY) || '[]');
         return Array.isArray(items) ? items : [];
-      } catch (e) { 
-        localStorage.removeItem(this.STORAGE_KEY); 
-        return []; 
+      } catch {
+        return [];
       }
     }
-    
-    async fetchProductData() {
-      const handlesToFetch = this.state.wishlist.map(item => item.handle).filter(h => h && !this.state.products[h]);
-      if (handlesToFetch.length === 0) return;
+
+    setWishlist(items) {
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(items));
+      window.dispatchEvent(new CustomEvent(this.NAMESPACE + 'updated'));
+    }
+
+    async render() {
+      const items = this.getWishlist();
+      
+      this.countDisplay.textContent = `${items.length} article${items.length !== 1 ? 's' : ''}`;
+      
+      if (items.length === 0) {
+        this.container.innerHTML = '';
+        this.container.classList.add('hidden');
+        this.emptyState.classList.remove('hidden');
+        this.clearBtn.style.display = 'none';
+        return;
+      }
+
+      this.container.classList.remove('hidden');
+      this.emptyState.classList.add('hidden');
+      this.clearBtn.style.display = 'block';
+
+      this.renderSkeletons(items.length);
+
+      const products = await Promise.all(
+        items.map(item => this.fetchProduct(item.handle))
+      );
+
+      this.container.innerHTML = products
+        .filter(p => p)
+        .map((product, idx) => this.buildCard(product, items[idx]))
+        .join('');
+    }
+
+    async fetchProduct(handle) {
+      if (this.productsCache[handle]) return this.productsCache[handle];
+
       try {
-        const promises = handlesToFetch.map(h => fetch(`/products/${h}.js`).then(res => res.ok ? res.json() : null));
-        const results = await Promise.all(promises);
-        this.state.products = { 
-          ...this.state.products, 
-          ...results.filter(Boolean).reduce((acc, p) => { acc[p.handle] = p; return acc; }, {}) 
-        };
-      } catch (error) { 
-        console.error('[Wishlist] Fetch Error:', error); 
+        const res = await fetch(`/products/${handle}.js`);
+        if (!res.ok) throw new Error('Not found');
+        const product = await res.json();
+        this.productsCache[handle] = product;
+        return product;
+      } catch {
+        return null;
       }
     }
 
-    resizeImage(url, size) {
-      if (!url) return '';
-      try {
-        if (url.includes('_pico.')) return url.replace('_pico.', `_${size}.`);
-        const urlParts = url.split('?');
-        const coreUrl = urlParts[0];
-        const extension = coreUrl.split('.').pop();
-        const pathWithoutExtension = coreUrl.replace(/\.[^/.]+$/, "");
-        return `${pathWithoutExtension}_${size}.${extension}${urlParts[1] ? `?${urlParts[1]}`: ''}`;
-      } catch(e) { 
-        return url; 
-      }
-    }
-
-    formatMoney(cents) {
-      if (typeof cents !== 'number') cents = 0;
-      let value = (cents / 100).toFixed(2);
-      return this.moneyFormat.replace(/\{\{\s*amount\s*\}\}/, value).replace(/\{\{\s*amount_with_comma_separator\s*\}\}/, value.replace('.', ','));
-    }
-
-    createListRowHTML(item, product) {
+    buildCard(product, itemData) {
       const variant = product.variants[0];
       const price = this.formatMoney(variant.price);
-      const stockStatus = variant.available ? 'En stock' : 'Épuisé';
-      const addedDate = new Date(item.added_at || Date.now()).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' });
-      const imageUrl = this.resizeImage(product.featured_image, '360x');
-      const noteHTML = item.note
-        ? `<p class="wishlist-item-card__note-display" data-action="edit-note" title="Modifier la note">${item.note}</p>`
-        : `<a href="#" class="wishlist-item-card__note-link" data-action="add-note">Ajouter une note</a>`;
+      const inStock = variant.available;
+      const qty = itemData.quantity || 1;
+      const note = itemData.note || '';
+      const imageUrl = this.resizeImage(product.featured_image, '600x');
 
       return `
-        <div class="wishlist-item-card" data-handle="${item.handle}">
-          <div class="wishlist-item-card__image-wrapper">
+        <div class="wl-card" data-handle="${product.handle}">
+          <input type="checkbox" class="wl-card__checkbox" data-select="${product.handle}" aria-label="Sélectionner ${product.title}">
+          
+          <div class="wl-card__media">
             <a href="${product.url}">
-              <img class="wishlist-item-card__image" src="${imageUrl}" alt="${product.title || ''}" loading="lazy">
+              <img class="wl-card__image" src="${imageUrl}" alt="${product.title}" loading="lazy" width="600" height="600">
             </a>
-            <input type="checkbox" class="wishlist-item-card__checkbox" data-handle="${item.handle}" aria-label="Sélectionner ${product.title}">
-          </div>
-          <div class="wishlist-item-card__right">
-            <h3 class="wishlist-item-card__title"><a href="${product.url}">${product.title}</a></h3>
-            <dl class="wishlist-item-card__details">
-              <dt>Ajouté le:</dt><dd>${addedDate}</dd>
-              <dt>Prix:</dt><dd>${price}</dd>
-              <dt>Quantité:</dt>
-              <dd>
-                <div class="wishlist-item-card__quantity-selector">
-                  <button data-action="decrease-qty" aria-label="Diminuer">−</button>
-                  <input type="text" value="${item.quantity}" readonly>
-                  <button data-action="increase-qty" aria-label="Augmenter">+</button>
-                </div>
-              </dd>
-              <dt>Stock:</dt><dd>${stockStatus}</dd>
-              <dt>Note:</dt>
-              <dd data-note-area>
-                <div data-note-container>${noteHTML}</div>
-                <div class="wishlist-item-card__note-editor" data-note-editor>
-                  <textarea>${item.note || ''}</textarea>
-                  <button data-action="save-note" class="button button--primary" style="padding: 0.4rem 1rem;">OK</button>
-                </div>
-              </dd>
-            </dl>
-            <div class="wishlist-item-card__actions">
-              <button class="button button--primary" data-action="add-to-cart" ${!variant.available ? 'disabled' : ''}>
-                ${variant.available ? 'Ajouter au panier' : 'Épuisé'}
-              </button>
-            </div>
-            <div class="wishlist-item-card__sub-actions">
-                <button class="wishlist-item-card__remove-btn" data-action="remove-item" aria-label="Supprimer l'article" title="Supprimer">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6"></path>
-                    </svg>
+            <div class="wl-card__overlay">
+              <div class="wl-card__quick-actions">
+                <button class="wl-card__icon-btn" data-action="remove" data-handle="${product.handle}" title="Supprimer">
+                  <svg viewBox="0 0 24 24" fill="none"><path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
                 </button>
+                <button class="wl-card__icon-btn" data-action="quick-add" data-handle="${product.handle}" ${!inStock ? 'disabled' : ''} title="Ajouter au panier">
+                  <svg viewBox="0 0 24 24" fill="none"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" stroke="currentColor" stroke-width="2"/></svg>
+                </button>
+              </div>
             </div>
           </div>
-        </div>`;
-    }
-    
-    attachGlobalListeners() {
-      this.container.addEventListener('click', this.handleContainerClick.bind(this));
-      this.container.addEventListener('change', e => {
-        if (e.target.matches('.wishlist-item-card__checkbox')) this.handleItemSelection(e.target.dataset.handle, e.target.checked);
-      });
-      this.bulkApplyBtn.addEventListener('click', () => this.handleBulkApply());
-      if (this.addAllBtn) this.addAllBtn.addEventListener('click', () => this.bulkAddToCart(true));
-      if (this.clearBtn) this.clearBtn.addEventListener('click', () => this.clearWishlist());
-    }
-    
-    handleContainerClick(e) {
-      const target = e.target.closest('[data-action]');
-      if (!target) return;
-      const card = e.target.closest('.wishlist-item-card');
-      const handle = card?.dataset.handle;
-      if (!handle) return;
-      
-      const action = target.dataset.action;
-      if (action !== 'add-note' && action !== 'edit-note') e.preventDefault();
 
-      switch (action) {
-        case 'remove-item': this.removeItem(handle); break;
-        case 'add-to-cart': this.addToCart(target, handle); break;
-        case 'increase-qty': this.updateQuantity(handle, 1); break;
-        case 'decrease-qty': this.updateQuantity(handle, -1); break;
-        case 'add-note':
-        case 'edit-note': e.preventDefault(); this.toggleNoteEditor(handle, true); break;
-        case 'save-note': this.saveNote(handle); break;
-      }
+          <div class="wl-card__info">
+            <h3 class="wl-card__title"><a href="${product.url}">${product.title}</a></h3>
+            
+            <div class="wl-card__meta">
+              <span class="wl-card__price">${price}</span>
+              <span class="wl-card__stock wl-card__stock--${inStock ? 'in' : 'out'}">${inStock ? 'En stock' : 'Épuisé'}</span>
+            </div>
+
+            <div class="wl-card__footer">
+              <div class="wl-card__qty">
+                <span class="wl-card__qty-label">Quantité</span>
+                <div class="wl-card__qty-controls">
+                  <button class="wl-card__qty-btn" data-action="qty-dec" data-handle="${product.handle}">−</button>
+                  <span class="wl-card__qty-value">${qty}</span>
+                  <button class="wl-card__qty-btn" data-action="qty-inc" data-handle="${product.handle}">+</button>
+                </div>
+              </div>
+              ${note ? `<div class="wl-card__note" title="${note}">${note}</div>` : ''}
+            </div>
+
+            <button class="wl-btn wl-btn--primary wl-card__atc" data-action="add-cart" data-handle="${product.handle}" ${!inStock ? 'disabled' : ''}>
+              ${inStock ? 'Ajouter au panier' : 'Épuisé'}
+            </button>
+          </div>
+        </div>
+      `;
     }
 
-    updateQuantity(handle, change) {
-      const wishlist = this.getWishlist();
-      const itemIndex = wishlist.findIndex(item => item.handle === handle);
-      if (itemIndex > -1) {
-        const newQuantity = wishlist[itemIndex].quantity + change;
-        if (newQuantity > 0) {
-          wishlist[itemIndex].quantity = newQuantity;
-          this.setWishlist(wishlist);
+    renderSkeletons(count) {
+      const skeleton = `
+        <div class="wl-card wl-skeleton">
+          <div class="wl-skeleton__media"></div>
+          <div class="wl-skeleton__info">
+            <div class="wl-skeleton__line" style="width:80%"></div>
+            <div class="wl-skeleton__line" style="width:40%"></div>
+            <div class="wl-skeleton__line" style="width:60%"></div>
+          </div>
+        </div>
+      `;
+      this.container.innerHTML = skeleton.repeat(Math.min(count, 8));
+    }
+
+    attachEvents() {
+      this.container.addEventListener('click', (e) => {
+        const action = e.target.closest('[data-action]');
+        if (!action) return;
+
+        const handle = action.dataset.handle;
+
+        switch(action.dataset.action) {
+          case 'remove': this.removeItem(handle); break;
+          case 'quick-add':
+          case 'add-cart': this.addToCart(handle, action); break;
+          case 'qty-inc': this.updateQty(handle, 1); break;
+          case 'qty-dec': this.updateQty(handle, -1); break;
         }
-      }
+      });
+
+      this.container.addEventListener('change', (e) => {
+        if (e.target.matches('[data-select]')) {
+          this.toggleSelection(e.target.dataset.select, e.target.checked);
+        }
+      });
+
+      this.clearBtn?.addEventListener('click', () => {
+        if (confirm('Vider votre liste d\'envies ?')) {
+          this.setWishlist([]);
+          this.showToast('Liste vidée');
+        }
+      });
+
+      document.querySelector('[data-bulk-add]')?.addEventListener('click', () => this.bulkAddToCart());
+      document.querySelector('[data-bulk-remove]')?.addEventListener('click', () => this.bulkRemove());
     }
 
     removeItem(handle) {
-      if (confirm("Voulez-vous vraiment supprimer cet article de votre liste d'envies ?")) {
-        this.setWishlist(this.getWishlist().filter(i => i.handle !== handle));
+      const items = this.getWishlist().filter(i => i.handle !== handle);
+      this.setWishlist(items);
+      this.showToast('Produit retiré');
+    }
+
+    updateQty(handle, delta) {
+      const items = this.getWishlist();
+      const item = items.find(i => i.handle === handle);
+      if (item) {
+        item.quantity = Math.max(1, (item.quantity || 1) + delta);
+        this.setWishlist(items);
       }
     }
 
-    async addToCart(button, handle) {
-      const item = this.state.wishlist.find(i => i.handle === handle);
-      const product = this.state.products[handle];
+    async addToCart(handle, btn) {
+      const item = this.getWishlist().find(i => i.handle === handle);
+      const product = this.productsCache[handle];
       if (!item || !product) return;
-      const variant = product.variants[0];
 
-      button.textContent = '...';
-      button.disabled = true;
+      const originalText = btn.textContent;
+      btn.textContent = '...';
+      btn.disabled = true;
 
       try {
         await fetch('/cart/add.js', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ items: [{ id: variant.id, quantity: item.quantity }] })
+          body: JSON.stringify({ items: [{ id: product.variants[0].id, quantity: item.quantity || 1 }] })
         });
+        this.showToast('Ajouté au panier !');
         document.querySelector('cart-drawer')?.open();
-      } catch (e) { 
-        console.error(e); 
+      } catch (e) {
+        console.error(e);
       } finally {
-        button.textContent = 'Ajouter au panier';
-        button.disabled = !variant.available;
-      }
-    }
-    
-    toggleNoteEditor(handle, show) {
-      const area = this.container.querySelector(`[data-handle="${handle}"] [data-note-area]`);
-      if (!area) return;
-      area.querySelector('[data-note-container]').style.display = show ? 'none' : 'block';
-      area.querySelector('[data-note-editor]').style.display = show ? 'block' : 'none';
-      if(show) area.querySelector('textarea').focus();
-    }
-
-    saveNote(handle) {
-      const area = this.container.querySelector(`[data-handle="${handle}"] [data-note-area]`);
-      const note = area.querySelector('textarea').value.trim();
-      const wishlist = this.getWishlist();
-      const itemIndex = wishlist.findIndex(item => item.handle === handle);
-      if (itemIndex > -1) {
-        wishlist[itemIndex].note = note;
-        this.setWishlist(wishlist);
+        btn.textContent = originalText;
+        btn.disabled = !product.variants[0].available;
       }
     }
 
-    handleItemSelection(handle, isSelected) {
-      const selectedItemsSet = new Set(this.state.selectedItems);
-      if (isSelected) selectedItemsSet.add(handle); 
-      else selectedItemsSet.delete(handle);
-      this.state.selectedItems = [...selectedItemsSet];
-      this.updateBulkActionsUI();
+    toggleSelection(handle, selected) {
+      if (selected) this.selectedItems.add(handle);
+      else this.selectedItems.delete(handle);
+      this.updateBulkBar();
     }
 
-    handleBulkApply() {
-      const action = this.bulkActionSelect.value;
-      if (action === 'remove') this.bulkRemove();
-      if (action === 'add') this.bulkAddToCart();
-    }
-
-    updateBulkActionsUI() {
-      this.bulkApplyBtn.disabled = this.state.selectedItems.length === 0;
-      this.bulkActionsBar.classList.toggle('is-visible', this.state.wishlist.length > 0);
-    }
-    
-    togglePageElements(hasItems) {
-      const footerActions = this.section.querySelector('.wishlist-sig-footer-actions');
-      const topActions = this.section.querySelector('.wishlist-sig-top-actions');
-      if (footerActions) footerActions.style.display = hasItems ? 'flex' : 'none';
-      if (topActions) topActions.style.display = hasItems ? 'block' : 'none';
+    updateBulkBar() {
+      const count = this.selectedItems.size;
+      if (count > 0) {
+        this.bulkBar.classList.remove('hidden');
+        this.selectedCountEl.textContent = `${count} sélectionné${count > 1 ? 's' : ''}`;
+      } else {
+        this.bulkBar.classList.add('hidden');
+      }
     }
 
     bulkRemove() {
-      if (confirm(`Supprimer les ${this.state.selectedItems.length} articles sélectionnés ?`)) {
-        this.setWishlist(this.getWishlist().filter(i => !this.state.selectedItems.includes(i.handle)));
-        this.state.selectedItems = [];
+      if (confirm(`Supprimer ${this.selectedItems.size} articles ?`)) {
+        const items = this.getWishlist().filter(i => !this.selectedItems.has(i.handle));
+        this.setWishlist(items);
+        this.selectedItems.clear();
+        this.showToast('Articles supprimés');
       }
     }
 
-    async bulkAddToCart(all = false) {
-      const button = all ? this.addAllBtn : this.bulkApplyBtn;
-      if (button) button.disabled = true;
-      
-      const handlesToAdd = all ? this.state.wishlist.map(i => i.handle) : this.state.selectedItems;
-      const items = this.state.wishlist
-        .filter(i => handlesToAdd.includes(i.handle) && this.state.products[i.handle]?.variants[0]?.available)
-        .map(i => ({ id: this.state.products[i.handle].variants[0].id, quantity: i.quantity }));
-      
-      if (items.length > 0) {
-        try {
-          await fetch('/cart/add.js', { 
-            method: 'POST', 
-            headers: { 'Content-Type': 'application/json' }, 
-            body: JSON.stringify({ items }) 
-          });
-          document.querySelector('cart-drawer')?.open();
-        } catch (e) { 
-          console.error('Bulk add failed:', e); 
+    async bulkAddToCart() {
+      const items = this.getWishlist().filter(i => this.selectedItems.has(i.handle));
+      const cartItems = [];
+
+      for (const item of items) {
+        const product = await this.fetchProduct(item.handle);
+        if (product?.variants[0]?.available) {
+          cartItems.push({ id: product.variants[0].id, quantity: item.quantity || 1 });
         }
       }
-      if (button) button.disabled = false;
-    }
 
-    clearWishlist() {
-      if (confirm('Voulez-vous vraiment vider votre liste d\'envies ?')) {
-        this.setWishlist([]);
+      if (cartItems.length > 0) {
+        try {
+          await fetch('/cart/add.js', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ items: cartItems })
+          });
+          this.showToast(`${cartItems.length} articles ajoutés !`);
+          document.querySelector('cart-drawer')?.open();
+        } catch (e) {
+          console.error(e);
+        }
       }
     }
-    
-    renderSkeleton() {
-      const skeletonCard = `
-        <div class="wishlist-item-card wishlist-skeleton" style="opacity: 0.5;">
-          <div class="wishlist-item-card__image-wrapper" style="background-color: var(--sig-color-background-alt);"></div>
-          <div class="wishlist-item-card__right">
-            <div style="height: 20px; width: 80%; background-color: var(--sig-color-background-alt); margin-bottom: 1.5rem; border-radius: 4px;"></div>
-            <div style="height: 100px; width: 100%; background-color: var(--sig-color-background-alt); border-radius: 4px;"></div>
-            <div style="margin-top: auto; padding-top: 1.5rem; height: 45px; background-color: var(--sig-color-background-alt); border-radius: 4px;"></div>
-          </div>
-        </div>`;
-      this.container.innerHTML = `<div class="wishlist-sig-list">${skeletonCard.repeat(Math.min(this.state.wishlist.length, 6))}</div>`;
+
+    resizeImage(url, size) {
+      if (!url) return '';
+      return url.replace(/\.(jpg|png|gif|jpeg|webp)/i, `_${size}.$1`);
     }
-    
-    setWishlist(list) {
-      const updatedList = list.map(item => ({ ...item, added_at: item.added_at || new Date().toISOString() }));
-      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(updatedList));
-      window.dispatchEvent(new CustomEvent(this.NAMESPACE + 'updated'));
+
+    formatMoney(cents) {
+      const value = (cents / 100).toFixed(2);
+      return this.moneyFormat.replace(/\{\{\s*amount\s*\}\}/, value);
     }
-    
-    getEmptyStateHTML() {
-      return `<div class="wishlist-sig-empty-state">
-        <h2>Votre liste d'envies est vide</h2>
-        <div><p>Parcourez nos collections pour trouver vos prochains coups de cœur.</p></div>
-        <a href="{{ routes.all_products_collection_url }}" class="button button--primary" style="margin-top: 1.5rem;">Découvrir les produits</a>
-      </div>`;
+
+    showToast(message) {
+      const messageEl = this.toast.querySelector('span');
+      if (messageEl) messageEl.textContent = message;
+      this.toast.classList.add('show');
+      setTimeout(() => this.toast.classList.remove('show'), 3000);
     }
   }
-  
-  new WishlistSig(document.querySelector('.wishlist-sig-section[data-section-id]'));
-});
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => new WishlistPremium());
+  } else {
+    new WishlistPremium();
+  }
+})();
 </script>
 
 {% schema %}
 {
-  "name": "Page Wishlist Signature",
+  "name": "Wishlist Premium Grid",
   "settings": [
     {
       "type": "header",
-      "content": "Contenu de la page"
+      "content": "Contenu"
     },
     {
       "type": "text",
       "id": "title",
       "label": "Titre",
-      "default": "Ma Wishlist"
-    },
+      "default": "Ma Liste d'Envies"
+    }
+  ],
+  "presets": [
     {
-      "type": "header",
-      "content": "Couleurs"
-    },
-    {
-      "type": "color",
-      "id": "color_text",
-      "label": "Couleur du texte",
-      "default": "#212121"
-    },
-    {
-      "type": "color",
-      "id": "color_text_light",
-      "label": "Couleur du texte secondaire",
-      "default": "#757575"
-    },
-    {
-      "type": "color",
-      "id": "color_border",
-      "label": "Couleur des bordures",
-      "default": "#E0E0E0"
-    },
-    {
-      "type": "color",
-      "id": "color_background",
-      "label": "Couleur de fond",
-      "default": "#FFFFFF"
-    },
-    {
-      "type": "color",
-      "id": "color_background_alt",
-      "label": "Couleur de fond alternative",
-      "default": "#F5F5F5"
-    },
-    {
-      "type": "header",
-      "content": "Boutons"
-    },
-    {
-      "type": "color",
-      "id": "button_primary_bg",
-      "label": "Fond bouton principal",
-      "default": "#212121"
-    },
-    {
-      "type": "color",
-      "id": "button_primary_text",
-      "label": "Texte bouton principal",
-      "default": "#FFFFFF"
-    },
-    {
-      "type": "header",
-      "content": "Style des cartes"
-    },
-    {
-      "type": "text",
-      "id": "card_shadow",
-      "label": "Ombre des cartes (CSS)",
-      "default": "0 4px 15px rgba(0, 0, 0, 0.07)"
-    },
-    {
-      "type": "range",
-      "id": "card_border_radius",
-      "min": 0,
-      "max": 20,
-      "step": 2,
-      "unit": "px",
-      "label": "Arrondis des cartes",
-      "default": 6
+      "name": "Wishlist Premium Grid"
     }
   ]
 }
