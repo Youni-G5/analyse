@@ -1,6 +1,6 @@
 {% comment %}
   Wishlist Nike Style - Design fidèle Nike.com
-  Cartes minimalistes avec espacement généreux et typographie Nike
+  Avec sélecteurs de variantes dynamiques
   Compatible: 100% avec système existant (wishlist-sig-items)
 {% endcomment %}
 
@@ -174,6 +174,49 @@
     color: #111;
     margin-left: 1rem;
     white-space: nowrap;
+  }
+
+  /* ========== VARIANT SELECTORS ========== */
+  .wl-nike-card__variants {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+  }
+
+  .wl-nike-variant {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 120px;
+  }
+
+  .wl-nike-variant__label {
+    font-size: 0.75rem;
+    color: #757575;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .wl-nike-variant__select {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background: #fff;
+    font-size: 0.875rem;
+    color: #111;
+    font-family: inherit;
+    cursor: pointer;
+    transition: border-color 0.2s;
+  }
+
+  .wl-nike-variant__select:hover {
+    border-color: #111;
+  }
+
+  .wl-nike-variant__select:focus {
+    outline: none;
+    border-color: #111;
   }
 
   .wl-nike-card__meta {
@@ -386,6 +429,10 @@
       width: 180px;
       height: 180px;
     }
+
+    .wl-nike-variant {
+      min-width: 140px;
+    }
   }
 
   /* ========== RESPONSIVE DESKTOP ========== */
@@ -446,6 +493,10 @@
       width: 100%;
       height: auto;
       aspect-ratio: 1 / 1;
+    }
+
+    .wl-nike-variant {
+      min-width: calc(50% - 0.375rem);
     }
   }
 {% endstyle %}
@@ -542,14 +593,37 @@
       const inStock = variant.available;
       const qty = itemData.quantity || 1;
       const note = itemData.note || '';
-      const imageUrl = this.resizeImage(product.featured_image, '400x');
+      const imageUrl = this.resizeImage(variant.featured_image?.src || product.featured_image, '400x');
+
+      // Construction des sélecteurs de variantes
+      let variantsHTML = '';
+      if (product.options && product.options.length > 0 && product.options[0].name !== 'Title') {
+        variantsHTML = '<div class="wl-nike-card__variants">';
+        
+        product.options.forEach((option, optionIndex) => {
+          variantsHTML += `
+            <div class="wl-nike-variant">
+              <label class="wl-nike-variant__label">${option.name}</label>
+              <select class="wl-nike-variant__select" data-option-index="${optionIndex}" data-product-handle="${product.handle}">
+                ${option.values.map(value => `
+                  <option value="${value}" ${variant.options[optionIndex] === value ? 'selected' : ''}>
+                    ${value}
+                  </option>
+                `).join('')}
+              </select>
+            </div>
+          `;
+        });
+        
+        variantsHTML += '</div>';
+      }
 
       return `
-        <div class="wl-nike-card" data-handle="${product.handle}">
+        <div class="wl-nike-card" data-handle="${product.handle}" data-product-id="${product.id}">
           <div class="wl-nike-card__media">
             <input type="checkbox" class="wl-nike-card__checkbox" data-select="${product.handle}">
             <a href="${product.url}">
-              <img class="wl-nike-card__image" src="${imageUrl}" alt="${product.title}" loading="lazy">
+              <img class="wl-nike-card__image" src="${imageUrl}" alt="${product.title}" loading="lazy" data-card-image>
             </a>
           </div>
 
@@ -559,12 +633,14 @@
                 <h3 class="wl-nike-card__title"><a href="${product.url}">${product.title}</a></h3>
                 <p class="wl-nike-card__subtitle">${product.product_type || 'Produit'}</p>
               </div>
-              <div class="wl-nike-card__price">${price}</div>
+              <div class="wl-nike-card__price" data-card-price>${price}</div>
             </div>
+
+            ${variantsHTML}
 
             <div class="wl-nike-card__meta">
               <div class="wl-nike-card__qty-label">Quantité</div>
-              <div class="wl-nike-card__stock wl-nike-card__stock--${inStock ? 'in' : 'out'}">
+              <div class="wl-nike-card__stock wl-nike-card__stock--${inStock ? 'in' : 'out'}" data-card-stock>
                 ${inStock ? '✓ En stock' : '✕ Épuisé'}
               </div>
             </div>
@@ -622,12 +698,68 @@
         }
       });
 
+      // Event pour changement de variante
+      this.container.addEventListener('change', (e) => {
+        if (e.target.matches('.wl-nike-variant__select')) {
+          const select = e.target;
+          const handle = select.dataset.productHandle;
+          this.handleVariantChange(handle);
+        }
+      });
+
       this.clearBtn?.addEventListener('click', () => {
         if (confirm('Vider votre liste ?')) {
           this.setWishlist([]);
           this.showToast('Liste vidée');
         }
       });
+    }
+
+    handleVariantChange(handle) {
+      const card = this.container.querySelector(`[data-handle="${handle}"]`);
+      if (!card) return;
+
+      const product = this.productsCache[handle];
+      if (!product) return;
+
+      // Récupérer toutes les options sélectionnées
+      const selects = card.querySelectorAll('.wl-nike-variant__select');
+      const selectedOptions = Array.from(selects).map(s => s.value);
+
+      // Trouver la variante correspondante
+      const matchingVariant = product.variants.find(v => 
+        v.options.every((opt, idx) => opt === selectedOptions[idx])
+      );
+
+      if (!matchingVariant) return;
+
+      // Mettre à jour le prix
+      const priceEl = card.querySelector('[data-card-price]');
+      if (priceEl) {
+        priceEl.textContent = this.formatMoney(matchingVariant.price);
+      }
+
+      // Mettre à jour l'image
+      const imageEl = card.querySelector('[data-card-image]');
+      if (imageEl && matchingVariant.featured_image) {
+        imageEl.src = this.resizeImage(matchingVariant.featured_image.src, '400x');
+      }
+
+      // Mettre à jour le stock
+      const stockEl = card.querySelector('[data-card-stock]');
+      if (stockEl) {
+        const inStock = matchingVariant.available;
+        stockEl.className = `wl-nike-card__stock wl-nike-card__stock--${inStock ? 'in' : 'out'}`;
+        stockEl.textContent = inStock ? '✓ En stock' : '✕ Épuisé';
+      }
+
+      // Mettre à jour le bouton ATC
+      const btn = card.querySelector('[data-action="add-cart"]');
+      if (btn) {
+        btn.dataset.variantId = matchingVariant.id;
+        btn.disabled = !matchingVariant.available;
+        btn.textContent = matchingVariant.available ? 'Ajouter au panier' : 'Épuisé';
+      }
     }
 
     removeItem(handle) {
@@ -647,8 +779,9 @@
 
     async addToCart(handle, btn) {
       const item = this.getWishlist().find(i => i.handle === handle);
-      const product = this.productsCache[handle];
-      if (!item || !product) return;
+      const variantId = btn.dataset.variantId;
+      
+      if (!item || !variantId) return;
 
       const originalText = btn.textContent;
       btn.textContent = '...';
@@ -657,7 +790,7 @@
       try {
         const formData = {
           items: [{
-            id: product.variants[0].id,
+            id: variantId,
             quantity: item.quantity || 1
           }]
         };
@@ -686,7 +819,6 @@
         this.showToast('Erreur, réessayez');
       } finally {
         btn.textContent = originalText;
-        btn.disabled = !product.variants[0].available;
       }
     }
 
