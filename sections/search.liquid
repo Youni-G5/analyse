@@ -1,0 +1,394 @@
+<style>
+  .search-results-wrapper { max-width: 1440px; margin: 0 auto; padding: 0 24px 80px; }
+  .breadcrumbs-container { padding: 20px 0 12px; border-bottom: 1px solid #e5e5e5; margin-bottom: 24px; }
+  .search-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px; padding: 0 0 24px; gap: 24px; flex-wrap: wrap; }
+  .search-header-left { flex: 1; min-width: 300px; }
+  .search-title { font-size: clamp(32px, 4vw, 48px); font-weight: 700; letter-spacing: -0.03em; margin: 0 0 12px; color: #111; line-height: 1.1; }
+  .search-count { font-size: 17px; color: #757575; font-weight: 400; margin-bottom: 8px; }
+  .search-term { font-weight: 600; color: #111; }
+  .search-meta { display: flex; gap: 20px; margin-top: 16px; font-size: 14px; color: #757575; }
+  .search-meta-item { display: flex; align-items: center; gap: 6px; }
+  .search-controls { display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px; padding: 20px; background: #f7f7f7; border-radius: 12px; gap: 16px; flex-wrap: wrap; }
+  .controls-left { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .results-per-page { display: flex; align-items: center; gap: 8px; }
+  .results-per-page span { font-size: 14px; color: #757575; font-weight: 500; }
+  .sort-dropdown { position: relative; display: flex; align-items: center; gap: 8px; }
+  .sort-label { font-size: 14px; font-weight: 500; color: #111; }
+  .sort-select { padding: 10px 36px 10px 16px; font-size: 14px; border: 1px solid #ccc; border-radius: 30px; background-color: #fff; cursor: pointer; transition: all 0.2s ease; appearance: none; font-weight: 500; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23111' d='M6 8.5L1.5 4h9z'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; }
+  .sort-select:hover, .sort-select:focus { border-color: #111; outline: none; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+  .loading-indicator { position: fixed; top: 0; left: 0; right: 0; height: 3px; background: #f5f5f5; z-index: 9999; overflow: hidden; opacity: 0; transition: opacity 0.3s ease; }
+  .loading-indicator.active { opacity: 1; }
+  .loading-indicator::after { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: #111; animation: loading 1.5s ease-in-out infinite; }
+  @keyframes loading { 0% { left: -100%; } 100% { left: 100%; } }
+  .products-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px 20px; margin-bottom: 64px; }
+  .product-card-wrapper { opacity: 0; transform: translateY(20px); animation: fadeInUp 0.6s ease forwards; }
+  .product-card-wrapper:nth-child(1) { animation-delay: 0.05s; }
+  .product-card-wrapper:nth-child(2) { animation-delay: 0.1s; }
+  .product-card-wrapper:nth-child(3) { animation-delay: 0.15s; }
+  .product-card-wrapper:nth-child(4) { animation-delay: 0.2s; }
+  .product-card-wrapper:nth-child(5) { animation-delay: 0.25s; }
+  .product-card-wrapper:nth-child(6) { animation-delay: 0.3s; }
+  .product-card-wrapper:nth-child(7) { animation-delay: 0.35s; }
+  .product-card-wrapper:nth-child(8) { animation-delay: 0.4s; }
+  @keyframes fadeInUp { to { opacity: 1; transform: translateY(0); } }
+  .product-card-wrapper:hover { transform: translateY(-6px); transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1); }
+  .empty-state { text-align: center; padding: 100px 24px; max-width: 700px; margin: 0 auto; }
+  .empty-state-icon { width: 80px; height: 80px; margin: 0 auto 28px; opacity: 0.2; }
+  .empty-state-icon svg { width: 100%; height: 100%; }
+  .empty-state-title { font-size: 32px; font-weight: 700; margin: 0 0 16px; color: #111; letter-spacing: -0.02em; }
+  .empty-state-message { font-size: 17px; color: #757575; line-height: 1.7; margin-bottom: 40px; }
+  .empty-state-suggestions { text-align: left; display: inline-block; background: #f7f7f7; padding: 32px 40px; border-radius: 12px; }
+  .empty-state-suggestions h3 { font-size: 18px; font-weight: 600; margin: 0 0 20px; color: #111; }
+  .empty-state-suggestions ul { list-style: none; padding: 0; margin: 0; }
+  .empty-state-suggestions li { font-size: 15px; color: #757575; margin-bottom: 12px; padding-left: 28px; position: relative; line-height: 1.6; }
+  .empty-state-suggestions li:before { content: "→"; position: absolute; left: 0; color: #111; font-weight: 600; }
+  .btn-primary { display: inline-block; padding: 14px 40px; background-color: #111; color: #fff; text-decoration: none; border-radius: 30px; font-weight: 600; font-size: 15px; transition: all 0.25s ease; border: none; cursor: pointer; text-transform: uppercase; letter-spacing: 0.5px; }
+  .btn-primary:hover { background-color: #333; transform: scale(1.02); }
+  .pagination-wrapper { display: flex; justify-content: center; align-items: center; gap: 8px; margin-top: 80px; padding: 32px 0; border-top: 1px solid #e5e5e5; }
+  .pagination-btn { min-width: 44px; height: 44px; padding: 0 16px; border: 1px solid #ccc; background-color: #fff; color: #111; text-decoration: none; border-radius: 50%; font-size: 14px; font-weight: 600; transition: all 0.2s ease; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; }
+  .pagination-btn:hover:not(.disabled):not(.active) { border-color: #111; background-color: #f5f5f5; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+  .pagination-btn.disabled { opacity: 0.3; cursor: not-allowed; pointer-events: none; }
+  .pagination-btn.active { background-color: #111; color: #fff; border-color: #111; transform: scale(1.1); }
+  .pagination-nav { min-width: 100px; border-radius: 30px; padding: 0 20px; text-transform: uppercase; font-size: 13px; letter-spacing: 0.5px; }
+  .pagination-ellipsis { padding: 0 8px; color: #757575; font-weight: 600; }
+  .pagination-info { padding: 12px 24px; font-size: 14px; color: #757575; background: #f7f7f7; border-radius: 30px; margin: 0 8px; font-weight: 500; }
+  .quick-actions { position: fixed; bottom: 32px; right: 32px; display: flex; flex-direction: column; gap: 12px; z-index: 100; }
+  .quick-action-btn { width: 56px; height: 56px; border-radius: 50%; background: #111; color: #fff; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); transition: all 0.3s ease; }
+  .quick-action-btn:hover { transform: scale(1.1); box-shadow: 0 6px 30px rgba(0,0,0,0.3); }
+  .quick-action-btn svg { width: 20px; height: 20px; }
+  @media (max-width: 1024px) {
+    .products-grid { grid-template-columns: repeat(2, 1fr); gap: 24px 16px; }
+    .search-results-wrapper { padding: 0 20px 60px; }
+    .search-header { margin-bottom: 24px; padding: 0 0 16px; }
+    .quick-actions { bottom: 24px; right: 24px; }
+  }
+  @media (max-width: 640px) {
+    .products-grid { grid-template-columns: repeat(2, 1fr); gap: 16px 12px; }
+    .search-results-wrapper { padding: 0 16px 48px; }
+    .breadcrumbs-container { padding: 16px 0 8px; margin-bottom: 16px; }
+    .search-header { flex-direction: column; gap: 16px; padding: 0 0 16px; }
+    .search-header-left { min-width: 100%; }
+    .search-title { font-size: 28px; }
+    .search-meta { flex-direction: column; gap: 8px; }
+    .search-controls { flex-direction: column; align-items: stretch; padding: 16px; }
+    .controls-left { flex-direction: column; align-items: stretch; width: 100%; }
+    .sort-dropdown { width: 100%; }
+    .sort-select { width: 100%; }
+    .results-per-page { justify-content: space-between; }
+    .pagination-wrapper { gap: 6px; flex-wrap: wrap; margin-top: 48px; padding: 24px 0; }
+    .pagination-btn { min-width: 40px; height: 40px; font-size: 13px; }
+    .pagination-nav { min-width: auto; padding: 0 16px; font-size: 12px; }
+    .pagination-info { width: 100%; text-align: center; order: -1; margin: 0 0 12px 0; }
+    .quick-actions { bottom: 16px; right: 16px; gap: 8px; }
+    .quick-action-btn { width: 48px; height: 48px; font-size: 18px; }
+  }
+</style>
+
+<div class="loading-indicator" id="loadingBar"></div>
+
+<div class="search-results-wrapper">
+  <div class="breadcrumbs-container">
+    {% render 'breadcrumbs' %}
+  </div>
+
+  {% paginate search.results by section.settings.products_per_page %}
+    
+    <div class="search-header">
+      <div class="search-header-left">
+        <h1 class="search-title">{{ section.settings.section_title }}</h1>
+        
+        {% if search.performed %}
+          <p class="search-count">
+            {% if search.results_count == 0 %}
+              Aucun résultat
+            {% elsif search.results_count == 1 %}
+              1 résultat trouvé
+            {% else %}
+              {{ search.results_count }} résultats trouvés
+            {% endif %}
+            {% if search.terms != blank %}
+              pour <span class="search-term">"{{ search.terms }}"</span>
+            {% endif %}
+          </p>
+
+          {% if search.results_count > 0 %}
+            <div class="search-meta">
+              <div class="search-meta-item">
+                <span>{{ search.results_count }} produits</span>
+              </div>
+              {% if paginate.pages > 1 %}
+                <div class="search-meta-item">
+                  <span>•</span>
+                  <span>Page {{ paginate.current_page }} / {{ paginate.pages }}</span>
+                </div>
+              {% endif %}
+            </div>
+          {% endif %}
+        {% endif %}
+      </div>
+    </div>
+
+    {% if search.performed %}
+      {% if search.results.size > 0 %}
+        
+        {% if section.settings.show_sort %}
+          <div class="search-controls">
+            <div class="controls-left">
+              <div class="results-per-page">
+                <span>{{ paginate.items }} produits affichés</span>
+              </div>
+            </div>
+
+            <div class="sort-dropdown">
+              <label for="SortBy" class="sort-label">Trier :</label>
+              <select id="SortBy" name="sort_by" class="sort-select">
+                <option value="relevance" {% if search.sort_by == 'relevance' or search.sort_by == blank %}selected{% endif %}>
+                  Pertinence
+                </option>
+                <option value="price-ascending" {% if search.sort_by == 'price-ascending' %}selected{% endif %}>
+                  Prix : Croissant
+                </option>
+                <option value="price-descending" {% if search.sort_by == 'price-descending' %}selected{% endif %}>
+                  Prix : Décroissant
+                </option>
+                <option value="created-descending" {% if search.sort_by == 'created-descending' %}selected{% endif %}>
+                  Nouveautés
+                </option>
+                <option value="best-selling" {% if search.sort_by == 'best-selling' %}selected{% endif %}>
+                  Meilleures ventes
+                </option>
+                <option value="title-ascending" {% if search.sort_by == 'title-ascending' %}selected{% endif %}>
+                  Nom : A - Z
+                </option>
+                <option value="title-descending" {% if search.sort_by == 'title-descending' %}selected{% endif %}>
+                  Nom : Z - A
+                </option>
+              </select>
+            </div>
+          </div>
+        {% endif %}
+
+        <div class="products-grid" id="productsGrid">
+          {% for item in search.results %}
+            {% if item.object_type == 'product' %}
+              <div class="product-card-wrapper">
+                {% render 'product-card', product: item %}
+              </div>
+            {% endif %}
+          {% endfor %}
+        </div>
+
+        {% if paginate.pages > 1 %}
+          <div class="pagination-wrapper">
+            
+            <div class="pagination-info">
+              {% assign offset_start = paginate.current_offset | plus: 1 %}
+              {% assign offset_end = paginate.current_offset | plus: paginate.page_size %}
+              {% if offset_end > search.results_count %}
+                {% assign offset_end = search.results_count %}
+              {% endif %}
+              Affichage {{ offset_start }}-{{ offset_end }} sur {{ search.results_count }}
+            </div>
+
+            {% if paginate.previous %}
+              <a href="{{ paginate.previous.url }}" class="pagination-btn pagination-nav">
+                ← Préc.
+              </a>
+            {% else %}
+              <span class="pagination-btn pagination-nav disabled">← Préc.</span>
+            {% endif %}
+
+            {% assign page_window = 2 %}
+            {% assign min_page = paginate.current_page | minus: page_window %}
+            {% assign max_page = paginate.current_page | plus: page_window %}
+            {% assign pages_minus_one = paginate.pages | minus: 1 %}
+            {% assign pages_minus_three = paginate.pages | minus: 3 %}
+
+            {% for part in paginate.parts %}
+              {% if part.is_link %}
+                {% assign page_num = part.title | plus: 0 %}
+                {% assign show_page = false %}
+                
+                {% if page_num == 1 or page_num == paginate.pages %}
+                  {% assign show_page = true %}
+                {% elsif page_num >= min_page and page_num <= max_page %}
+                  {% assign show_page = true %}
+                {% endif %}
+
+                {% if show_page %}
+                  <a href="{{ part.url }}" class="pagination-btn">
+                    {{ part.title }}
+                  </a>
+                {% elsif page_num == 2 and paginate.current_page > 4 %}
+                  <span class="pagination-ellipsis">...</span>
+                {% elsif page_num == pages_minus_one and paginate.current_page < pages_minus_three %}
+                  <span class="pagination-ellipsis">...</span>
+                {% endif %}
+              {% else %}
+                <span class="pagination-btn active">
+                  {{ part.title }}
+                </span>
+              {% endif %}
+            {% endfor %}
+
+            {% if paginate.next %}
+              <a href="{{ paginate.next.url }}" class="pagination-btn pagination-nav">
+                Suiv. →
+              </a>
+            {% else %}
+              <span class="pagination-btn pagination-nav disabled">Suiv. →</span>
+            {% endif %}
+          </div>
+        {% endif %}
+
+      {% else %}
+        <div class="empty-state">
+          <div class="empty-state-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <path d="m21 21-4.35-4.35"></path>
+            </svg>
+          </div>
+          <h2 class="empty-state-title">{{ section.settings.empty_title }}</h2>
+          <p class="empty-state-message">{{ section.settings.empty_message }}</p>
+          
+          <div class="empty-state-suggestions">
+            <h3>Suggestions de recherche</h3>
+            <ul>
+              <li>Vérifiez l'orthographe des mots-clés</li>
+              <li>Essayez des termes plus généraux ou différents</li>
+              <li>Utilisez moins de mots-clés</li>
+              <li>Parcourez nos collections populaires</li>
+            </ul>
+          </div>
+
+          <a href="{{ routes.all_products_collection_url }}" class="btn-primary" style="margin-top: 40px;">
+            Voir tous les produits
+          </a>
+        </div>
+      {% endif %}
+    {% endif %}
+
+  {% endpaginate %}
+</div>
+
+<div class="quick-actions" style="display: none;" id="quickActions">
+  <button class="quick-action-btn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" title="Retour en haut">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+      <path d="M12 19V5M5 12l7-7 7 7"/>
+    </svg>
+  </button>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const sortSelect = document.getElementById('SortBy');
+    const loadingBar = document.getElementById('loadingBar');
+    const quickActions = document.getElementById('quickActions');
+    
+    if (sortSelect) {
+      sortSelect.addEventListener('change', function(e) {
+        loadingBar.classList.add('active');
+        const sortValue = e.target.value;
+        const url = new URL(window.location.href);
+        
+        if (sortValue === 'relevance') {
+          url.searchParams.delete('sort_by');
+        } else {
+          url.searchParams.set('sort_by', sortValue);
+        }
+        
+        url.searchParams.delete('page');
+        window.location.href = url.toString();
+      });
+    }
+
+    const observerOptions = {
+      threshold: 0.1,
+      rootMargin: '0px 0px -50px 0px'
+    };
+
+    const observer = new IntersectionObserver(function(entries) {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, observerOptions);
+
+    document.querySelectorAll('.product-card-wrapper').forEach(card => {
+      observer.observe(card);
+    });
+
+    let scrollTimeout;
+    window.addEventListener('scroll', function() {
+      if (window.scrollY > 400) {
+        quickActions.style.display = 'flex';
+      } else {
+        quickActions.style.display = 'none';
+      }
+
+      clearTimeout(scrollTimeout);
+      loadingBar.classList.remove('active');
+    });
+
+    const paginationLinks = document.querySelectorAll('.pagination-btn[href]');
+    paginationLinks.forEach(link => {
+      link.addEventListener('click', function(e) {
+        loadingBar.classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Résultats de recherche",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Configuration générale"
+    },
+    {
+      "type": "text",
+      "id": "section_title",
+      "label": "Titre de la section",
+      "default": "Résultats de recherche"
+    },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 12,
+      "max": 48,
+      "step": 4,
+      "label": "Produits par page",
+      "default": 24,
+      "info": "Nombre de produits affichés par page"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_sort",
+      "label": "Afficher les options de tri",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "État vide (aucun résultat)"
+    },
+    {
+      "type": "text",
+      "id": "empty_title",
+      "label": "Titre",
+      "default": "Aucun résultat trouvé"
+    },
+    {
+      "type": "textarea",
+      "id": "empty_message",
+      "label": "Message",
+      "default": "Nous n'avons trouvé aucun produit correspondant à votre recherche. Essayez d'autres mots-clés ou parcourez nos collections."
+    }
+  ]
+}
+{% endschema %}

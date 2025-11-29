@@ -1,0 +1,689 @@
+<!-- list-collections.liquid -->
+
+{% schema %}
+{
+  "name": "Liste des Collections",
+  "settings": [
+    {
+      "type": "header",
+      "content": "En-tête Hero"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_hero",
+      "label": "Afficher le hero",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "hero_title",
+      "label": "Titre du Hero",
+      "default": "EXPLORER NOS COLLECTIONS"
+    },
+    {
+      "type": "text",
+      "id": "hero_subtitle",
+      "label": "Sous-titre du Hero",
+      "default": "Trouve ton style. Crée ton histoire."
+    },
+    {
+      "type": "color",
+      "id": "hero_bg_color",
+      "label": "Couleur de fond Hero",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "hero_text_color",
+      "label": "Couleur du texte Hero",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "hero_height",
+      "min": 40,
+      "max": 100,
+      "step": 5,
+      "unit": "vh",
+      "label": "Hauteur du Hero",
+      "default": 70
+    },
+    {
+      "type": "header",
+      "content": "Grille de Collections"
+    },
+    {
+      "type": "select",
+      "id": "grid_layout",
+      "label": "Type de grille",
+      "options": [
+        {
+          "value": "dynamic",
+          "label": "Dynamique (tailles variables)"
+        },
+        {
+          "value": "uniform",
+          "label": "Uniforme (toutes mêmes tailles)"
+        }
+      ],
+      "default": "dynamic"
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "min": 4,
+      "max": 32,
+      "step": 4,
+      "unit": "px",
+      "label": "Espacement entre les tuiles",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "collections_limit",
+      "min": 4,
+      "max": 50,
+      "step": 1,
+      "label": "Nombre max de collections",
+      "default": 20,
+      "info": "Nombre maximum de collections à afficher"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_product_count",
+      "label": "Afficher le nombre de produits",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cta_on_mobile",
+      "label": "Toujours afficher le CTA sur mobile",
+      "default": true,
+      "info": "Affiche le bouton 'Acheter' sans hover sur mobile"
+    },
+    {
+      "type": "header",
+      "content": "Overlay et Effets"
+    },
+    {
+      "type": "range",
+      "id": "overlay_opacity",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "label": "Opacité de l'overlay",
+      "default": 70
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_hover_zoom",
+      "label": "Activer le zoom au survol",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_tile_scale",
+      "label": "Activer l'effet de réduction au survol",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Bannière CTA"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cta_banner",
+      "label": "Afficher la bannière CTA",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "cta_eyebrow",
+      "label": "Surtitre CTA",
+      "default": "NOUVEAUTÉ"
+    },
+    {
+      "type": "textarea",
+      "id": "cta_title",
+      "label": "Titre CTA",
+      "default": "PRÊT À DÉCOUVRIR\nTON PROCHAIN STYLE ?"
+    },
+    {
+      "type": "text",
+      "id": "cta_button_text",
+      "label": "Texte du bouton CTA",
+      "default": "Voir tous les produits"
+    },
+    {
+      "type": "url",
+      "id": "cta_button_link",
+      "label": "Lien du bouton CTA",
+      "default": "/collections/all"
+    },
+    {
+      "type": "color",
+      "id": "cta_bg_color",
+      "label": "Couleur de fond CTA",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "cta_text_color",
+      "label": "Couleur du texte CTA",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Espacement"
+    },
+    {
+      "type": "range",
+      "id": "padding_top",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding supérieur grille",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "padding_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Padding inférieur grille",
+      "default": 12
+    }
+  ]
+}
+{% endschema %}
+
+<div class="nike-collections-list">
+  
+  <!-- Hero Banner Full Width -->
+  {% if section.settings.show_hero %}
+    <section class="hero-banner" style="background-color: {{ section.settings.hero_bg_color }}; height: {{ section.settings.hero_height }}vh; min-height: 400px;">
+      <div class="hero-content">
+        <h1 class="hero-title" style="color: {{ section.settings.hero_text_color }};">{{ section.settings.hero_title }}</h1>
+        <p class="hero-subtitle" style="color: {{ section.settings.hero_text_color }};">{{ section.settings.hero_subtitle }}</p>
+      </div>
+      <div class="hero-overlay"></div>
+      <div class="hero-bg"></div>
+    </section>
+  {% endif %}
+
+  <!-- Collections Grid - Dynamic Masonry -->
+  <section class="collections-wrapper" style="padding: {{ section.settings.padding_top }}px 0 {{ section.settings.padding_bottom }}px;">
+    
+    {% if collections.size > 0 %}
+      <div class="collections-masonry {{ section.settings.grid_layout }}" style="gap: {{ section.settings.grid_gap }}px; padding: {{ section.settings.grid_gap }}px;">
+        
+        {% for collection in collections limit: section.settings.collections_limit %}
+          {% unless collection.handle == 'frontpage' %}
+            
+            {% assign card_size = 'standard' %}
+            
+            {% if section.settings.grid_layout == 'dynamic' %}
+              {% assign index = forloop.index | modulo: 9 %}
+              
+              {% if index == 1 or index == 6 %}
+                {% assign card_size = 'large' %}
+              {% elsif index == 3 or index == 8 %}
+                {% assign card_size = 'wide' %}
+              {% elsif index == 5 %}
+                {% assign card_size = 'tall' %}
+              {% endif %}
+            {% endif %}
+            
+            <a href="{{ collection.url }}" class="collection-tile {{ card_size }}{% unless section.settings.enable_tile_scale %} no-scale{% endunless %}">
+              <div class="tile-media">
+                {% if collection.image %}
+                  <img 
+                    src="{{ collection.image | img_url: '1200x' }}" 
+                    alt="{{ collection.title }}"
+                    class="tile-image{% unless section.settings.enable_hover_zoom %} no-zoom{% endunless %}"
+                    loading="lazy"
+                  >
+                {% elsif collection.products.first.featured_image %}
+                  <img 
+                    src="{{ collection.products.first.featured_image | img_url: '1200x' }}" 
+                    alt="{{ collection.title }}"
+                    class="tile-image{% unless section.settings.enable_hover_zoom %} no-zoom{% endunless %}"
+                    loading="lazy"
+                  >
+                {% else %}
+                  <div class="tile-placeholder">
+                    <svg width="100" height="100" viewBox="0 0 24 24" fill="none">
+                      <path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                  </div>
+                {% endif %}
+                <div class="tile-overlay" style="opacity: {{ section.settings.overlay_opacity | divided_by: 100.0 }};"></div>
+              </div>
+              
+              <div class="tile-content">
+                <div class="tile-info">
+                  <h2 class="tile-title">{{ collection.title }}</h2>
+                  {% if section.settings.show_product_count %}
+                    <p class="tile-count">{{ collection.products_count }} produit{% if collection.products_count > 1 %}s{% endif %}</p>
+                  {% endif %}
+                </div>
+                <div class="tile-cta{% if section.settings.show_cta_on_mobile %} always-visible-mobile{% endif %}">
+                  <span class="cta-text">Acheter</span>
+                  <svg class="cta-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+              </div>
+            </a>
+            
+          {% endunless %}
+        {% endfor %}
+        
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <h2>AUCUNE COLLECTION DISPONIBLE</h2>
+        <p>Reviens bientôt pour découvrir nos collections.</p>
+        <a href="{{ routes.root_url }}" class="btn-dark">Retour à l'accueil</a>
+      </div>
+    {% endif %}
+    
+  </section>
+
+  <!-- Call to Action Banner -->
+  {% if section.settings.show_cta_banner %}
+    <section class="cta-banner" style="background-color: {{ section.settings.cta_bg_color }};">
+      <div class="cta-content">
+        <span class="cta-eyebrow" style="color: {{ section.settings.cta_text_color }};">{{ section.settings.cta_eyebrow }}</span>
+        <h2 class="cta-title" style="color: {{ section.settings.cta_text_color }};">{{ section.settings.cta_title | newline_to_br }}</h2>
+        <a href="{{ section.settings.cta_button_link }}" class="btn-light">
+          <span>{{ section.settings.cta_button_text }}</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+      </div>
+    </section>
+  {% endif %}
+
+</div>
+
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  .nike-collections-list {
+    background: #ffffff;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  }
+  
+  /* Hero Banner */
+  .hero-banner {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  
+  .hero-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, rgba(17,17,17,0.3) 0%, rgba(0,0,0,0.1) 100%);
+  }
+  
+  .hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle at 30% 50%, rgba(255,255,255,0.05) 0%, rgba(0,0,0,0.3) 100%);
+  }
+  
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 0 20px;
+  }
+  
+  .hero-title {
+    font-size: clamp(48px, 8vw, 120px);
+    font-weight: 900;
+    letter-spacing: -0.05em;
+    line-height: 0.9;
+    margin-bottom: 24px;
+    text-transform: uppercase;
+  }
+  
+  .hero-subtitle {
+    font-size: clamp(18px, 2vw, 28px);
+    font-weight: 400;
+    letter-spacing: 0.02em;
+  }
+  
+  /* Collections Grid */
+  .collections-wrapper {
+    background: #ffffff;
+  }
+  
+  .collections-masonry {
+    display: grid;
+    grid-auto-flow: dense;
+    max-width: 100%;
+  }
+  
+  .collections-masonry.dynamic {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-auto-rows: 280px;
+  }
+  
+  .collections-masonry.uniform {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    grid-auto-rows: 300px;
+  }
+  
+  .collection-tile {
+    position: relative;
+    display: block;
+    overflow: hidden;
+    text-decoration: none;
+    background: #f6f6f6;
+    transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  
+  .collection-tile.standard {
+    grid-column: span 1;
+    grid-row: span 1;
+  }
+  
+  .collection-tile.large {
+    grid-column: span 2;
+    grid-row: span 2;
+  }
+  
+  .collection-tile.wide {
+    grid-column: span 2;
+    grid-row: span 1;
+  }
+  
+  .collection-tile.tall {
+    grid-column: span 1;
+    grid-row: span 2;
+  }
+  
+  .collection-tile:hover {
+    z-index: 10;
+  }
+  
+  .collection-tile:not(.no-scale):hover {
+    transform: scale(0.98);
+  }
+  
+  .tile-media {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .tile-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  
+  .tile-image:not(.no-zoom) {
+    transform: scale(1);
+  }
+  
+  .collection-tile:hover .tile-image:not(.no-zoom) {
+    transform: scale(1.08);
+  }
+  
+  .tile-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,0.85) 100%);
+    transition: opacity 0.4s ease;
+  }
+  
+  .collection-tile:hover .tile-overlay {
+    opacity: 0.9 !important;
+  }
+  
+  .tile-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e5e5e5;
+    color: #cccccc;
+  }
+  
+  .tile-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: clamp(20px, 4vw, 32px);
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .tile-info {
+    flex: 1;
+  }
+  
+  .tile-title {
+    font-size: clamp(18px, 3vw, 28px);
+    font-weight: 900;
+    color: #ffffff;
+    letter-spacing: -0.02em;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    line-height: 1.1;
+  }
+  
+  .tile-count {
+    font-size: clamp(11px, 1.5vw, 13px);
+    font-weight: 500;
+    color: rgba(255,255,255,0.8);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  
+  .tile-cta {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+  
+  .collection-tile:hover .tile-cta {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  
+  .cta-text {
+    font-size: clamp(14px, 2vw, 16px);
+    font-weight: 700;
+    color: #ffffff;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  
+  .cta-arrow {
+    color: #ffffff;
+    transition: transform 0.3s ease;
+  }
+  
+  .collection-tile:hover .cta-arrow {
+    transform: translateX(8px);
+  }
+  
+  /* CTA Banner */
+  .cta-banner {
+    padding: clamp(80px, 15vw, 120px) clamp(20px, 5vw, 40px);
+    text-align: center;
+  }
+  
+  .cta-eyebrow {
+    display: block;
+    font-size: clamp(12px, 1.5vw, 14px);
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+  }
+  
+  .cta-title {
+    font-size: clamp(32px, 6vw, 80px);
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    margin-bottom: clamp(32px, 5vw, 40px);
+    text-transform: uppercase;
+  }
+  
+  .btn-light,
+  .btn-dark {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: clamp(16px, 3vw, 20px) clamp(32px, 6vw, 48px);
+    font-size: clamp(14px, 2vw, 16px);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-light {
+    background: #ffffff;
+    color: #000000;
+  }
+  
+  .btn-light:hover {
+    background: #f6f6f6;
+    transform: scale(1.05);
+  }
+  
+  .btn-light svg {
+    transition: transform 0.3s ease;
+  }
+  
+  .btn-light:hover svg {
+    transform: translateX(4px);
+  }
+  
+  .btn-dark {
+    background: #000000;
+    color: #ffffff;
+    border: 2px solid #ffffff;
+  }
+  
+  .btn-dark:hover {
+    background: #ffffff;
+    color: #000000;
+  }
+  
+  /* Empty State */
+  .empty-state {
+    text-align: center;
+    padding: 120px 40px;
+  }
+  
+  .empty-state h2 {
+    font-size: clamp(32px, 6vw, 48px);
+    font-weight: 900;
+    color: #111111;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: -0.02em;
+  }
+  
+  .empty-state p {
+    font-size: clamp(16px, 2vw, 18px);
+    color: #757575;
+    margin-bottom: 40px;
+  }
+  
+  /* Responsive */
+  @media (max-width: 1400px) {
+    .collections-masonry.dynamic {
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      grid-auto-rows: 250px;
+    }
+  }
+  
+  @media (max-width: 1100px) {
+    .collections-masonry.dynamic {
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      grid-auto-rows: 220px;
+    }
+  }
+  
+  @media (max-width: 900px) {
+    .collections-masonry {
+      grid-template-columns: repeat(2, 1fr) !important;
+      grid-auto-rows: minmax(180px, auto) !important;
+    }
+    
+    .collection-tile.large,
+    .collection-tile.wide,
+    .collection-tile.tall {
+      grid-column: span 1;
+      grid-row: span 1;
+    }
+    
+    .tile-content {
+      padding: 16px;
+    }
+    
+    .tile-cta.always-visible-mobile {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  
+  @media (max-width: 600px) {
+    .collections-masonry {
+      grid-template-columns: 1fr !important;
+      grid-auto-rows: minmax(200px, auto) !important;
+    }
+    
+    .tile-content {
+      padding: 20px;
+    }
+  }
+  
+  @media (max-width: 400px) {
+    .collections-masonry {
+      grid-auto-rows: minmax(180px, auto) !important;
+    }
+  }
+</style>

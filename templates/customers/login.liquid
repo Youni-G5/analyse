@@ -1,0 +1,367 @@
+{% comment %}
+  Template: Customer Login
+  Description: Page de connexion et récupération de mot de passe
+  Conforme aux standards Shopify et WCAG 2.1
+{% endcomment %}
+
+<div class="customer login page-width">
+  <div class="customer-container">
+    
+    {%- comment -%} Formulaire de récupération de mot de passe {%- endcomment -%}
+    <div class="recover-password" id="recover" style="display: none;">
+      <h1 class="customer-title">{{ 'customer.recover_password.title' | t }}</h1>
+      <p class="customer-subtitle">{{ 'customer.recover_password.subtext' | t }}</p>
+
+      {%- form 'recover_customer_password' -%}
+        {% assign recover_success = form.posted_successfully? %}
+        
+        {%- if form.errors -%}
+          <div class="form-message form-message--error" role="alert">
+            {{ form.errors | default_errors }}
+          </div>
+        {%- endif -%}
+
+        <div class="field">
+          <input
+            type="email"
+            value=""
+            name="email"
+            id="RecoverEmail"
+            autocorrect="off"
+            autocapitalize="off"
+            autocomplete="email"
+            {% if form.errors %}
+              aria-invalid="true"
+              aria-describedby="RecoverEmail-error"
+            {% endif %}
+            placeholder="{{ 'customer.login_page.email' | t }}"
+            required
+          >
+          <label for="RecoverEmail">
+            {{ 'customer.login_page.email' | t }}
+          </label>
+          {%- if form.errors -%}
+            <small id="RecoverEmail-error" class="form-message">
+              <span class="visually-hidden">{{ 'accessibility.error' | t }}</span>
+              {{ form.errors.messages['form'] }}
+            </small>
+          {%- endif -%}
+        </div>
+
+        <button type="submit" class="button button--primary button--full-width">
+          {{ 'customer.login_page.submit' | t }}
+        </button>
+
+        <a href="#login" class="link link--cancel" onclick="hideRecoverPasswordForm();return false;">
+          {{ 'customer.login_page.cancel' | t }}
+        </a>
+      {%- endform -%}
+    </div>
+
+    {%- comment -%} Formulaire de connexion principal {%- endcomment -%}
+    <div class="login-form" id="login">
+      <h1 class="customer-title">{{ 'customer.login_page.title' | t }}</h1>
+      
+      {%- if recover_success == true -%}
+        <div class="form-message form-message--success" role="status">
+          <svg aria-hidden="true" focusable="false" width="13" height="13" class="icon icon-success" viewBox="0 0 13 13">
+            <path d="M6.5 12.35C9.73528 12.35 12.35 9.73528 12.35 6.5C12.35 3.26472 9.73528 0.65 6.5 0.65C3.26472 0.65 0.65 3.26472 0.65 6.5C0.65 9.73528 3.26472 12.35 6.5 12.35Z" fill="#428445" stroke="#428445"/>
+            <path d="M5.53271 8.66357L9.25213 4.68197" stroke="white"/>
+            <path d="M4.10645 6.7688L6.13766 8.62553" stroke="white"/>
+          </svg>
+          {{ 'customer.recover_password.success' | t }}
+        </div>
+      {%- endif -%}
+
+      {%- form 'customer_login', novalidate: 'novalidate' -%}
+        {%- if form.errors -%}
+          <div class="form-message form-message--error" role="alert">
+            <h2 class="form-message__title">
+              <svg aria-hidden="true" focusable="false" width="13" height="13" class="icon icon-error" viewBox="0 0 13 13">
+                <circle cx="6.5" cy="6.5" r="5.65" stroke="#EB001B" stroke-width="1.3"/>
+                <path d="M5.87413 3.52832L5.97439 7.57216H7.02713L7.12739 3.52832H5.87413ZM6.50076 9.66091C6.88091 9.66091 7.18169 9.37267 7.18169 9.00504C7.18169 8.63742 6.88091 8.34917 6.50076 8.34917C6.12061 8.34917 5.81982 8.63742 5.81982 9.00504C5.81982 9.37267 6.12061 9.66091 6.50076 9.66091Z" fill="#EB001B"/>
+              </svg>
+              {{ 'templates.contact.form.error_heading' | t }}
+            </h2>
+            {{ form.errors | default_errors }}
+          </div>
+        {%- endif -%}
+
+        <div class="field">
+          <input
+            type="email"
+            name="customer[email]"
+            id="CustomerEmail"
+            autocomplete="email"
+            autocorrect="off"
+            autocapitalize="off"
+            {% if form.errors %}
+              aria-invalid="true"
+              aria-describedby="CustomerEmail-error"
+            {% endif %}
+            placeholder="{{ 'customer.login_page.email' | t }}"
+            required
+          >
+          <label for="CustomerEmail">
+            {{ 'customer.login_page.email' | t }}
+          </label>
+        </div>
+
+        {%- if form.password_needed -%}
+          <div class="field">
+            <input
+              type="password"
+              value=""
+              name="customer[password]"
+              id="CustomerPassword"
+              autocomplete="current-password"
+              {% if form.errors %}
+                aria-invalid="true"
+                aria-describedby="CustomerPassword-error"
+              {% endif %}
+              placeholder="{{ 'customer.login_page.password' | t }}"
+              required
+            >
+            <label for="CustomerPassword">
+              {{ 'customer.login_page.password' | t }}
+            </label>
+          </div>
+        {%- endif -%}
+
+        <a href="#recover" class="link link--text" onclick="showRecoverPasswordForm();return false;">
+          {{ 'customer.login_page.forgot_password' | t }}
+        </a>
+
+        <button type="submit" class="button button--primary button--full-width">
+          {{ 'customer.login_page.sign_in' | t }}
+        </button>
+
+        <div class="customer-footer">
+          <span class="customer-footer__text">{{ 'customer.login_page.new_customer' | t }}</span>
+          <a href="{{ routes.account_register_url }}" class="button button--secondary">
+            {{ 'customer.login_page.create_account' | t }}
+          </a>
+        </div>
+      {%- endform -%}
+
+      {%- if shop.checkout.guest_login -%}
+        <hr>
+        <div class="guest-login">
+          <h2 class="customer-title">{{ 'customer.login_page.guest_title' | t }}</h2>
+          <a href="{{ routes.root_url }}" class="button button--secondary button--full-width">
+            {{ 'customer.login_page.guest_continue' | t }}
+          </a>
+        </div>
+      {%- endif -%}
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function showRecoverPasswordForm() {
+    document.getElementById('recover').style.display = 'block';
+    document.getElementById('login').style.display = 'none';
+  }
+
+  function hideRecoverPasswordForm() {
+    document.getElementById('recover').style.display = 'none';
+    document.getElementById('login').style.display = 'block';
+  }
+
+  // Afficher automatiquement le formulaire de récupération si demandé
+  if (window.location.hash == '#recover') {
+    showRecoverPasswordForm();
+  }
+</script>
+
+<style>
+  .customer.login {
+    padding: 60px 20px;
+    max-width: 100%;
+  }
+
+  .customer-container {
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  .customer-title {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    text-align: center;
+  }
+
+  .customer-subtitle {
+    text-align: center;
+    margin-bottom: 32px;
+    color: rgba(var(--foreground-color), 0.7);
+  }
+
+  .field {
+    position: relative;
+    margin-bottom: 24px;
+  }
+
+  .field input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
+    font-size: 16px;
+    transition: border-color 0.2s ease;
+  }
+
+  .field input:focus {
+    outline: none;
+    border-color: rgba(var(--foreground-color), 0.8);
+  }
+
+  .field input[aria-invalid="true"] {
+    border-color: #d82c0d;
+  }
+
+  .field label {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+    color: rgba(0, 0, 0, 0.55);
+    pointer-events: none;
+    transition: all 0.2s ease;
+  }
+
+  .field input:focus + label,
+  .field input:not(:placeholder-shown) + label {
+    top: -10px;
+    font-size: 12px;
+    background: white;
+    padding: 0 4px;
+  }
+
+  .button {
+    display: inline-block;
+    padding: 14px 24px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .button--primary {
+    background: rgb(var(--foreground-color));
+    color: rgb(var(--background-color));
+  }
+
+  .button--primary:hover {
+    opacity: 0.9;
+  }
+
+  .button--secondary {
+    background: transparent;
+    color: rgb(var(--foreground-color));
+    border: 2px solid rgb(var(--foreground-color));
+  }
+
+  .button--secondary:hover {
+    background: rgb(var(--foreground-color));
+    color: rgb(var(--background-color));
+  }
+
+  .button--full-width {
+    width: 100%;
+    margin-top: 8px;
+  }
+
+  .link {
+    display: inline-block;
+    margin: 16px 0;
+    color: rgb(var(--foreground-color));
+    text-decoration: underline;
+    font-size: 14px;
+  }
+
+  .link--cancel {
+    display: block;
+    text-align: center;
+    margin-top: 24px;
+  }
+
+  .form-message {
+    padding: 16px;
+    margin-bottom: 24px;
+    border-radius: 4px;
+    font-size: 14px;
+  }
+
+  .form-message--error {
+    background: #fef3f2;
+    color: #d82c0d;
+    border: 1px solid #d82c0d;
+  }
+
+  .form-message--success {
+    background: #f0f9f1;
+    color: #428445;
+    border: 1px solid #428445;
+  }
+
+  .form-message__title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 16px;
+    margin-bottom: 8px;
+  }
+
+  .customer-footer {
+    margin-top: 40px;
+    padding-top: 32px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    text-align: center;
+  }
+
+  .customer-footer__text {
+    display: block;
+    margin-bottom: 16px;
+    color: rgba(var(--foreground-color), 0.7);
+  }
+
+  .guest-login {
+    margin-top: 32px;
+    text-align: center;
+  }
+
+  hr {
+    margin: 32px 0;
+    border: none;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+  }
+
+  @media (max-width: 768px) {
+    .customer.login {
+      padding: 40px 20px;
+    }
+
+    .customer-title {
+      font-size: 24px;
+    }
+  }
+</style>

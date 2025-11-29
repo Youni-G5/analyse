@@ -1,0 +1,348 @@
+{% comment %}
+  Nike Header Replica v7.5 - OPTIMIZED VERSION
+  CSS et JavaScript extraits dans des fichiers séparés
+  - assets/header-test.css (19.2 KB)
+  - assets/header-test.js (12.6 KB)
+  
+  Total optimisation: 64 KB -> 6 KB (section) + 32 KB (assets cachablesparateur)
+  Gain: ~70% de réduction du fichier section
+{% endcomment %}
+
+<!-- Chargement du CSS dédié -->
+{{ 'header-test.css' | asset_url | stylesheet_tag }}
+
+<div class="nike-header-wrapper" data-section-id="{{ section.id }}">
+  {%- style -%}
+    :root {
+      /* Variables dynamiques depuis les settings Shopify */
+      --header-bg-color: {{ section.settings.header_bg }};
+      --header-text-color: {{ section.settings.header_text }};
+      --topbar-bg-color: {{ section.settings.topbar_bg }};
+      --topbar-text-color: {{ section.settings.topbar_text }};
+      --accent-color: {{ section.settings.accent_color }};
+      --logo-width-pc: {{ section.settings.logo_width_desktop }}px;
+      --logo-width-mb: {{ section.settings.logo_width_mobile }}px;
+    }
+  {%- endstyle -%}
+
+  <!-- 1. TOP BAR -->
+  {% if section.settings.show_topbar %}
+  <div class="nike-top-bar">
+    <div class="nike-top-bar__brands">
+      {% if section.settings.show_brand_1 %}
+        {% if section.settings.brand_logo_1 != blank %}
+          <a href="{{ section.settings.brand_link_1 }}"><img src="{{ section.settings.brand_logo_1 | image_url: width: 50 }}" alt="Brand 1"></a>
+        {% else %}
+          <a href="#" aria-label="Jordan"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" role="img" fill="none"><path fill="currentColor" fill-rule="evenodd" d="M13.182 3.733c-.012-.039-.012-.039-.012-.072a.966.966 0 01.922-1.007.97.97 0 011.007.922.964.964 0 01-.917 1.007c-.027.004-.062 0-.101 0-.016.004-.04.004-.056.022-.056.084.14.073-.005.44 0 0 0 .038-.012.077-.012.14-.08.562-.096.793.029.04.04.05.029.13a6.003 6.003 0 01-.09.534c-.04.14-.096.174-.147.202c-0.073 0.298-0.095 0.545-0.281 0.905c-0.022 0.276-0.045 0.35-0.106 0.484c-0.017 0.4 0.01 0.46-0.281 1.101c-0.08 0.3-0.017 0.507 0.05 0.821c0.068 0.321 0.276 0.461 0.298 0.793c0.05 0.771 0.017 1.305-0.163 1.907l0.135 0.348c0.18 0.084 0.618 0.326 0.36 0.675c0.343 0.19 0.865 0.394 1.28 0.781c0.176 0.147 0.35 0.315 0.513 0.5c0.316 0.057 0.276 0.08 0.506 0.231c0.675 0.438 1.749 1.304 2.373 1.906c0.112 0.067 0.147 0.112 0.236 0.163c0.01 0.023 0.017 0.034 0.01 0.04c-0.026 0.072-0.026 0.072-0.06 0.14c0.039 0.04 0.095 0.073 0.134 0.107c0.04 0.005 0.04-0.006 0.096-0.017c0.079 0.073 0.18 0.135 0.214 0.135c0.106-0.022 0.084-0.005 0.185-0.1c0.029-0.035 0.084 0 0.084 0c0.04-0.04 0.113-0.119 0.214-0.176c0.079-0.045 0.23-0.045 0.23-0.045c0.052 0.006 0.04 0.051 0.029 0.073c-0.057 0.023-0.18 0.057-0.247 0.108c-0.152 0.14-0.276 0.353-0.276 0.353c0.299-0.033 0.484 0.045 0.719 0.023c0.136-0.005 0.237 0.006 0.377-0.09c0 0 0.14-0.096 0.265-0.14c0.118-0.05 0.23-0.017 0.33 0.062c0.069 0.084 0.119 0.084 0 0.196c-0.044 0.045-0.1 0.096-0.18 0.17c-0.133 0.123-0.313 0.291-0.5 0.432a3.11 3.11 0 01-0.527 0.315c-0.338 0.23-0.26 0.174-0.523 0.394c-0.03 0.022-0.124 0.078-0.163 0.106c-0.107 0.062-0.135 0.006-0.197-0.118c0 0-0.028-0.045-0.08-0.14c-0.05-0.107-0.09-0.23-0.072-0.23c-0.062-0.007-0.331-0.344-0.331-0.41c-0.063-0.013-0.304-0.26-0.31-0.31l-0.214-0.18c-0.253 0.044-0.31-0.113-0.961-0.608c-0.08-0.006-0.197-0.05-0.36-0.174c-0.298-0.253-1.007-0.815-1.124-0.883c-0.13-0.067-0.281-0.134-0.383-0.214c-0.146-0.022-0.218-0.05-0.298-0.067c-0.08-0.022-0.14-0.057-0.326-0.079c-0.303-0.045-0.618-0.18-0.911-0.337c-0.14-0.073-0.264-0.107-0.382-0.169c-0.27-0.124-0.506-0.236-0.686-0.28a2.148 2.148 0 01-0.568-0.226c-0.061-0.034-0.095-0.06-0.134-0.073c-0.09-0.022-0.153 0.006-0.192 0.022c-0.23 0.108-0.438 0.203-0.636 0.31c-0.18 0.09-0.348 0.186-0.528 0.286a7.971 7.971 0 01-0.534 0.254s-0.534 0.253-0.832 0.348c-0.26 0.197-0.787 0.546-1.107 0.715c-0.158 0.073-0.467 0.252-0.608 0.292c-0.08 0.061-0.371 0.258-0.596 0.421c-0.18 0.124-0.31 0.231-0.31 0.231c-0.106 0.084-0.101 0.13-0.28 0.045a1.491 1.491 0 00-0.13 0.096c-0.14 0.095-0.146 0.073-0.202 0.067c-0.101 0.08-0.113 0.04-0.197 0.13c-0.061 0.084 0 0.061-0.118 0.106c-0.028 0.006-0.04 0.04-0.057 0.056c-0.094 0.073-0.1 0.293-0.325 0.304c-0.135 0.09-0.107 0.203-0.197 0.191c0 0.102-0.18 0.23-0.214 0.23c-0.292 0.096-0.304-0.118-0.646 0.035c-0.045 0.016-0.113 0.072-0.197 0.084c-0.152 0.022-0.332-0.006-0.444-0.102a1.93 1.93 0 01-0.326-0.398c-0.051-0.13-0.017-0.208 0.163-0.332c0.073-0.045 0.084-0.079 0.208-0.084c0.06-0.024 0.045 0.01 0.15-0.024c0.064-0.016 0.064-0.005 0.193-0.005c0.028-0.017 0.067-0.022 0.124-0.045c0.1-0.034 0.196-0.062 0.196-0.062s0.028-0.023 0.124-0.01c0.078-0.035 0.169-0.08 0.214-0.097c-0.012-0.124 0.005-0.124 0.06-0.174c0.08-0.062 0.09-0.05 0.148-0.01c0.022-0.007 0.039-0.013 0.027-0.035c-0.01-0.073-0.061-0.107-0.045-0.247c-0.022-0.057-0.061-0.129-0.05-0.174c0.01-0.045 0.028-0.069 0.056-0.079c0.029-0.012 0.045 0.006 0.057 0.022c0.028 0.034 0.05 0.135 0.05 0.135c0.006 0.118 0.04 0.26 0.152 0.18c0.067-0.062 0.084-0.242 0.214-0.203l0.096 0.085c0.084-0.073 0.084-0.073 0.14-0.107c0 0-0.08-0.073-0.012-0.135c0.045-0.039 0.108-0.067 0.208-0.175c0.276-0.292 0.422-0.42 0.714-0.657a6.811 6.811 0 011.699-0.939c0.146-0.174 0.28-0.286 0.585-0.304c0.377-0.606 1.085-1.136 1.248-1.22c0.134-0.23 0.19-0.208 0.365-0.247c0.135-0.107 0.175-0.107 0.23-0.214c0.063-0.23-0.112-0.86 0.383-0.877c0.112-0.146 0.078-0.112 0.196-0.248a2.19 2.19 0 01-0.118-0.5c-0.005-0.016-0.196-0.157-0.13-0.332a2.33 2.33 0 01-0.268-0.432.202.202 0 01-0.063-0.012c-0.022-0.005-0.055-0.005-0.09-0.005c-0.078 0.196-0.163 0.208-0.303 0.253c-0.26 0.512-0.35 0.731-1.046 1.142c-0.28 0.298-0.382 0.64-0.382 0.634a.46.46 0 00-0.012 0.321c-0.045 0.107-0.027 0.124-0.027 0.124c0.01 0.045 0.056 0.106 0.106 0.112c0.079 0.023 0.169 0.023 0.158 0.118c-0.011 0.113-0.163 0.09-0.237 0.073c-0.275-0.05-0.185-0.23-0.365-0.174c-0.141 0.085-0.196 0.348-0.416 0.31c-0.028-0.023-0.017-0.074 0.006-0.119c0.028-0.06 0.084-0.118 0.056-0.14c-0.146 0.04-0.433 0.123-0.433 0.123c-0.135 0.04-0.281-0.039-0.147-0.124c0.063-0.022 0.153-0.05 0.265-0.118c0 0 0.062-0.072-0.057-0.039a1.144 1.144 0 01-0.416 0.045s-0.257-0.039-0.292-0.056c-0.028-0.022-0.061-0.107 0.017-0.1a2.71 2.71 0 000.563-0.068c0.095-0.035 0.28-0.14 0.382-0.186c0 0 0.113-0.157 0.18-0.19c0.107-0.114 0.19-0.18 0.28-0.299c0.09-0.18 0.192-0.46 0.5-0.906a4.16 4.16 0 010.535-0.646s0.062-0.338 0.343-0.573c0.063-0.14 0.157-0.31 0.259-0.462a1.7 1.7 0 000.106-0.168c0.09-0.13 0.186-0.377 0.518-0.41c0 0 0.147-0.102 0.197-0.175c0.084-0.073 0.074-0.186 0.14-0.259c-0.106-0.106-0.365-0.309-0.382-0.573a.85.85 0 010.265-0.692c0.196-0.185 0.398-0.275 0.646-0.258c0.309 0.055 0.366 0.157 0.455 0.258c0.09 0.101 0.13 0.04 0.163 0.146c0.259 0.073 0.248 0.045 0.237 0.236c0.045 0.057 0.106 0.108 0.1 0.214c0.085-0.175 0.108-0.208 0.344-0.399c0.062-0.157 0.1-0.315 0.15-0.478c0.052-0.146 0.114-0.298 0.154-0.41c-0.04-0.326 0.06-0.377 0.196-0.664c-0.022-0.039-0.016-0.05-0.006-0.112c0.057-0.192 0.136-0.433 0.186-0.596c0 0 0.017-0.063 0.085-0.063c0.06-0.202 0.157-0.579 0.179-0.663c0.062-0.208 0.029-0.287-0.01-0.41c-0.012-0.04-0.006-0.09-0.03-0.136a5.483 5.483 0 01-0.19-0.41c-0.028-0.073-0.08-0.354-0.08-0.354c-0.004-0.062-0.004-0.09-0.004-0.09z" clip-rule="evenodd"></path></svg></a>
+        {% endif %}
+      {% endif %}
+    </div>
+
+    <div class="nike-top-bar__right">
+      {% render 'localization-modal', button_style: 'footer' %}
+      <ul class="nike-top-bar__menu">
+        {% for link in linklists[section.settings.topbar_menu].links %}
+          <li><a href="{{ link.url }}">{{ link.title }}</a></li>
+          {% unless forloop.last %}<div class="vertical-line"></div>{% endunless %}
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- 2. MAIN HEADER -->
+  <header class="nike-main-header {% if section.settings.center_logo_desktop %}layout-centered-logo{% endif %}" id="main-header">
+    <button class="desktop-drawer-trigger" id="desktop-menu-trigger">
+      <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" role="img" width="24px" height="24px" fill="none"><path stroke="currentColor" stroke-width="1.5" d="M21 5.25H3M21 12H3m18 6.75H3"></path></svg>
+    </button>
+
+    <div class="nike-logo">
+      <a href="{{ routes.root_url }}">
+        {% if section.settings.main_logo != blank %}
+          <img src="{{ section.settings.main_logo | image_url: width: 120 }}" alt="{{ shop.name }}">
+        {% else %}
+          <svg aria-hidden="true" class="swoosh-svg" focusable="false" viewBox="0 0 24 24" role="img" width="24px" height="24px" fill="none"><path fill="currentColor" fill-rule="evenodd" d="M21 8.719L7.836 14.303C6.74 14.768 5.818 15 5.075 15c-.836 0-1.445-.295-1.819-.884-.485-.76-.273-1.982.559-3.272.494-.754 1.122-1.446 1.734-2.108-.144.234-1.415 2.349-.025 3.345.275.2.666.298 1.147.298.386 0 .829-.063 1.316-.19L21 8.719z" clip-rule="evenodd"></path></svg>
+        {% endif %}
+      </a>
+    </div>
+
+    {% unless section.settings.center_logo_desktop %}
+      <nav class="nav-center desktop-only">
+        <ul class="nav-list">
+          {% for link in linklists[section.settings.main_menu].links %}
+            <li class="nav-item">
+              <a href="{{ link.url }}" class="nav-link">{{ link.title }}<div class="nav-line"></div></a>
+              {% if link.links != blank %}
+                <div class="mega-pane">
+                  <div class="mega-content">
+                    {% for child_link in link.links %}
+                      <div class="mega-col">
+                        <a href="{{ child_link.url }}" class="mega-head">{{ child_link.title }}</a>
+                        <ul class="mega-sub">
+                          {% for grandchild_link in child_link.links %}
+                            <li><a href="{{ grandchild_link.url }}">{{ grandchild_link.title }}</a></li>
+                          {% endfor %}
+                        </ul>
+                      </div>
+                    {% endfor %}
+                  </div>
+                </div>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      </nav>
+    {% endunless %}
+
+    <div class="nike-tools">
+      <div class="nike-search-container" id="desktop-search-container">
+        <form action="{{ routes.search_url }}" method="get" class="nike-search-form">
+          <button type="button" class="nike-search-submit-wrapper">
+            <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" role="img" fill="none"><path stroke="currentColor" stroke-width="1.5" d="M13.962 16.296a6.716 6.716 0 01-3.462.954 6.728 6.728 0 01-4.773-1.977A6.728 6.728 0 013.75 10.5c0-1.864.755-3.551 1.977-4.773A6.728 6.728 0 0110.5 3.75c1.864 0 3.551.755 4.773 1.977A6.728 6.728 0 0117.25 10.5a6.726 6.726 0 01-.921 3.407c-.517.882-.434 1.988.289 2.711l3.853 3.853"></path></svg>
+          </button>
+          <input type="text" name="q" class="nike-search-input" placeholder="{{ section.settings.search_placeholder }}" id="desktop-search-input" autocomplete="off">
+          <button type="button" class="nike-search-clear" id="desktop-search-clear">
+            <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 8.586L6.707 5.293a1 1 0 00-1.414 1.414L8.586 10l-3.293 3.293a1 1 0 101.414 1.414L10 11.414l3.293 3.293a1 1 0 001.414-1.414L11.414 10l3.293-3.293a1 1 0 00-1.414-1.414L10 8.586z" clip-rule="evenodd"></path></svg>
+          </button>
+          <button type="button" class="nike-search-cancel-desktop" id="desktop-search-cancel">Annuler</button>
+        </form>
+      </div>
+      
+      <button class="nike-icon-btn mobile-only" id="mobile-search-trigger">
+        <svg class="search-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" role="img" fill="none"><path stroke="currentColor" stroke-width="1.5" d="M13.962 16.296a6.716 6.716 0 01-3.462.954 6.728 6.728 0 01-4.773-1.977A6.728 6.728 0 013.75 10.5c0-1.864.755-3.551 1.977-4.773A6.728 6.728 0 0110.5 3.75c1.864 0 3.551.755 4.773 1.977A6.728 6.728 0 0117.25 10.5a6.726 6.726 0 01-.921 3.407c-.517.882-.434 1.988.289 2.711l3.853 3.853"></path></svg>
+      </button>
+
+      <a href="/pages/wishlist" class="nike-icon-btn">
+        <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" role="img" fill="none"><path stroke="currentColor" stroke-width="1.5" d="M16.794 3.75c1.324 0 2.568.516 3.504 1.451a4.96 4.96 0 010 7.008L12 20.508l-8.299-8.299a4.96 4.96 0 010-7.007A4.923 4.923 0 017.205 3.75c1.324 0 2.568.516 3.504 1.451l.76.76.531.531.53-.531.76-.76a4.926 4.926 0 013.504-1.451"></path></svg>
+      </a>
+
+      <button class="nike-icon-btn" data-cart-drawer-open title="Panier">
+        <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" role="img" fill="none"><path stroke="currentColor" stroke-width="1.5" d="M8.25 8.25V6a2.25 2.25 0 012.25-2.25h3a2.25 2.25 0 110 4.5H3.75v8.25a3.75 3.75 0 003.75 3.75h9a3.75 3.75 0 003.75-3.75V8.25H17.5"></path></svg>
+        <span class="can-header__cart-badge" data-cart-count style="position:absolute;top:-2px;right:-2px;background:var(--header-text-color);color:var(--header-bg-color);font-size:10px;height:16px;width:16px;border-radius:50%;display:{% if cart.item_count > 0 %}flex{% else %}none{% endif %};align-items:center;justify-content:center;font-weight:700;">{{ cart.item_count }}</span>
+      </button>
+      
+      <button class="nike-icon-btn mobile-only" id="mobile-menu-trigger">
+        <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" role="img" width="24px" height="24px" fill="none"><path stroke="currentColor" stroke-width="1.5" d="M21 5.25H3M21 12H3m18 6.75H3"></path></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- SEARCH OVERLAY PANEL -->
+  <div class="search-overlay-panel" id="search-overlay-panel">
+    <div class="nike-search-results-tray">
+      <div class="popular-searches-container" id="desktop-popular-searches">
+        {% if section.blocks.size > 0 %}
+          <div class="nike-search-title">{{ section.settings.search_title }}</div>
+          <div class="nike-search-tags">
+            {% for block in section.blocks %}
+              {% if block.type == 'search_tag' %}
+                <a href="/search?q={{ block.settings.term }}" class="nike-search-tag">{{ block.settings.term }}</a>
+              {% endif %}
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+      <div class="predictive-results-container" id="desktop-predictive-results"></div>
+    </div>
+  </div>
+
+  <!-- OVERLAY BACKDROP -->
+  <div class="nike-overlay" id="nike-overlay"></div>
+
+  <!-- MOBILE DRAWER -->
+  <div class="nike-mobile-drawer" id="mobile-drawer">
+    <div class="nike-drawer-header">
+      <button class="nike-drawer-close" id="mobile-drawer-close">
+        <svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" role="img" width="24px" height="24px" fill="none"><path stroke="currentColor" stroke-width="1.5" d="M18.973 5.027L5.028 18.972m0-13.945l13.944 13.945"></path></svg>
+      </button>
+    </div>
+    
+    <div class="nike-drawer-viewport" id="mobile-viewport">
+      <div class="nike-nav-panel is-active" data-level="0" id="panel-main">
+        <ul class="nike-drawer-list">
+          {% for link in linklists[section.settings.main_menu].links %}
+            <li class="nike-drawer-item">
+              {% if link.links != blank %}
+                <div class="nike-drawer-link" onclick="openPanel('panel-{{ link.handle }}-{{ forloop.index }}')">
+                  {{ link.title }}
+                  <svg class="nike-drawer-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 18l6-6-6-6"></path></svg>
+                </div>
+              {% else %}
+                <a href="{{ link.url }}" class="nike-drawer-link">{{ link.title }}</a>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+        
+        <div class="nike-drawer-footer">
+          <div class="nike-drawer-footer-brands">
+            {% if section.settings.show_brand_1 %}
+              {% if section.settings.brand_logo_1 != blank %}
+                <a href="{{ section.settings.brand_link_1 }}"><img src="{{ section.settings.brand_logo_1 | image_url: width: 50 }}" alt="Brand 1"></a>
+              {% else %}
+                <a href="#" aria-label="Jordan"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" role="img" fill="none"><path fill="currentColor" fill-rule="evenodd" d="M13.182 3.733c-.012-.039-.012-.039-.012-.072a.966.966 0 01.922-1.007.97.97 0 011.007.922.964.964 0 01-.917 1.007c-.027.004-.062 0-.101 0-.016.004-.04.004-.056.022-.056.084.14.073-.005.44 0 0 0 .038-.012.077-.012.14-.08.562-.096.793.029.04.04.05.029.13a6.003 6.003 0 01-.09.534c-.04.14-.096.174-.147.202c-0.073 0.298-0.095 0.545-0.281 0.905c-0.022 0.276-0.045 0.35-0.106 0.484c-0.017 0.4 0.01 0.46-0.281 1.101c-0.08 0.3-0.017 0.507 0.05 0.821c0.068 0.321 0.276 0.461 0.298 0.793c0.05 0.771 0.017 1.305-0.163 1.907l0.135 0.348c0.18 0.084 0.618 0.326 0.36 0.675c0.343 0.19 0.865 0.394 1.28 0.781c0.176 0.147 0.35 0.315 0.513 0.5c0.316 0.057 0.276 0.08 0.506 0.231c0.675 0.438 1.749 1.304 2.373 1.906c0.112 0.067 0.147 0.112 0.236 0.163c0.01 0.023 0.017 0.034 0.01 0.04c-0.026 0.072-0.026 0.072-0.06 0.14c0.039 0.04 0.095 0.073 0.134 0.107c0.04 0.005 0.04-0.006 0.096-0.017c0.079 0.073 0.18 0.135 0.214 0.135c0.106-0.022 0.084-0.005 0.185-0.1c0.029-0.035 0.084 0 0.084 0c0.04-0.04 0.113-0.119 0.214-0.176c0.079-0.045 0.23-0.045 0.23-0.045c0.052 0.006 0.04 0.051 0.029 0.073c-0.057 0.023-0.18 0.057-0.247 0.108c-0.152 0.14-0.276 0.353-0.276 0.353c0.299-0.033 0.484 0.045 0.719 0.023c0.136-0.005 0.237 0.006 0.377-0.09c0 0 0.14-0.096 0.265-0.14c0.118-0.05 0.23-0.017 0.33 0.062c0.069 0.084 0.119 0.084 0 0.196c-0.044 0.045-0.1 0.096-0.18 0.17c-0.133 0.123-0.313 0.291-0.5 0.432a3.11 3.11 0 01-0.527 0.315c-0.338 0.23-0.26 0.174-0.523 0.394c-0.03 0.022-0.124 0.078-0.163 0.106c-0.107 0.062-0.135 0.006-0.197-0.118c0 0-0.028-0.045-0.08-0.14c-0.05-0.107-0.09-0.23-0.072-0.23c-0.062-0.007-0.331-0.344-0.331-0.41c-0.063-0.013-0.304-0.26-0.31-0.31l-0.214-0.18c-0.253 0.044-0.31-0.113-0.961-0.608c-0.08-0.006-0.197-0.05-0.36-0.174c-0.298-0.253-1.007-0.815-1.124-0.883c-0.13-0.067-0.281-0.134-0.383-0.214c-0.146-0.022-0.218-0.05-0.298-0.067c-0.08-0.022-0.14-0.057-0.326-0.079c-0.303-0.045-0.618-0.18-0.911-0.337c-0.14-0.073-0.264-0.107-0.382-0.169c-0.27-0.124-0.506-0.236-0.686-0.28a2.148 2.148 0 01-0.568-0.226c-0.061-0.034-0.095-0.06-0.134-0.073c-0.09-0.022-0.153 0.006-0.192 0.022c-0.23 0.108-0.438 0.203-0.636 0.31c-0.18 0.09-0.348 0.186-0.528 0.286a7.971 7.971 0 01-0.534 0.254s-0.534 0.253-0.832 0.348c-0.26 0.197-0.787 0.546-1.107 0.715c-0.158 0.073-0.467 0.252-0.608 0.292c-0.08 0.061-0.371 0.258-0.596 0.421c-0.18 0.124-0.31 0.231-0.31 0.231c-0.106 0.084-0.101 0.13-0.28 0.045a1.491 1.491 0 00-0.13 0.096c-0.14 0.095-0.146 0.073-0.202 0.067c-0.101 0.08-0.113 0.04-0.197 0.13c-0.061 0.084 0 0.061-0.118 0.106c-0.028 0.006-0.04 0.04-0.057 0.056c-0.094 0.073-0.1 0.293-0.325 0.304c-0.135 0.09-0.107 0.203-0.197 0.191c0 0.102-0.18 0.23-0.214 0.23c-0.292 0.096-0.304-0.118-0.646 0.035c-0.045 0.016-0.113 0.072-0.197 0.084c-0.152 0.022-0.332-0.006-0.444-0.102a1.93 1.93 0 01-0.326-0.398c-0.051-0.13-0.017-0.208 0.163-0.332c0.073-0.045 0.084-0.079 0.208-0.084c0.06-0.024 0.045 0.01 0.15-0.024c0.064-0.016 0.064-0.005 0.193-0.005c0.028-0.017 0.067-0.022 0.124-0.045c0.1-0.034 0.196-0.062 0.196-0.062s0.028-0.023 0.124-0.01c0.078-0.035 0.169-0.08 0.214-0.097c-0.012-0.124 0.005-0.124 0.06-0.174c0.08-0.062 0.09-0.05 0.148-0.01c0.022-0.007 0.039-0.013 0.027-0.035c-0.01-0.073-0.061-0.107-0.045-0.247c-0.022-0.057-0.061-0.129-0.05-0.174c0.01-0.045 0.028-0.069 0.056-0.079c0.029-0.012 0.045 0.006 0.057 0.022c0.028 0.034 0.05 0.135 0.05 0.135c0.006 0.118 0.04 0.26 0.152 0.18c0.067-0.062 0.084-0.242 0.214-0.203l0.096 0.085c0.084-0.073 0.084-0.073 0.14-0.107c0 0-0.08-0.073-0.012-0.135c0.045-0.039 0.108-0.067 0.208-0.175c0.276-0.292 0.422-0.42 0.714-0.657a6.811 6.811 0 011.699-0.939c0.146-0.174 0.28-0.286 0.585-0.304c0.377-0.606 1.085-1.136 1.248-1.22c0.134-0.23 0.19-0.208 0.365-0.247c0.135-0.107 0.175-0.107 0.23-0.214c0.063-0.23-0.112-0.86 0.383-0.877c0.112-0.146 0.078-0.112 0.196-0.248a2.19 2.19 0 01-0.118-0.5c-0.005-0.016-0.196-0.157-0.13-0.332a2.33 2.33 0 01-0.268-0.432.202.202 0 01-0.063-0.012c-0.022-0.005-0.055-0.005-0.09-0.005c-0.078 0.196-0.163 0.208-0.303 0.253c-0.26 0.512-0.35 0.731-1.046 1.142c-0.28 0.298-0.382 0.64-0.382 0.634a.46.46 0 00-0.012 0.321c-0.045 0.107-0.027 0.124-0.027 0.124c0.01 0.045 0.056 0.106 0.106 0.112c0.079 0.023 0.169 0.023 0.158 0.118c-0.011 0.113-0.163 0.09-0.237 0.073c-0.275-0.05-0.185-0.23-0.365-0.174c-0.141 0.085-0.196 0.348-0.416 0.31c-0.028-0.023-0.017-0.074 0.006-0.119c0.028-0.06 0.084-0.118 0.056-0.14c-0.146 0.04-0.433 0.123-0.433 0.123c-0.135 0.04-0.281-0.039-0.147-0.124c0.063-0.022 0.153-0.05 0.265-0.118c0 0 0.062-0.072-0.057-0.039a1.144 1.144 0 01-0.416 0.045s-0.257-0.039-0.292-0.056c-0.028-0.022-0.061-0.107 0.017-0.1a2.71 2.71 0 000.563-0.068c0.095-0.035 0.28-0.14 0.382-0.186c0 0 0.113-0.157 0.18-0.19c0.107-0.114 0.19-0.18 0.28-0.299c0.09-0.18 0.192-0.46 0.5-0.906a4.16 4.16 0 010.535-0.646s0.062-0.338 0.343-0.573c0.063-0.14 0.157-0.31 0.259-0.462a1.7 1.7 0 000.106-0.168c0.09-0.13 0.186-0.377 0.518-0.41c0 0 0.147-0.102 0.197-0.175c0.084-0.073 0.074-0.186 0.14-0.259c-0.106-0.106-0.365-0.309-0.382-0.573a.85.85 0 010.265-0.692c0.196-0.185 0.398-0.275 0.646-0.258c0.309 0.055 0.366 0.157 0.455 0.258c0.09 0.101 0.13 0.04 0.163 0.146c0.259 0.073 0.248 0.045 0.237 0.236c0.045 0.057 0.106 0.108 0.1 0.214c0.085-0.175 0.108-0.208 0.344-0.399c0.062-0.157 0.1-0.315 0.15-0.478c0.052-0.146 0.114-0.298 0.154-0.41c-0.04-0.326 0.06-0.377 0.196-0.664c-0.022-0.039-0.016-0.05-0.006-0.112c0.057-0.192 0.136-0.433 0.186-0.596c0 0 0.017-0.063 0.085-0.063c0.06-0.202 0.157-0.579 0.179-0.663c0.062-0.208 0.029-0.287-0.01-0.41c-0.012-0.04-0.006-0.09-0.03-0.136a5.483 5.483 0 01-0.19-0.41c-0.028-0.073-0.08-0.354-0.08-0.354c-0.004-0.062-0.004-0.09-0.004-0.09z" clip-rule="evenodd"></path></svg></a>
+              {% endif %}
+            {% endif %}
+            {% if section.settings.show_brand_2 %}
+              {% if section.settings.brand_logo_2 != blank %}
+                <a href="{{ section.settings.brand_link_2 }}"><img src="{{ section.settings.brand_logo_2 | image_url: width: 50 }}" alt="Brand 2"></a>
+              {% else %}
+                <a href="#" aria-label="Converse"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" role="img" width="24px" height="24px" fill="none"><path fill="currentColor" fill-rule="evenodd" d="M8.045 10.99V7.73L6.19 10.37 3.115 9.35l1.94 2.64-1.905 2.64 3.045-1.005 1.855 2.64v-3.26l3.11-1.02-3.115-.995zm12.84 1.02l-6.82 7.49H8.21l6.825-7.49L8.21 4.5h5.856l6.819 7.51z" clip-rule="evenodd"></path></svg></a>
+              {% endif %}
+            {% endif %}
+          </div>
+          <div class="nike-drawer-footer-links">
+            {% for link in linklists[section.settings.topbar_menu].links %}
+              <a href="{{ link.url }}">{{ link.title }}</a>
+            {% endfor %}
+          </div>
+          <div class="drawer-localization">{% render 'localization-modal', button_style: 'footer' %}</div>
+        </div>
+      </div>
+
+      {% for link in linklists[section.settings.main_menu].links %}
+        {% if link.links != blank %}
+          <div class="nike-nav-panel" data-level="1" id="panel-{{ link.handle }}-{{ forloop.index }}">
+            <div class="panel-header">
+              <button class="panel-back-btn" onclick="closePanel()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"></path></svg>
+                Tout
+              </button>
+              <span class="panel-title">{{ link.title }}</span>
+            </div>
+            <ul class="nike-drawer-list">
+              {% for child_link in link.links %}
+                <li class="nike-drawer-item">
+                  {% if child_link.links != blank %}
+                    <div class="nike-drawer-link" onclick="openPanel('panel-{{ child_link.handle }}-{{ forloop.index }}')">
+                      {{ child_link.title }}
+                      <svg class="nike-drawer-arrow" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 18l6-6-6-6"></path></svg>
+                    </div>
+                  {% else %}
+                    <a href="{{ child_link.url }}" class="nike-drawer-link">{{ child_link.title }}</a>
+                  {% endif %}
+                </li>
+              {% endfor %}
+            </ul>
+          </div>
+        {% endif %}
+      {% endfor %}
+
+      {% for link in linklists[section.settings.main_menu].links %}
+        {% if link.links != blank %}
+          {% for child_link in link.links %}
+            {% if child_link.links != blank %}
+              <div class="nike-nav-panel" data-level="2" id="panel-{{ child_link.handle }}-{{ forloop.index }}">
+                <div class="panel-header">
+                  <button class="panel-back-btn" onclick="closePanel()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"></path></svg>
+                    {{ child_link.title }}
+                  </button>
+                  <span class="panel-title">{{ child_link.title }}</span>
+                </div>
+                <ul class="nike-drawer-list">
+                  {% for grandchild_link in child_link.links %}
+                    <li class="nike-drawer-item">
+                      <a href="{{ grandchild_link.url }}" class="nike-drawer-link sub-link">{{ grandchild_link.title }}</a>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- MOBILE SEARCH OVERLAY -->
+  <div class="nike-mobile-search" id="mobile-search-overlay">
+    <div class="nike-mobile-search-header">
+      <div class="nike-mobile-search-input-wrapper">
+        <svg class="search-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" role="img" fill="none"><path stroke="currentColor" stroke-width="1.5" d="M13.962 16.296a6.716 6.716 0 01-3.462.954 6.728 6.728 0 01-4.773-1.977A6.728 6.728 0 013.75 10.5c0-1.864.755-3.551 1.977-4.773A6.728 6.728 0 0110.5 3.75c1.864 0 3.551.755 4.773 1.977A6.728 6.728 0 0117.25 10.5a6.726 6.726 0 01-.921 3.407c-.517.882-.434 1.988.289 2.711l3.853 3.853"></path></svg> 
+        <form action="{{ routes.search_url }}" method="get" style="flex:1; margin-left: 8px;">
+          <input type="search" name="q" class="nike-mobile-search-input" id="mobile-search-input" placeholder="{{ section.settings.search_placeholder }}" autocomplete="off">
+        </form>
+      </div>
+      <button class="nike-mobile-cancel" id="mobile-search-cancel">Annuler</button>
+    </div>
+    
+    <div class="nike-mobile-search-content">
+      <div class="mobile-popular-searches" id="mobile-popular-searches">
+        {% if section.blocks.size > 0 %}
+          <div class="nike-search-title" style="margin-top: 10px;">{{ section.settings.search_title }}</div>
+          <div class="nike-search-tags">
+            {% for block in section.blocks %}
+              {% if block.type == 'search_tag' %}
+                <a href="/search?q={{ block.settings.term }}" class="nike-search-tag">{{ block.settings.term }}</a>
+              {% endif %}
+            {% endfor %}
+          </div>
+        {% endif %}
+      </div>
+      <div class="mobile-predictive-results" id="mobile-predictive-results"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Chargement du JavaScript dédié -->
+<script src="{{ 'header-test.js' | asset_url }}" defer></script>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    { "type": "header", "content": "Menu Principal" },
+    { "type": "link_list", "id": "main_menu", "label": "Main Menu", "default": "main-menu" },
+
+    { "type": "header", "content": "Branding" },
+    { "type": "image_picker", "id": "main_logo", "label": "Main Logo" },
+    { "type": "range", "id": "logo_width_desktop", "min": 20, "max": 120, "step": 2, "unit": "px", "label": "Desktop Logo Width", "default": 60 },
+    { "type": "range", "id": "logo_width_mobile", "min": 20, "max": 80, "step": 2, "unit": "px", "label": "Mobile Logo Width", "default": 48 },
+    
+    { "type": "header", "content": "Layout Options" },
+    { "type": "checkbox", "id": "center_logo_desktop", "label": "Center Logo on PC & Show Drawer (Hides standard menu)", "default": false },
+
+    { "type": "header", "content": "Top Bar" },
+    { "type": "checkbox", "id": "show_topbar", "label": "Show Top Bar", "default": true },
+    { "type": "link_list", "id": "topbar_menu", "label": "Top Bar Menu" },
+    
+    { "type": "header", "content": "Brands (Left)" },
+    { "type": "checkbox", "id": "show_brand_1", "label": "Show Brand 1 (Jordan)", "default": true },
+    { "type": "image_picker", "id": "brand_logo_1", "label": "Brand Logo 1" },
+    { "type": "url", "id": "brand_link_1", "label": "Brand Link 1" },
+    { "type": "checkbox", "id": "show_brand_2", "label": "Show Brand 2 (Converse)", "default": true },
+    { "type": "image_picker", "id": "brand_logo_2", "label": "Brand Logo 2" },
+    { "type": "url", "id": "brand_link_2", "label": "Brand Link 2" },
+    
+    { "type": "header", "content": "Colors" },
+    { "type": "color", "id": "header_bg", "label": "Header Background", "default": "#FFFFFF" },
+    { "type": "color", "id": "header_text", "label": "Header Text", "default": "#111111" },
+    { "type": "color", "id": "topbar_bg", "label": "Top Bar Background", "default": "#F5F5F5" },
+    { "type": "color", "id": "topbar_text", "label": "Top Bar Text", "default": "#111111" },
+    { "type": "color", "id": "accent_color", "label": "Accents", "default": "#707072" },
+    
+    { "type": "header", "content": "Search" },
+    { "type": "text", "id": "search_placeholder", "label": "Placeholder", "default": "Rechercher" },
+    { "type": "text", "id": "search_title", "label": "Popular Search Title", "default": "Recherches populaires" }
+  ],
+  "blocks": [
+    {
+      "type": "search_tag",
+      "name": "Search Tag",
+      "settings": [
+        { "type": "text", "id": "term", "label": "Term", "default": "Air Force 1" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Header",
+      "blocks": [
+        { "type": "search_tag", "settings": { "term": "Jordan" } },
+        { "type": "search_tag", "settings": { "term": "Air Max" } }
+      ]
+    }
+  ]
+}
+{% endschema %}

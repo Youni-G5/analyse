@@ -1,0 +1,269 @@
+{% comment %}
+  Template: Customer Order
+  Description: Détails d'une commande spécifique
+{% endcomment %}
+
+<div class="customer order page-width">
+  <div class="order-header">
+    <a href="{{ routes.account_url }}" class="link link--back">
+      <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
+        <path d="M8 1L2 5L8 9" stroke="currentColor" stroke-width="1.5"/>
+      </svg>
+      {{ 'customer.account.return' | t }}
+    </a>
+    
+    <h1 class="customer-title">
+      {{ 'customer.order.title' | t: name: order.name }}
+    </h1>
+    
+    <p class="order-date">
+      {{ 'customer.order.date_html' | t: date: order.created_at | time_tag: format: 'date_at_time' }}
+    </p>
+    
+    {%- if order.cancelled -%}
+      <div class="order-status order-status--cancelled">
+        {%- assign cancelled_at = order.cancelled_at | time_tag: format: 'date_at_time' -%}
+        <p>{{ 'customer.order.cancelled_html' | t: date: cancelled_at }}</p>
+        <p>{{ 'customer.order.cancelled_reason' | t: reason: order.cancel_reason_label }}</p>
+      </div>
+    {%- endif -%}
+  </div>
+
+  <table role="table" class="order-details">
+    <caption class="visually-hidden">{{ 'customer.order.title' | t: name: order.name }}</caption>
+    <thead role="rowgroup">
+      <tr role="row">
+        <th id="ColumnProduct" scope="col" role="columnheader">{{ 'customer.order.product' | t }}</th>
+        <th id="ColumnSku" scope="col" role="columnheader">{{ 'customer.order.sku' | t }}</th>
+        <th id="ColumnPrice" scope="col" role="columnheader">{{ 'customer.order.price' | t }}</th>
+        <th id="ColumnQuantity" scope="col" role="columnheader">{{ 'customer.order.quantity' | t }}</th>
+        <th id="ColumnTotal" scope="col" role="columnheader">{{ 'customer.order.total' | t }}</th>
+      </tr>
+    </thead>
+    <tbody role="rowgroup">
+      {%- for line_item in order.line_items -%}
+        <tr role="row">
+          <td role="cell" headers="ColumnProduct" data-label="{{ 'customer.order.product' | t }}">
+            <div class="order-item">
+              {%- if line_item.image -%}
+                <img
+                  src="{{ line_item.image | image_url: width: 100 }}"
+                  alt="{{ line_item.image.alt | escape }}"
+                  width="50"
+                  height="50"
+                  loading="lazy"
+                >
+              {%- endif -%}
+              <div>
+                <strong>{{ line_item.title }}</strong>
+                {%- if line_item.variant.title != 'Default Title' -%}
+                  <p class="variant-title">{{ line_item.variant.title }}</p>
+                {%- endif -%}
+                {%- if line_item.fulfillment -%}
+                  <p class="fulfillment-status">
+                    {{ 'customer.order.fulfilled_at_html' | t: date: line_item.fulfillment.created_at | time_tag: format: 'date' }}
+                  </p>
+                {%- endif -%}
+              </div>
+            </div>
+          </td>
+          <td role="cell" headers="ColumnSku" data-label="{{ 'customer.order.sku' | t }}">
+            {{ line_item.sku }}
+          </td>
+          <td role="cell" headers="ColumnPrice" data-label="{{ 'customer.order.price' | t }}">
+            {{ line_item.final_price | money }}
+          </td>
+          <td role="cell" headers="ColumnQuantity" data-label="{{ 'customer.order.quantity' | t }}">
+            {{ line_item.quantity }}
+          </td>
+          <td role="cell" headers="ColumnTotal" data-label="{{ 'customer.order.total' | t }}">
+            {{ line_item.final_line_price | money }}
+          </td>
+        </tr>
+      {%- endfor -%}
+    </tbody>
+    <tfoot role="rowgroup">
+      <tr role="row">
+        <td colspan="4" role="cell">{{ 'customer.order.subtotal' | t }}</td>
+        <td role="cell">{{ order.line_items_subtotal_price | money }}</td>
+      </tr>
+      {%- if order.cart_level_discount_applications != blank -%}
+        {%- for discount_application in order.cart_level_discount_applications -%}
+          <tr role="row">
+            <td colspan="4" role="cell">
+              {{ 'customer.order.discount' | t }}
+              {%- if discount_application.title -%}
+                ({{ discount_application.title }})
+              {%- endif -%}
+            </td>
+            <td role="cell">-{{ discount_application.total_allocated_amount | money }}</td>
+          </tr>
+        {%- endfor -%}
+      {%- endif -%}
+      {%- for shipping_method in order.shipping_methods -%}
+        <tr role="row">
+          <td colspan="4" role="cell">{{ 'customer.order.shipping' | t }} ({{ shipping_method.title }})</td>
+          <td role="cell">{{ shipping_method.price | money }}</td>
+        </tr>
+      {%- endfor -%}
+      {%- for tax_line in order.tax_lines -%}
+        <tr role="row">
+          <td colspan="4" role="cell">{{ 'customer.order.tax' | t }} ({{ tax_line.title }} {{ tax_line.rate | times: 100 }}%)</td>
+          <td role="cell">{{ tax_line.price | money }}</td>
+        </tr>
+      {%- endfor -%}
+      <tr role="row" class="total-row">
+        <td colspan="4" role="cell"><strong>{{ 'customer.order.total' | t }}</strong></td>
+        <td role="cell"><strong>{{ order.total_price | money_with_currency }}</strong></td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <div class="order-footer">
+    <div class="order-address">
+      <h2>{{ 'customer.order.billing_address' | t }}</h2>
+      <p><strong>{{ 'customer.order.payment_status' | t }}:</strong> {{ order.financial_status_label }}</p>
+      {{ order.billing_address | format_address }}
+    </div>
+
+    <div class="order-address">
+      <h2>{{ 'customer.order.shipping_address' | t }}</h2>
+      <p><strong>{{ 'customer.order.fulfillment_status' | t }}:</strong> {{ order.fulfillment_status_label }}</p>
+      {{ order.shipping_address | format_address }}
+    </div>
+  </div>
+</div>
+
+<style>
+  .customer.order {
+    padding: 60px 20px;
+  }
+
+  .order-header {
+    margin-bottom: 40px;
+  }
+
+  .link--back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 16px;
+    color: rgb(var(--foreground-color));
+    text-decoration: none;
+  }
+
+  .customer-title {
+    font-size: 28px;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .order-date {
+    color: rgba(var(--foreground-color), 0.6);
+  }
+
+  .order-status {
+    margin-top: 16px;
+    padding: 16px;
+    border-radius: 4px;
+  }
+
+  .order-status--cancelled {
+    background: #fef3f2;
+    border: 1px solid #d82c0d;
+    color: #d82c0d;
+  }
+
+  .order-details {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 40px;
+  }
+
+  .order-details th,
+  .order-details td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+  }
+
+  .order-details th {
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
+  }
+
+  .order-item {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .order-item img {
+    border-radius: 4px;
+  }
+
+  .variant-title,
+  .fulfillment-status {
+    font-size: 13px;
+    color: rgba(var(--foreground-color), 0.6);
+    margin-top: 4px;
+  }
+
+  .order-details tfoot td {
+    font-weight: 500;
+  }
+
+  .total-row {
+    font-size: 18px;
+  }
+
+  .order-footer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+  }
+
+  .order-address h2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 16px;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+  }
+
+  @media (max-width: 990px) {
+    .order-details thead {
+      display: none;
+    }
+
+    .order-details tr {
+      display: block;
+      margin-bottom: 16px;
+      border: 1px solid rgba(0,0,0,0.1);
+      border-radius: 4px;
+    }
+
+    .order-details td {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 12px;
+    }
+
+    .order-details td:before {
+      content: attr(data-label);
+      font-weight: 600;
+    }
+
+    .order-footer {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

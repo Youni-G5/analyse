@@ -1,0 +1,166 @@
+{{ 'https://fonts.googleapis.com/css2?family=Anton&display=swap' | stylesheet_tag }}
+
+<style>
+  #shopify-section-{{ section.id }} { overflow-x: clip; }
+  .promo-grid-section-{{ section.id }} {
+    max-width: 100%;
+    margin: {{ section.settings.margin_top }}px 0 {{ section.settings.margin_bottom }}px 0;
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  :root {
+    --site-gutter: 20px;
+  }
+  .promo-grid-edgefix-{{ section.id }} { padding-left: 0 !important; padding-right: 0 !important; }
+  .promo-grid-edgefix-{{ section.id }} > .promo-grid-container-{{ section.id }} { margin-left: calc(var(--site-gutter) * -1); margin-right: calc(var(--site-gutter) * -1); }
+  .promo-grid-section-{{ section.id }} .page-width,
+  .promo-grid-section-{{ section.id }} .page-width-desktop,
+  .promo-grid-section-{{ section.id }} .container,
+  .promo-grid-section-{{ section.id }} .content-container,
+  .promo-grid-section-{{ section.id }} .section-padding { padding-left: 0 !important; padding-right: 0 !important; }
+  .promo-grid-section-{{ section.id }} .section-heading { font-family: 'Anton', sans-serif; font-size: clamp(2rem, 5vw, 2.8rem); text-transform: uppercase; text-align: center; margin: 0 0 40px 0; color: {{ section.settings.heading_color }}; padding-left: var(--site-gutter); padding-right: var(--site-gutter); }
+  .promo-grid-container-{{ section.id }} { display: grid; grid-template-columns: repeat(3, 1fr); gap: {{ section.settings.column_gap }}px; padding-left: var(--site-gutter); padding-right: var(--site-gutter); }
+  .promo-banner-item { position: relative; display: block; overflow: hidden; height: {{ section.settings.desktop_height }}px; background-color: #f0f0f0; border-radius: {{ section.settings.border_radius }}px; }
+  .promo-banner-item__media-wrapper { position: absolute; inset: 0; overflow: hidden; }
+  .promo-banner-item__media-wrapper::after { content: ''; position: absolute; inset: 0; background-color: var(--overlay-color, #000); opacity: var(--overlay-opacity, 0.2); pointer-events: none; transition: none; }
+  .promo-banner-item__media { display: block; width: 100%; height: 100%; object-fit: cover; transition: none; transform: none; }
+  .promo-banner-item:hover .promo-banner-item__media { transform: none; }
+  .promo-banner-item:hover .promo-banner-item__media-wrapper::after { opacity: var(--overlay-opacity, 0.2); }
+  .promo-banner-item__content-wrapper { position: absolute; inset: 0; display: flex; padding: 30px; justify-content: var(--horizontal-align, center); align-items: var(--vertical-align, center); }
+  .promo-banner-item__content { color: var(--text-color, #FFFFFF); text-align: var(--text-align, center); }
+  .promo-banner-item__title { font-family: 'Anton', sans-serif; font-size: clamp(1.8rem, 4.5vw, 2.6rem); font-weight: 400; text-transform: uppercase; line-height: 1.1; margin: 0 0 10px 0; }
+  .promo-banner-item__subtitle { font-size: clamp(0.95rem, 2vw, 1.1rem); text-transform: uppercase; font-family: sans-serif; margin: 0 0 22px 0; }
+  .promo-banner-item__button { display: inline-block; padding: 12px 30px; font-size: 1rem; font-family: sans-serif; font-weight: 700; text-decoration: none; border: 2px solid; transition: all 0.3s ease; text-transform: uppercase; cursor: pointer; background-color: var(--button-bg-color, #FFFFFF); color: var(--button-text-color, #000000); border-color: var(--button-bg-color, #FFFFFF); white-space: nowrap; }
+  .promo-banner-item__button:hover { background-color: transparent; color: var(--button-bg-color, #FFFFFF); }
+
+  @media (max-width: 990px) {
+    .promo-grid-container-{{ section.id }} { grid-template-columns: 1fr; }
+    .promo-banner-item { height: {{ section.settings.mobile_height }}px; }
+  }
+</style>
+
+<div class="promo-grid-section-{{ section.id }}">
+  {% if section.settings.heading != blank %}
+    <h2 class="section-heading">{{ section.settings.heading | escape }}</h2>
+  {% endif %}
+
+  <div class="promo-grid-edgefix-{{ section.id }}">
+    <div class="promo-grid-container-{{ section.id }}">
+      {% for block in section.blocks %}
+        {%- capture css_vars -%}
+          --overlay-color: {{ block.settings.overlay_color }};
+          --overlay-opacity: {{ block.settings.overlay_opacity }};
+          --text-color: {{ block.settings.text_color }};
+          --button-bg-color: {{ block.settings.button_color }};
+          --button-text-color: {{ block.settings.button_text_color }};
+          --vertical-align: {{ block.settings.vertical_align }};
+          --horizontal-align: {{ block.settings.horizontal_align }};
+          --text-align: {{ block.settings.text_align }};
+        {%- endcapture -%}
+
+        <a href="{{ block.settings.link_url | default: '#' }}"
+           class="promo-banner-item"
+           style="{{ css_vars }}"
+           aria-label="{{ block.settings.title | strip_html | escape }}"
+           {{ block.shopify_attributes }}>
+          <div class="promo-banner-item__media-wrapper">
+            {% if block.settings.image != blank %}
+              <img class="promo-banner-item__media"
+                   src="{{ block.settings.image | image_url: width: 2000 }}"
+                   width="{{ block.settings.image.width }}"
+                   height="{{ block.settings.image.height }}"
+                   alt="{{ block.settings.image.alt | escape }}"
+                   loading="lazy">
+            {% else %}
+              {{ 'lifestyle-1' | placeholder_svg_tag: 'promo-banner-item__media' }}
+            {% endif %}
+          </div>
+
+          <div class="promo-banner-item__content-wrapper">
+            <div class="promo-banner-item__content">
+              {% if block.settings.title != blank %}
+                <h3 class="promo-banner-item__title">{{ block.settings.title | newline_to_br }}</h3>
+              {% endif %}
+              {% if block.settings.subtitle != blank %}
+                <p class="promo-banner-item__subtitle">{{ block.settings.subtitle }}</p>
+              {% endif %}
+              {% if block.settings.button_label != blank %}
+                <div class="promo-banner-item__button">{{ block.settings.button_label }}</div>
+              {% endif %}
+            </div>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Grille de Bannières Promo",
+  "tag": "section",
+  "settings": [
+    { "type": "header", "content": "Section" },
+    { "type": "text", "id": "heading", "label": "Titre", "default": "Nos Offres du Moment" },
+    { "type": "color", "id": "heading_color", "label": "Couleur du titre", "default": "#111111" },
+
+    { "type": "range", "id": "column_gap", "min": 0, "max": 40, "step": 2, "unit": "px", "label": "Espace entre les bannières", "default": 20 },
+    { "type": "range", "id": "border_radius", "min": 0, "max": 20, "step": 1, "unit": "px", "label": "Arrondi des bordures", "default": 0 },
+
+    { "type": "header", "content": "Hauteur des bannières" },
+    { "type": "range", "id": "desktop_height", "min": 200, "max": 700, "step": 10, "unit": "px", "label": "Hauteur sur PC", "default": 420 },
+    { "type": "range", "id": "mobile_height", "min": 220, "max": 560, "step": 10, "unit": "px", "label": "Hauteur sur Mobile", "default": 360 },
+
+    { "type": "header", "content": "Marges externes" },
+    { "type": "range", "id": "margin_top", "min": 0, "max": 100, "step": 2, "unit": "px", "label": "Marge en haut", "default": 0 },
+    { "type": "range", "id": "margin_bottom", "min": 0, "max": 100, "step": 2, "unit": "px", "label": "Marge en bas", "default": 0 }
+  ],
+  "blocks": [
+    {
+      "type": "promo_banner",
+      "name": "Bannière Promo",
+      "limit": 3,
+      "settings": [
+        { "type": "header", "content": "Contenu" },
+        { "type": "image_picker", "id": "image", "label": "Image" },
+        { "type": "url", "id": "link_url", "label": "Lien de la bannière" },
+        { "type": "text", "id": "title", "label": "Titre", "default": "PROMOTION" },
+        { "type": "text", "id": "subtitle", "label": "Sous-titre", "default": "Collection Hiver" },
+        { "type": "text", "id": "button_label", "label": "Texte du bouton", "default": "DÉCOUVRIR" },
+
+        { "type": "header", "content": "Style & Superposition" },
+        { "type": "color", "id": "text_color", "label": "Couleur du texte", "default": "#FFFFFF" },
+        { "type": "color", "id": "button_color", "label": "Couleur du bouton", "default": "#FFFFFF" },
+        { "type": "color", "id": "button_text_color", "label": "Couleur texte du bouton", "default": "#000000" },
+        { "type": "color", "id": "overlay_color", "label": "Couleur de superposition", "default": "#000000" },
+        { "type": "range", "id": "overlay_opacity", "min": 0, "max": 1, "step": 0.1, "label": "Opacité de la superposition", "default": 0.3 },
+
+        { "type": "header", "content": "Disposition du contenu" },
+        { "type": "select", "id": "vertical_align", "label": "Alignement vertical", "options": [
+          { "value": "flex-start", "label": "Haut" },
+          { "value": "center", "label": "Centre" },
+          { "value": "flex-end", "label": "Bas" }
+        ], "default": "center" },
+        { "type": "select", "id": "horizontal_align", "label": "Alignement horizontal", "options": [
+          { "value": "flex-start", "label": "Gauche" },
+          { "value": "center", "label": "Centre" },
+          { "value": "flex-end", "label": "Droite" }
+        ], "default": "center" },
+        { "type": "select", "id": "text_align", "label": "Alignement du texte", "options": [
+          { "value": "left", "label": "Gauche" },
+          { "value": "center", "label": "Centre" },
+          { "value": "right", "label": "Droite" }
+        ], "default": "center" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Grille de Bannières Promo",
+      "category": "Bannière",
+      "blocks": [{ "type": "promo_banner" }, { "type": "promo_banner" }, { "type": "promo_banner" }]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,293 @@
+<!-- Section FAQ -->
+
+{% schema %}
+{
+  "name": "FAQ",
+  "settings": [
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Titre",
+      "default": "Questions Fréquentes"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Trouve les réponses aux questions les plus courantes."
+    },
+    {
+      "type": "checkbox",
+      "id": "first_open",
+      "label": "Ouvrir le premier élément par défaut",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "min": 600,
+      "max": 1200,
+      "step": 50,
+      "unit": "px",
+      "label": "Largeur maximale",
+      "default": 800
+    }
+  ],
+  "blocks": [
+    {
+      "type": "faq_item",
+      "name": "Question",
+      "settings": [
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "Quelle est votre politique de retour ?"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Réponse",
+          "default": "<p>Vous disposez de 60 jours pour retourner tout article non porté et non lavé.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ",
+      "category": "FAQ",
+      "blocks": [
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "Quelle est votre politique de retour ?",
+            "answer": "<p>Vous disposez de 60 jours pour retourner tout article non porté et non lavé.</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "Quels sont les délais de livraison ?",
+            "answer": "<p>La livraison standard prend 3-5 jours ouvrés. La livraison express est disponible en 24-48h.</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "question": "Comment suivre ma commande ?",
+            "answer": "<p>Un email avec le lien de suivi vous sera envoyé dès l'expédition de votre commande.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+<section class="nike-faq" style="--max-width: {{ section.settings.max_width }}px;">
+  
+  <div class="faq-container">
+    
+    <!-- Header -->
+    <div class="faq-header">
+      <h2>{{ section.settings.title }}</h2>
+      {% if section.settings.description != blank %}
+        <p>{{ section.settings.description }}</p>
+      {% endif %}
+    </div>
+    
+    <!-- FAQ Items -->
+    <div class="faq-list">
+      {% for block in section.blocks %}
+        <div class="faq-item {% if section.settings.first_open and forloop.first %}is-active{% endif %}" {{ block.shopify_attributes }}>
+          <button class="faq-question" type="button" aria-expanded="{% if section.settings.first_open and forloop.first %}true{% else %}false{% endif %}">
+            <span>{{ block.settings.question }}</span>
+            <svg class="faq-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M19 9l-7 7-7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+          <div class="faq-answer" style="{% if section.settings.first_open and forloop.first %}display: block;{% endif %}">
+            <div class="faq-answer-content">
+              {{ block.settings.answer }}
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    
+  </div>
+  
+</section>
+
+<style>
+  .nike-faq {
+    padding: clamp(60px, 10vh, 100px) clamp(20px, 4vw, 40px);
+    background: #ffffff;
+  }
+  
+  .faq-container {
+    max-width: var(--max-width);
+    margin: 0 auto;
+  }
+  
+  /* Header */
+  .faq-header {
+    text-align: center;
+    margin-bottom: clamp(40px, 6vh, 60px);
+  }
+  
+  .faq-header h2 {
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.03em;
+    margin: 0 0 16px;
+    color: #111111;
+  }
+  
+  .faq-header p {
+    font-size: clamp(15px, 1.8vw, 17px);
+    line-height: 1.6;
+    color: #757575;
+    margin: 0;
+  }
+  
+  /* FAQ List */
+  .faq-list {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .faq-item {
+    border-bottom: 1px solid #e5e5e5;
+  }
+  
+  .faq-item:first-child {
+    border-top: 1px solid #e5e5e5;
+  }
+  
+  /* Question Button */
+  .faq-question {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding: clamp(20px, 3vh, 24px) 0;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .faq-question:hover {
+    opacity: 0.7;
+  }
+  
+  .faq-question span {
+    flex: 1;
+    font-size: clamp(16px, 2vw, 18px);
+    font-weight: 600;
+    color: #111111;
+  }
+  
+  .faq-icon {
+    flex-shrink: 0;
+    color: #111111;
+    transition: transform 0.3s ease;
+  }
+  
+  .faq-item.is-active .faq-icon {
+    transform: rotate(180deg);
+  }
+  
+  /* Answer */
+  .faq-answer {
+    display: none;
+    overflow: hidden;
+  }
+  
+  .faq-answer-content {
+    padding: 0 0 clamp(20px, 3vh, 28px);
+    font-size: clamp(15px, 1.8vw, 16px);
+    line-height: 1.7;
+    color: #111111;
+  }
+  
+  .faq-answer-content p {
+    margin: 0 0 16px;
+  }
+  
+  .faq-answer-content p:last-child {
+    margin-bottom: 0;
+  }
+  
+  .faq-answer-content a {
+    color: #111111;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    font-weight: 600;
+  }
+  
+  .faq-answer-content a:hover {
+    opacity: 0.6;
+  }
+  
+  .faq-answer-content ul,
+  .faq-answer-content ol {
+    margin: 16px 0;
+    padding-left: 24px;
+  }
+  
+  .faq-answer-content li {
+    margin-bottom: 8px;
+  }
+  
+  /* Responsive */
+  @media (max-width: 768px) {
+    .nike-faq {
+      padding: 60px 20px;
+    }
+    
+    .faq-header {
+      margin-bottom: 40px;
+    }
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const faqItems = document.querySelectorAll('.faq-item');
+    
+    faqItems.forEach(item => {
+      const question = item.querySelector('.faq-question');
+      const answer = item.querySelector('.faq-answer');
+      
+      question.addEventListener('click', function() {
+        const isActive = item.classList.contains('is-active');
+        
+        // Fermer tous les autres items
+        faqItems.forEach(otherItem => {
+          if (otherItem !== item) {
+            otherItem.classList.remove('is-active');
+            otherItem.querySelector('.faq-answer').style.display = 'none';
+            otherItem.querySelector('.faq-question').setAttribute('aria-expanded', 'false');
+          }
+        });
+        
+        // Toggle l'item actuel
+        if (isActive) {
+          item.classList.remove('is-active');
+          answer.style.display = 'none';
+          question.setAttribute('aria-expanded', 'false');
+        } else {
+          item.classList.add('is-active');
+          answer.style.display = 'block';
+          question.setAttribute('aria-expanded', 'true');
+        }
+      });
+    });
+  });
+</script>

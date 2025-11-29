@@ -1,0 +1,889 @@
+{% schema %}
+{
+  "name": "Formulaire de Contact",
+  "settings": [
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Surtitre",
+      "default": "Nous Contacter"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Titre Principal",
+      "default": "On Est Là Pour Vous Aider"
+    },
+    {
+      "type": "richtext",
+      "id": "description",
+      "label": "Description",
+      "default": "<p>Vous avez une question sur votre commande, nos produits ou besoin d'assistance ? Notre équipe est disponible pour vous accompagner.</p>"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Image de Fond (Optionnelle)"
+    },
+    {
+      "type": "text",
+      "id": "button_text",
+      "label": "Texte du Bouton",
+      "default": "Envoyer"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Couleur de Fond",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Informations de Contact"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_contact_info",
+      "label": "Afficher les informations de contact",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "phone",
+      "label": "Numéro de Téléphone",
+      "default": "+33 1 23 45 67 89",
+      "info": "Laissez vide pour ne pas afficher"
+    },
+    {
+      "type": "text",
+      "id": "contact_email",
+      "label": "Email de Contact",
+      "info": "Laissez vide pour utiliser l'email de la boutique"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_email",
+      "label": "Afficher l'email",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "hours",
+      "label": "Horaires",
+      "default": "Lun - Ven : 9h00 - 18h00",
+      "info": "Laissez vide pour ne pas afficher"
+    },
+    {
+      "type": "header",
+      "content": "Animations"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_card_animation",
+      "label": "Activer l'animation des cartes info",
+      "default": true,
+      "info": "Animation de translation au survol des cartes"
+    },
+    {
+      "type": "header",
+      "content": "Espacement"
+    },
+    {
+      "type": "range",
+      "id": "margin_top",
+      "min": 0,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "label": "Marge Supérieure",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "margin_bottom",
+      "min": 0,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "label": "Marge Inférieure",
+      "default": 0
+    }
+  ],
+  "blocks": [
+    {
+      "type": "info_card",
+      "name": "Carte Info",
+      "settings": [
+        {
+          "type": "select",
+          "id": "icon_type",
+          "label": "Type d'Icône",
+          "options": [
+            {
+              "value": "package",
+              "label": "Colis / Suivi"
+            },
+            {
+              "value": "support",
+              "label": "Support / Chat"
+            },
+            {
+              "value": "returns",
+              "label": "Retours"
+            },
+            {
+              "value": "shipping",
+              "label": "Livraison"
+            },
+            {
+              "value": "secure",
+              "label": "Paiement Sécurisé"
+            },
+            {
+              "value": "warranty",
+              "label": "Garantie"
+            },
+            {
+              "value": "gift",
+              "label": "Cadeau"
+            },
+            {
+              "value": "time",
+              "label": "Livraison Rapide"
+            },
+            {
+              "value": "headset",
+              "label": "Service Client"
+            },
+            {
+              "value": "star",
+              "label": "Qualité Premium"
+            }
+          ],
+          "default": "package"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Titre",
+          "default": "Suivi de Commande"
+        },
+        {
+          "type": "text",
+          "id": "description",
+          "label": "Description",
+          "default": "Suivez votre commande en temps réel"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Formulaire de Contact",
+      "category": "Contact",
+      "blocks": [
+        {
+          "type": "info_card",
+          "settings": {
+            "icon_type": "package",
+            "title": "Suivi de Commande",
+            "description": "Suivez votre commande en temps réel"
+          }
+        },
+        {
+          "type": "info_card",
+          "settings": {
+            "icon_type": "support",
+            "title": "Support Client",
+            "description": "Assistance disponible 7j/7"
+          }
+        },
+        {
+          "type": "info_card",
+          "settings": {
+            "icon_type": "returns",
+            "title": "Retours Gratuits",
+            "description": "60 jours pour changer d'avis"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+{% liquid
+  assign display_email = shop.email
+  if section.settings.contact_email != blank
+    assign display_email = section.settings.contact_email
+  endif
+%}
+
+<section class="nike-contact-section" style="background-color: {{ section.settings.background_color }}; margin-top: {{ section.settings.margin_top }}px; margin-bottom: {{ section.settings.margin_bottom }}px;">
+  {% if section.settings.background_image %}
+    <div class="contact-hero" style="background-image: url('{{ section.settings.background_image | image_url: 'master' }}');">
+      <div class="hero-overlay"></div>
+      <div class="hero-content">
+        <h1 class="hero-title">{{ section.settings.heading }}</h1>
+      </div>
+    </div>
+  {% endif %}
+
+  <div class="contact-wrapper">
+    <div class="contact-container">
+      
+      <!-- En-tête -->
+      <div class="contact-header">
+        {% if section.settings.eyebrow != blank %}
+          <span class="contact-eyebrow">{{ section.settings.eyebrow }}</span>
+        {% endif %}
+        {% if section.settings.heading != blank and section.settings.background_image == blank %}
+          <h1 class="contact-heading">{{ section.settings.heading }}</h1>
+        {% endif %}
+        {% if section.settings.description != blank %}
+          <div class="contact-description">
+            {{ section.settings.description }}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="contact-layout">
+        
+        <!-- Colonne gauche : Informations -->
+        <div class="contact-info">
+          
+          <!-- Coordonnées en premier -->
+          {% if section.settings.show_contact_info %}
+            <div class="contact-details">
+              <h3 class="details-heading">Nos Coordonnées</h3>
+              
+              {% if section.settings.phone != blank %}
+                <div class="detail-item">
+                  <svg class="detail-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  <a href="tel:{{ section.settings.phone | replace: ' ', '' }}">{{ section.settings.phone }}</a>
+                </div>
+              {% endif %}
+
+              {% if section.settings.show_email and display_email != blank %}
+                <div class="detail-item">
+                  <svg class="detail-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M22 6l-10 7L2 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  <a href="mailto:{{ display_email }}">{{ display_email }}</a>
+                </div>
+              {% endif %}
+
+              {% if section.settings.hours != blank %}
+                <div class="detail-item">
+                  <svg class="detail-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                    <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M12 6v6l4 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  <span>{{ section.settings.hours }}</span>
+                </div>
+              {% endif %}
+            </div>
+          {% endif %}
+
+          <!-- Cartes d'information sous les coordonnées -->
+          {% if section.blocks.size > 0 %}
+            <div class="info-cards-grid">
+              {% for block in section.blocks %}
+                <div class="info-card{% unless section.settings.enable_card_animation %} no-animation{% endunless %}" {{ block.shopify_attributes }}>
+                  <div class="info-icon-wrapper">
+                    {% case block.settings.icon_type %}
+                      {% when 'package' %}
+                        <svg class="info-icon-svg" width="32" height="32" viewBox="0 0 24 24" fill="none">
+                          <path d="M16.5 9.4l-9-5.19M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                          <path d="M3.27 6.96L12 12.01l8.73-5.05M12 22.08V12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      {% when 'support' %}
+                        <svg class="info-icon-svg" width="32" height="32" viewBox="0 0 24 24" fill="none">
+                          <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      {% when 'returns' %}
+                        <svg class="info-icon-svg" width="32" height="32" viewBox="0 0 24 24" fill="none">
+                          <path d="M9 14l-5-5 5-5M4 9h10.5a5.5 5.5 0 015.5 5.5v0a5.5 5.5 0 01-5.5 5.5H11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      {% when 'shipping' %}
+                        <svg class="info-icon-svg" width="32" height="32" viewBox="0 0 24 24" fill="none">
+                          <path d="M16 3h5v13h-5zM16 8H1v11h15V8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                          <circle cx="5.5" cy="18.5" r="2.5" stroke="currentColor" stroke-width="2"/>
+                          <circle cx="16.5" cy="18.5" r="2.5" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                      {% when 'secure' %}
+                        <svg class="info-icon-svg" width="32" height="32" viewBox="0 0 24 24" fill="none">
+                          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                          <path d="M9 12l2 2 4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      {% when 'warranty' %}
+                        <svg class="info-icon-svg" width="32" height="32" viewBox="0 0 24 24" fill="none">
+                          <path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 01-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 011-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 011.52 0C14.51 3.81 17 5 19 5a1 1 0 011 1z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      {% when 'gift' %}
+                        <svg class="info-icon-svg" width="32" height="32" viewBox="0 0 24 24" fill="none">
+                          <path d="M20 12v10H4V12M2 7h20v5H2zM12 22V7M12 7H7.5a2.5 2.5 0 110-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 100-5C13 2 12 7 12 7z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      {% when 'time' %}
+                        <svg class="info-icon-svg" width="32" height="32" viewBox="0 0 24 24" fill="none">
+                          <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      {% when 'headset' %}
+                        <svg class="info-icon-svg" width="32" height="32" viewBox="0 0 24 24" fill="none">
+                          <path d="M3 18v-6a9 9 0 0118 0v6M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3zM3 19a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                      {% when 'star' %}
+                        <svg class="info-icon-svg" width="32" height="32" viewBox="0 0 24 24" fill="none">
+                          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    {% endcase %}
+                  </div>
+                  <h3 class="info-title">{{ block.settings.title }}</h3>
+                  <p class="info-description">{{ block.settings.description }}</p>
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+        </div>
+
+        <!-- Colonne droite : Formulaire -->
+        <div class="contact-form-wrapper">
+          
+          {% form 'contact' %}
+            {% if form.posted_successfully? %}
+              <div class="contact-success">
+                <div class="success-icon-wrapper">
+                  <svg class="success-icon" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <h3>Message Envoyé !</h3>
+                <p>Merci de nous avoir contactés. Nous vous répondrons dans les plus brefs délais.</p>
+              </div>
+            {% endif %}
+            
+            {% if form.errors %}
+              <div class="contact-errors">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/>
+                  <path d="M12 8v4M12 16h.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <div>
+                  <p class="error-title">Veuillez corriger les éléments suivants :</p>
+                  <ul>
+                    {% for field in form.errors %}
+                      <li>{{ field | capitalize }} {{ form.errors.messages[field] }}</li>
+                    {% endfor %}
+                  </ul>
+                </div>
+              </div>
+            {% endif %}
+            
+            <div class="contact-form">
+              <div class="form-row">
+                <div class="form-field">
+                  <label for="ContactName">Nom</label>
+                  <input 
+                    type="text" 
+                    name="contact[name]" 
+                    id="ContactName"
+                    value="{% if form.name %}{{ form.name }}{% endif %}"
+                  >
+                </div>
+                
+                <div class="form-field">
+                  <label for="ContactEmail">Email *</label>
+                  <input 
+                    type="email" 
+                    name="contact[email]" 
+                    id="ContactEmail"
+                    value="{% if form.email %}{{ form.email }}{% endif %}"
+                    required
+                  >
+                </div>
+              </div>
+              
+              <div class="form-field">
+                <label for="ContactPhone">Téléphone</label>
+                <input 
+                  type="tel" 
+                  name="contact[phone]" 
+                  id="ContactPhone"
+                  value="{% if form.phone %}{{ form.phone }}{% endif %}"
+                >
+              </div>
+              
+              <div class="form-field">
+                <label for="ContactSubject">Sujet</label>
+                <select name="contact[subject]" id="ContactSubject">
+                  <option value="Question générale">Question générale</option>
+                  <option value="Suivi de commande">Suivi de commande</option>
+                  <option value="Retour / Échange">Retour / Échange</option>
+                  <option value="Produit défectueux">Produit défectueux</option>
+                  <option value="Partenariat">Partenariat</option>
+                  <option value="Autre">Autre</option>
+                </select>
+              </div>
+              
+              <div class="form-field">
+                <label for="ContactMessage">Message *</label>
+                <textarea 
+                  name="contact[body]" 
+                  id="ContactMessage"
+                  rows="6"
+                  required
+                >{% if form.body %}{{ form.body }}{% endif %}</textarea>
+              </div>
+              
+              <button type="submit" class="contact-submit">
+                <span>{{ section.settings.button_text }}</span>
+                <svg class="button-arrow" width="20" height="20" viewBox="0 0 24 24" fill="none">
+                  <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+            </div>
+          {% endform %}
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .nike-contact-section {
+    position: relative;
+    overflow: hidden;
+  }
+  
+  /* Hero Section */
+  .contact-hero {
+    position: relative;
+    height: 400px;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 60px;
+  }
+  
+  .hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.3) 100%);
+  }
+  
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 0 20px;
+  }
+  
+  .hero-title {
+    font-size: 72px;
+    font-weight: 900;
+    color: #ffffff;
+    margin: 0;
+    letter-spacing: -0.03em;
+    text-transform: uppercase;
+  }
+  
+  /* Container */
+  .contact-wrapper {
+    padding: 80px 20px 120px;
+  }
+  
+  .contact-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  /* Header */
+  .contact-header {
+    text-align: center;
+    margin-bottom: 60px;
+  }
+  
+  .contact-eyebrow {
+    display: inline-block;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #111111;
+    margin-bottom: 16px;
+  }
+  
+  .contact-heading {
+    font-size: 56px;
+    font-weight: 900;
+    margin: 0 0 24px 0;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: #111111;
+  }
+  
+  .contact-description {
+    font-size: 18px;
+    line-height: 1.6;
+    color: #757575;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  
+  /* Layout */
+  .contact-layout {
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    gap: 60px;
+    align-items: start;
+  }
+  
+  /* Contact Details */
+  .contact-details {
+    background: #111111;
+    color: #ffffff;
+    padding: 32px;
+    border-radius: 0;
+    margin-bottom: 40px;
+  }
+  
+  .details-heading {
+    font-size: 20px;
+    font-weight: 700;
+    margin: 0 0 24px 0;
+  }
+  
+  .detail-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    font-size: 14px;
+  }
+  
+  .detail-item:last-child {
+    margin-bottom: 0;
+  }
+  
+  .detail-item a {
+    color: #ffffff;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+  }
+  
+  .detail-item a:hover {
+    opacity: 0.7;
+  }
+  
+  .detail-icon {
+    flex-shrink: 0;
+    color: #ffffff;
+  }
+  
+  /* Info Cards */
+  .info-cards-grid {
+    display: grid;
+    gap: 20px;
+  }
+  
+  .info-card {
+    background: #f5f5f5;
+    padding: 24px;
+    border-radius: 0;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+  }
+  
+  .info-card:hover {
+    background: #ffffff;
+    border-color: #111111;
+  }
+  
+  /* Animation conditionnelle */
+  .info-card:not(.no-animation):hover {
+    transform: translateX(8px);
+  }
+  
+  .info-card.no-animation {
+    transform: none !important;
+  }
+  
+  .info-icon-wrapper {
+    margin-bottom: 12px;
+  }
+  
+  .info-icon-svg {
+    color: #111111;
+  }
+  
+  .info-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    color: #111111;
+  }
+  
+  .info-description {
+    font-size: 14px;
+    color: #757575;
+    margin: 0;
+    line-height: 1.5;
+  }
+  
+  /* Form Wrapper */
+  .contact-form-wrapper {
+    background: #ffffff;
+    position: sticky;
+    top: 20px;
+  }
+  
+  /* Messages */
+  .contact-success {
+    background: #f0f9f4;
+    border: 2px solid #111111;
+    padding: 32px;
+    margin-bottom: 32px;
+    text-align: center;
+  }
+  
+  .success-icon-wrapper {
+    width: 60px;
+    height: 60px;
+    background: #111111;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 16px;
+  }
+  
+  .success-icon {
+    color: #ffffff;
+  }
+  
+  .contact-success h3 {
+    font-size: 24px;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    color: #111111;
+  }
+  
+  .contact-success p {
+    font-size: 14px;
+    color: #757575;
+    margin: 0;
+  }
+  
+  .contact-errors {
+    background: #fef2f2;
+    border: 2px solid #dc2626;
+    padding: 20px;
+    margin-bottom: 24px;
+    display: flex;
+    gap: 12px;
+  }
+  
+  .contact-errors svg {
+    flex-shrink: 0;
+    color: #dc2626;
+  }
+  
+  .error-title {
+    margin: 0 0 8px 0;
+    color: #991b1b;
+    font-weight: 700;
+    font-size: 14px;
+  }
+  
+  .contact-errors ul {
+    margin: 0;
+    padding-left: 20px;
+    color: #991b1b;
+    font-size: 13px;
+  }
+  
+  .contact-errors li {
+    margin-bottom: 4px;
+  }
+  
+  /* Form */
+  .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  
+  .form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .form-field label {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111111;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  
+  .form-field input,
+  .form-field textarea,
+  .form-field select {
+    width: 100%;
+    padding: 16px 20px;
+    font-size: 16px;
+    line-height: 1.5;
+    border: 2px solid #e5e5e5;
+    border-radius: 0;
+    background-color: #f5f5f5;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    color: #111111;
+  }
+  
+  .form-field input:focus,
+  .form-field textarea:focus,
+  .form-field select:focus {
+    outline: none;
+    border-color: #111111;
+    background-color: #ffffff;
+  }
+  
+  .form-field textarea {
+    resize: vertical;
+    min-height: 140px;
+  }
+  
+  .form-field select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%23111111' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+    padding-right: 40px;
+  }
+  
+  /* Submit Button */
+  .contact-submit {
+    width: 100%;
+    padding: 18px 32px;
+    font-size: 16px;
+    font-weight: 700;
+    background-color: #111111;
+    color: #ffffff;
+    border: 2px solid #111111;
+    border-radius: 0;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 12px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .contact-submit:hover {
+    background-color: transparent;
+    color: #111111;
+  }
+  
+  .contact-submit:hover .button-arrow {
+    transform: translateX(4px);
+  }
+  
+  .contact-submit:active {
+    transform: scale(0.98);
+  }
+  
+  .button-arrow {
+    transition: transform 0.3s ease;
+  }
+  
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .contact-layout {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+    
+    .contact-form-wrapper {
+      position: static;
+      order: 1;
+    }
+    
+    .contact-info {
+      order: 2;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .contact-wrapper {
+      padding: 60px 16px 80px;
+    }
+    
+    .hero-title {
+      font-size: 48px;
+    }
+    
+    .contact-heading {
+      font-size: 40px;
+    }
+    
+    .contact-description {
+      font-size: 16px;
+    }
+    
+    .contact-header {
+      margin-bottom: 40px;
+    }
+    
+    .form-row {
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+    
+    .info-cards-grid {
+      gap: 16px;
+    }
+    
+    .contact-details {
+      margin-bottom: 24px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .hero-title {
+      font-size: 36px;
+    }
+    
+    .contact-heading {
+      font-size: 32px;
+    }
+    
+    .contact-hero {
+      height: 300px;
+    }
+  }
+</style>

@@ -1,0 +1,371 @@
+{% comment %}
+  Section: Carousel Recommandations (Design Compact Desktop)
+{% endcomment %}
+
+<div class="product-recommendations" 
+     data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit={{ section.settings.products_to_show }}"
+     data-section-id="{{ section.id }}"
+     style="--bg-color: {{ section.settings.background_color }}; 
+            --title-color: {{ section.settings.title_color }}; 
+            --btn-bg: {{ section.settings.button_bg_color }}; 
+            --btn-color: {{ section.settings.button_color }}; 
+            --scrollbar-color: {{ section.settings.scrollbar_color }}; 
+            padding-top: {{ section.settings.spacing_top }}px; 
+            padding-bottom: {{ section.settings.spacing_bottom }}px;">
+
+  <div class="recommendations__container page-width">
+    
+    <div class="recommendations__header">
+      <h2 class="recommendations__title">{{ section.settings.heading }}</h2>
+      
+      {% if section.settings.show_navigation %}
+        <div class="recommendations__controls">
+          <button type="button" 
+                  class="recommendations__button recommendations__button--prev" 
+                  aria-label="Précédent"
+                  disabled>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="15 18 9 12 15 6"></polyline>
+            </svg>
+          </button>
+          <button type="button" 
+                  class="recommendations__button recommendations__button--next" 
+                  aria-label="Suivant">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </button>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="recommendations__carousel">
+      <div class="recommendations__track" data-recommendations-track>
+        
+        {% if recommendations.performed and recommendations.products_count > 0 %}
+          <!-- Produits chargés dynamiquement -->
+          {% for recommendation in recommendations.products %}
+            <div class="recommendations__item">
+              {% render 'product-card', 
+                 product_card_product: recommendation, 
+                 card_product: recommendation, 
+                 product: recommendation 
+              %}
+            </div>
+          {% endfor %}
+        {% else %}
+          <!-- Squelette de chargement (Skeleton) -->
+          {% for i in (1..5) %}
+            <div class="recommendations__item skeleton-item">
+              <div class="recommendations__card">
+                <div class="recommendations__image-placeholder skeleton-box"></div>
+                <div class="skeleton-text line-long"></div>
+                <div class="skeleton-text line-short"></div>
+              </div>
+            </div>
+          {% endfor %}
+        {% endif %}
+        
+      </div>
+
+      {% if section.settings.show_scrollbar %}
+        <div class="recommendations__scrollbar">
+          <div class="recommendations__scrollbar-track">
+            <div class="recommendations__scrollbar-thumb" data-scrollbar-thumb></div>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+
+<style>
+  .product-recommendations {
+    background-color: var(--bg-color, #ffffff);
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .recommendations__container {
+    max-width: 1440px;
+    margin: 0 auto;
+    padding-left: 48px;
+    padding-right: 48px;
+  }
+
+  /* Header */
+  .recommendations__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+  }
+
+  .recommendations__title {
+    color: var(--title-color, #111111);
+    font-family: "Helvetica Neue", Arial, sans-serif;
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 1.2;
+    margin: 0;
+    letter-spacing: -0.02em;
+  }
+
+  /* Navigation Buttons */
+  .recommendations__controls {
+    display: flex;
+    gap: 12px;
+  }
+
+  .recommendations__button {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: none;
+    background-color: var(--btn-bg, #f5f5f5);
+    color: var(--btn-color, #111111);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s ease, transform 0.1s ease;
+  }
+
+  .recommendations__button:hover:not(:disabled) { opacity: 0.7; }
+  .recommendations__button:active:not(:disabled) { transform: scale(0.96); }
+  .recommendations__button:disabled { opacity: 0.3; cursor: not-allowed; }
+  .recommendations__button svg { width: 20px; height: 20px; }
+
+  /* Carousel */
+  .recommendations__carousel { position: relative; }
+
+  .recommendations__track {
+    display: flex;
+    gap: 16px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-behavior: smooth;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -ms-overflow-scrolling: touch;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 20px;
+    margin-bottom: -10px;
+  }
+
+  .recommendations__track::-webkit-scrollbar { display: none; }
+
+  /* --- MODIFICATION TAILLE DESKTOP --- */
+  .recommendations__item {
+    flex: 0 0 auto;
+    /* Avant: 25% (4 items). Maintenant: ~20% (5 items) pour des cartes plus petites */
+    width: calc(20% - 13px); 
+    max-width: 300px; /* Maximum réduit aussi */
+    min-width: 200px;
+    scroll-snap-align: start;
+  }
+
+  .recommendations__item > * { width: 100%; }
+
+  /* SKELETON */
+  .recommendations__image-placeholder {
+    width: 100%;
+    aspect-ratio: 1;
+    background-color: #f5f5f5;
+    margin-bottom: 12px;
+  }
+  .skeleton-box { background-color: #f3f3f3; }
+  .skeleton-text { height: 12px; background-color: #f3f3f3; margin-bottom: 8px; border-radius: 2px; }
+  .line-long { width: 100%; }
+  .line-short { width: 60%; }
+
+  /* Scrollbar */
+  .recommendations__scrollbar { margin-top: 12px; }
+
+  .recommendations__scrollbar-track {
+    width: 100%;
+    height: 2px;
+    background-color: #e5e5e5;
+    border-radius: 2px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .recommendations__scrollbar-thumb {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background-color: var(--scrollbar-color, #111111);
+    border-radius: 2px;
+    width: 25%;
+    transition: transform 0.1s linear;
+  }
+
+  /* Responsive - Tablet */
+  @media screen and (max-width: 1024px) {
+    .recommendations__container { padding-left: 32px; padding-right: 32px; }
+    
+    /* Tablette: on revient à 3 cartes pour la lisibilité */
+    .recommendations__item {
+      width: calc(33.333% - 11px);
+      max-width: 350px;
+    }
+    .recommendations__title { font-size: 22px; }
+    .recommendations__button { width: 44px; height: 44px; }
+  }
+
+  /* Responsive - Mobile */
+  @media screen and (max-width: 768px) {
+    .recommendations__container { padding-left: 20px; padding-right: 20px; }
+    .recommendations__header { margin-bottom: 24px; }
+    .recommendations__title { font-size: 20px; }
+    .recommendations__controls { display: none; }
+    .recommendations__track { gap: 12px; }
+    .recommendations__item { width: calc(50% - 6px); max-width: 280px; min-width: 160px; }
+    .recommendations__scrollbar { margin-top: 16px; }
+  }
+
+  @media screen and (max-width: 480px) {
+    .recommendations__container { padding-left: 16px; padding-right: 16px; }
+    .recommendations__title { font-size: 18px; }
+    .recommendations__track { gap: 8px; }
+    .recommendations__item { width: calc(50% - 4px); min-width: 140px; }
+  }
+</style>
+
+<script>
+(function() {
+  'use strict';
+
+  class RecommendationsCarousel {
+    constructor(container) {
+      this.container = container;
+      this.url = container.dataset.url;
+      this.track = container.querySelector('[data-recommendations-track]');
+      
+      const observer = new IntersectionObserver((entries) => {
+        if (entries[0].isIntersecting) {
+          this.fetchRecommendations();
+          observer.disconnect();
+        }
+      }, { rootMargin: '200px' });
+      observer.observe(this.container);
+    }
+
+    fetchRecommendations() {
+      fetch(this.url)
+        .then(response => response.text())
+        .then(text => {
+          const html = document.createElement('div');
+          html.innerHTML = text;
+          const newTrack = html.querySelector('[data-recommendations-track]');
+
+          if (newTrack && newTrack.innerHTML.trim().length) {
+            this.track.innerHTML = newTrack.innerHTML;
+            this.initControls();
+          } else {
+            this.container.style.display = 'none';
+          }
+        })
+        .catch(e => console.error('Erreur Recos:', e));
+    }
+
+    initControls() {
+      this.prevButton = this.container.querySelector('.recommendations__button--prev');
+      this.nextButton = this.container.querySelector('.recommendations__button--next');
+      this.scrollbarThumb = this.container.querySelector('[data-scrollbar-thumb]');
+
+      if (this.prevButton) this.prevButton.addEventListener('click', () => this.scrollPrev());
+      if (this.nextButton) this.nextButton.addEventListener('click', () => this.scrollNext());
+
+      this.track.addEventListener('scroll', () => {
+        requestAnimationFrame(() => { this.updateButtons(); this.updateScrollbar(); });
+      });
+
+      // Resize
+      window.addEventListener('resize', () => { this.updateButtons(); this.updateScrollbar(); });
+      setTimeout(() => { this.updateButtons(); this.updateScrollbar(); }, 50);
+    }
+
+    scrollPrev() {
+      const itemWidth = this.track.querySelector('.recommendations__item')?.offsetWidth || 0;
+      const gap = 16;
+      this.track.scrollBy({ left: -(itemWidth + gap) * 2, behavior: 'smooth' });
+    }
+
+    scrollNext() {
+      const itemWidth = this.track.querySelector('.recommendations__item')?.offsetWidth || 0;
+      const gap = 16;
+      this.track.scrollBy({ left: (itemWidth + gap) * 2, behavior: 'smooth' });
+    }
+
+    updateButtons() {
+      if (!this.prevButton || !this.nextButton) return;
+      const { scrollLeft, scrollWidth, clientWidth } = this.track;
+      this.prevButton.disabled = scrollLeft <= 5;
+      this.nextButton.disabled = scrollLeft + clientWidth >= scrollWidth - 5;
+    }
+
+    updateScrollbar() {
+      if (!this.scrollbarThumb) return;
+      const { scrollLeft, scrollWidth, clientWidth } = this.track;
+
+      if (scrollWidth <= clientWidth) {
+        this.scrollbarThumb.style.display = 'none';
+        return;
+      }
+      this.scrollbarThumb.style.display = 'block';
+
+      const thumbWidth = (clientWidth / scrollWidth) * 100;
+      this.scrollbarThumb.style.width = thumbWidth + '%';
+      
+      const trackWidth = this.scrollbarThumb.parentElement.clientWidth;
+      const availableSpace = trackWidth - (trackWidth * (thumbWidth/100));
+      const scrollPercent = scrollLeft / (scrollWidth - clientWidth);
+      
+      this.scrollbarThumb.style.transform = `translateX(${scrollPercent * availableSpace}px)`;
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const init = () => document.querySelectorAll('.product-recommendations').forEach(c => new RecommendationsCarousel(c));
+    init();
+    document.addEventListener('shopify:section:load', init);
+  });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Recommendations Produits",
+  "tag": "section",
+  "class": "section-custom-carousel",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Titre", "default": "Vous aimerez aussi" },
+    { "type": "range", "id": "products_to_show", "min": 4, "max": 12, "step": 1, "label": "Produits à charger", "default": 10 },
+    { "type": "header", "content": "Design" },
+    {
+      "type": "select",
+      "id": "product_card_style",
+      "label": "Style des cartes produits",
+      "options": [
+        { "value": "light", "label": "Clair (Light)" },
+        { "value": "dark", "label": "Sombre (Dark)" }
+      ],
+      "default": "light"
+    },
+    { "type": "range", "id": "spacing_top", "min": 0, "max": 120, "step": 4, "default": 40, "label": "Marge Haut" },
+    { "type": "range", "id": "spacing_bottom", "min": 0, "max": 120, "step": 4, "default": 40, "label": "Marge Bas" },
+    { "type": "color", "id": "background_color", "label": "Fond", "default": "#ffffff" },
+    { "type": "color", "id": "title_color", "label": "Titre", "default": "#111111" },
+    { "type": "color", "id": "button_bg_color", "label": "Boutons Fond", "default": "#f5f5f5" },
+    { "type": "color", "id": "button_color", "label": "Boutons Icône", "default": "#111111" },
+    { "type": "color", "id": "scrollbar_color", "label": "Scrollbar", "default": "#111111" },
+    { "type": "checkbox", "id": "show_navigation", "label": "Navigation", "default": true },
+    { "type": "checkbox", "id": "show_scrollbar", "label": "Scrollbar", "default": true }
+  ],
+  "presets": [{ "name": "Recommendations Produits", "category": "Produit" }]
+}
+{% endschema %}

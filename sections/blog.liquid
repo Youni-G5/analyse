@@ -1,0 +1,396 @@
+<!-- blog.liquid -->
+
+{% schema %}
+{
+  "name": "Blog",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "grid_columns",
+      "label": "Colonnes desktop",
+      "options": [
+        {
+          "value": "2",
+          "label": "2 colonnes"
+        },
+        {
+          "value": "3",
+          "label": "3 colonnes"
+        },
+        {
+          "value": "4",
+          "label": "4 colonnes"
+        }
+      ],
+      "default": "3"
+    },
+    {
+      "type": "range",
+      "id": "articles_per_page",
+      "min": 6,
+      "max": 24,
+      "step": 3,
+      "label": "Articles par page",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "grid_gap",
+      "min": 0,
+      "max": 40,
+      "step": 4,
+      "label": "Espacement",
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Contenu"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_tags",
+      "label": "Afficher les tags",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_excerpt",
+      "label": "Afficher l'extrait",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_date",
+      "label": "Afficher la date",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_author",
+      "label": "Afficher l'auteur",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "range",
+      "id": "image_ratio",
+      "min": 50,
+      "max": 150,
+      "step": 10,
+      "unit": "%",
+      "label": "Ratio d'image",
+      "default": 100
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_hover_zoom",
+      "label": "Zoom au survol",
+      "default": true
+    }
+  ]
+}
+{% endschema %}
+
+<div class="nike-blog" style="--grid-columns: {{ section.settings.grid_columns }}; --grid-gap: {{ section.settings.grid_gap }}px; --image-ratio: {{ section.settings.image_ratio }}%;">
+  
+  <!-- Blog Header -->
+  <div class="blog-header">
+    <h1>{{ blog.title }}</h1>
+  </div>
+
+  <!-- Tag Filter -->
+  {% if section.settings.show_tags and blog.all_tags.size > 0 %}
+    <div class="blog-tags">
+      <a href="{{ blog.url }}" {% unless current_tags %}class="active"{% endunless %}>Tous</a>
+      {% for tag in blog.all_tags %}
+        <a href="{{ blog.url }}/tagged/{{ tag | handle }}" {% if current_tags contains tag %}class="active"{% endif %}>{{ tag }}</a>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <!-- Articles Grid -->
+  <div class="blog-grid">
+    {% paginate blog.articles by section.settings.articles_per_page %}
+      
+      {% for article in blog.articles %}
+        <article class="article-card">
+          <a href="{{ article.url }}">
+            
+            <div class="article-image">
+              {% if article.image %}
+                <img 
+                  src="{{ article.image | img_url: '800x' }}" 
+                  alt="{{ article.title }}"
+                  loading="lazy"
+                  class="{% if section.settings.enable_hover_zoom %}zoom{% endif %}"
+                >
+              {% else %}
+                <div class="placeholder"></div>
+              {% endif %}
+            </div>
+            
+            <div class="article-info">
+              {% if section.settings.show_tags and article.tags.size > 0 %}
+                <span class="tag">{{ article.tags.first }}</span>
+              {% endif %}
+              
+              <h2>{{ article.title }}</h2>
+              
+              {% if section.settings.show_excerpt and article.excerpt != blank %}
+                <p class="excerpt">{{ article.excerpt | strip_html | truncatewords: 20 }}</p>
+              {% endif %}
+              
+              <div class="meta">
+                {% if section.settings.show_date %}
+                  <time>{{ article.published_at | date: '%d.%m.%Y' }}</time>
+                {% endif %}
+                {% if section.settings.show_author %}
+                  <span>{{ article.author }}</span>
+                {% endif %}
+              </div>
+            </div>
+            
+          </a>
+        </article>
+      {% endfor %}
+      
+      {% if paginate.pages > 1 %}
+        <div class="pagination">
+          {% if paginate.previous %}
+            <a href="{{ paginate.previous.url }}" class="prev">←</a>
+          {% endif %}
+          
+          <span>{{ paginate.current_page }} / {{ paginate.pages }}</span>
+          
+          {% if paginate.next %}
+            <a href="{{ paginate.next.url }}" class="next">→</a>
+          {% endif %}
+        </div>
+      {% endif %}
+      
+    {% endpaginate %}
+  </div>
+
+</div>
+
+<style>
+  .nike-blog {
+    --black: #111111;
+    --white: #ffffff;
+    --gray: #757575;
+    --light-gray: #f7f7f7;
+  }
+  
+  /* Header */
+  .blog-header {
+    padding: clamp(60px, 10vh, 100px) clamp(20px, 4vw, 40px) clamp(40px, 6vh, 60px);
+    text-align: center;
+    background: var(--light-gray);
+  }
+  
+  .blog-header h1 {
+    font-size: clamp(48px, 8vw, 96px);
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    text-transform: uppercase;
+    margin: 0;
+    color: var(--black);
+  }
+  
+  /* Tags Filter */
+  .blog-tags {
+    display: flex;
+    gap: 12px;
+    padding: 20px clamp(20px, 4vw, 40px);
+    overflow-x: auto;
+    border-bottom: 1px solid #e5e5e5;
+    position: sticky;
+    top: 0;
+    background: var(--white);
+    z-index: 100;
+  }
+  
+  .blog-tags::-webkit-scrollbar {
+    display: none;
+  }
+  
+  .blog-tags a {
+    flex-shrink: 0;
+    padding: 10px 24px;
+    background: var(--light-gray);
+    color: var(--black);
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  
+  .blog-tags a:hover,
+  .blog-tags a.active {
+    background: var(--black);
+    color: var(--white);
+  }
+  
+  /* Grid */
+  .blog-grid {
+    display: grid;
+    grid-template-columns: repeat(var(--grid-columns), 1fr);
+    gap: var(--grid-gap);
+    padding: clamp(40px, 6vh, 60px) clamp(20px, 4vw, 40px);
+    max-width: 1600px;
+    margin: 0 auto;
+  }
+  
+  .article-card {
+    background: var(--white);
+  }
+  
+  .article-card a {
+    display: block;
+    text-decoration: none;
+    color: var(--black);
+    transition: transform 0.3s;
+  }
+  
+  .article-card a:hover {
+    transform: translateY(-4px);
+  }
+  
+  /* Image */
+  .article-image {
+    position: relative;
+    width: 100%;
+    padding-bottom: var(--image-ratio);
+    background: var(--light-gray);
+    overflow: hidden;
+  }
+  
+  .article-image img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s;
+  }
+  
+  .article-image img.zoom {
+    transform: scale(1);
+  }
+  
+  .article-card:hover .article-image img.zoom {
+    transform: scale(1.05);
+  }
+  
+  .placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #e5e5e5;
+  }
+  
+  /* Info */
+  .article-info {
+    padding: 20px 0 0;
+  }
+  
+  .tag {
+    display: inline-block;
+    padding: 4px 12px;
+    background: var(--black);
+    color: var(--white);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 12px;
+  }
+  
+  .article-info h2 {
+    font-size: clamp(18px, 2.5vw, 24px);
+    font-weight: 700;
+    line-height: 1.2;
+    margin: 0 0 12px;
+    color: var(--black);
+  }
+  
+  .excerpt {
+    font-size: 15px;
+    line-height: 1.6;
+    color: var(--gray);
+    margin: 0 0 12px;
+  }
+  
+  .meta {
+    display: flex;
+    gap: 16px;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--gray);
+  }
+  
+  /* Pagination */
+  .pagination {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    margin-top: 40px;
+    font-size: 16px;
+    font-weight: 700;
+  }
+  
+  .pagination a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    background: var(--black);
+    color: var(--white);
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  
+  .pagination a:hover {
+    background: var(--gray);
+  }
+  
+  .pagination span {
+    color: var(--black);
+  }
+  
+  /* Responsive */
+  @media (max-width: 1024px) {
+    .blog-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+  
+  @media (max-width: 640px) {
+    .blog-grid {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+    
+    .blog-tags {
+      padding: 16px 20px;
+    }
+  }
+</style>

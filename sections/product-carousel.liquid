@@ -1,0 +1,510 @@
+<style>
+  .product-carousel-section {
+    background: {{ section.settings.bg_color }};
+    width: 100%;
+    padding: {{ section.settings.section_padding }}px 0;
+    box-sizing: border-box;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    font-size: 11.5px;
+    line-height: 16px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .product-carousel-section__container {
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  
+  /* HEADER DE LA SECTION */
+  .product-carousel-section__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding: 0 16px;
+  }
+
+  .product-carousel-section__title-link {
+    text-decoration: none;
+    color: inherit;
+    transition: opacity 0.2s ease;
+  }
+
+  .product-carousel-section__title-link:hover {
+    opacity: 0.7;
+  }
+
+  .product-carousel-section__title {
+    font-size: 22px;
+    font-weight: 600;
+    margin: 0;
+    letter-spacing: -0.02em;
+    color: {{ section.settings.text_color }};
+    line-height: 28px;
+  }
+
+  .product-carousel-section__count-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .product-carousel-section__count {
+    font-size: 13px;
+    font-weight: 500;
+    color: {{ section.settings.text_color }};
+    text-decoration: none;
+    opacity: 0.7;
+    transition: opacity 0.2s ease;
+  }
+
+  .product-carousel-section__count:hover {
+    opacity: 1;
+  }
+
+  .product-carousel-section__caret {
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .product-carousel-section__caret svg {
+    width: 8px;
+    height: 8px;
+    transform: rotate(-90deg);
+    transition: transform 0.25s ease-in-out;
+  }
+
+  .product-carousel-section__caret svg path {
+    stroke: {{ section.settings.text_color }};
+    stroke-width: 1;
+  }
+
+  /* CAROUSEL */
+  .product-carousel-section__carousel {
+    display: flex;
+    overflow-x: auto;
+    overflow-y: hidden;
+    gap: {{ section.settings.gap }}px;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 0 0 20px 16px;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+  }
+
+  .product-carousel-section__carousel::-webkit-scrollbar {
+    display: none;
+  }
+
+  .product-carousel-section__carousel.is-dragging {
+    scroll-behavior: auto;
+  }
+
+  .product-carousel-section__product-link {
+    flex: 0 0 auto;
+    text-decoration: none;
+    display: block;
+    cursor: pointer;
+    transition: cursor 0.2s ease;
+  }
+
+  .product-carousel-section__product-link.is-dragging {
+    pointer-events: none;
+  }
+
+  .product-carousel-section__product-link:active {
+    cursor: grabbing;
+  }
+
+  .product-carousel-section__image-container {
+    width: {{ section.settings.image_size }}px;
+    height: {{ section.settings.image_size }}px;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.05);
+    position: relative;
+    transition: transform 0.3s ease;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  .product-carousel-section__carousel.is-dragging .product-carousel-section__product-link:hover .product-carousel-section__image-container {
+    transform: none;
+  }
+
+  .product-carousel-section__product-link:hover .product-carousel-section__image-container {
+    transform: scale(1.05);
+  }
+
+  .product-carousel-section__image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    user-select: none;
+    -webkit-user-select: none;
+    -webkit-user-drag: none;
+    pointer-events: none;
+    -webkit-touch-callout: none;
+  }
+
+  .product-carousel-section__product-info {
+    margin-top: 8px;
+    max-width: {{ section.settings.image_size }}px;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .product-carousel-section__product-title {
+    font-size: 12px;
+    color: {{ section.settings.text_color }};
+    margin: 0 0 4px 0;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .product-carousel-section__product-price {
+    font-size: 13px;
+    color: {{ section.settings.text_color }};
+    font-weight: 600;
+    margin: 0;
+  }
+
+  /* RESPONSIVE MOBILE */
+  @media (max-width: 768px) {
+    .product-carousel-section {
+      padding: 24px 0;
+    }
+
+    .product-carousel-section__header {
+      padding: 0 16px;
+      margin-bottom: 16px;
+    }
+
+    .product-carousel-section__title {
+      font-size: 18px;
+      line-height: 24px;
+    }
+
+    .product-carousel-section__count {
+      font-size: 12px;
+    }
+
+    .product-carousel-section__image-container {
+      width: 140px;
+      height: 140px;
+    }
+
+    .product-carousel-section__carousel {
+      gap: 10px;
+      padding: 0 0 20px 16px;
+    }
+
+    .product-carousel-section__product-info {
+      max-width: 140px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .product-carousel-section__title {
+      font-size: 16px;
+      line-height: 22px;
+    }
+  }
+</style>
+
+<div class="product-carousel-section" data-section-id="{{ section.id }}">
+  <div class="product-carousel-section__container">
+    
+    <!-- HEADER -->
+    <div class="product-carousel-section__header">
+      {% if section.settings.collection != blank %}
+        <a href="{{ section.settings.collection.url }}" class="product-carousel-section__title-link">
+          <h2 class="product-carousel-section__title">{{ section.settings.section_title }}</h2>
+        </a>
+      {% else %}
+        <h2 class="product-carousel-section__title">{{ section.settings.section_title }}</h2>
+      {% endif %}
+      
+      <div class="product-carousel-section__count-container">
+        {% if section.settings.collection != blank %}
+          <a href="{{ section.settings.collection.url }}" class="product-carousel-section__count">
+            {{ section.settings.collection.products_count }} {{ section.settings.count_text }}
+          </a>
+        {% else %}
+          <span class="product-carousel-section__count">0 {{ section.settings.count_text }}</span>
+        {% endif %}
+        <div class="product-carousel-section__caret">
+          <svg width="8" height="8" viewBox="0 0 10 6" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M1 1L5 5L9 1" stroke-width="1"></path>
+          </svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- CAROUSEL DE PRODUITS -->
+    <div class="product-carousel-section__carousel">
+      {% if section.settings.collection != blank %}
+        {% for product in section.settings.collection.products limit: section.settings.products_limit %}
+          <a href="{{ product.url }}" class="product-carousel-section__product-link" data-product-url="{{ product.url }}">
+            <div class="product-carousel-section__image-container">
+              {% if product.featured_image %}
+                <img 
+                  src="{{ product.featured_image | image_url: width: 500 }}" 
+                  srcset="
+                    {{ product.featured_image | image_url: width: 50 }} 50w,
+                    {{ product.featured_image | image_url: width: 100 }} 100w,
+                    {{ product.featured_image | image_url: width: 200 }} 200w,
+                    {{ product.featured_image | image_url: width: 300 }} 300w,
+                    {{ product.featured_image | image_url: width: 500 }} 500w,
+                    {{ product.featured_image | image_url: width: 750 }} 750w,
+                    {{ product.featured_image | image_url: width: 1000 }} 1000w
+                  "
+                  sizes="(max-width: 768px) 140px, 180px"
+                  alt="{{ product.title | escape }}"
+                  loading="lazy"
+                  width="500"
+                  height="500"
+                  class="product-carousel-section__image"
+                  draggable="false"
+                >
+              {% else %}
+                {{ 'product-1' | placeholder_svg_tag: 'product-carousel-section__image placeholder' }}
+              {% endif %}
+            </div>
+            
+            {% if section.settings.show_product_info %}
+            <div class="product-carousel-section__product-info">
+              <p class="product-carousel-section__product-title">{{ product.title }}</p>
+              <p class="product-carousel-section__product-price">{{ product.price | money }}</p>
+            </div>
+            {% endif %}
+          </a>
+        {% endfor %}
+      {% else %}
+        <!-- PLACEHOLDER -->
+        {% for i in (1..12) %}
+          <a href="#" class="product-carousel-section__product-link">
+            <div class="product-carousel-section__image-container">
+              <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 20px; font-weight: bold; user-select: none; -webkit-user-select: none;">
+                {{ i }}
+              </div>
+            </div>
+            
+            {% if section.settings.show_product_info %}
+            <div class="product-carousel-section__product-info">
+              <p class="product-carousel-section__product-title">Produit {{ i }}</p>
+              <p class="product-carousel-section__product-price">99,00 €</p>
+            </div>
+            {% endif %}
+          </a>
+        {% endfor %}
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+
+<script>
+(function() {
+  const section = document.querySelector('[data-section-id="{{ section.id }}"]');
+  if (!section) return;
+
+  const carousel = section.querySelector('.product-carousel-section__carousel');
+  if (!carousel) return;
+
+  // Smooth scroll with mouse drag
+  let isDown = false;
+  let startX;
+  let scrollLeft;
+  let didDrag = false;
+  const dragThreshold = 5;
+
+  const handleMouseDown = (e) => {
+    isDown = true;
+    didDrag = false;
+    carousel.classList.add('is-dragging');
+    carousel.style.cursor = 'grabbing';
+    startX = e.pageX - carousel.offsetLeft;
+    scrollLeft = carousel.scrollLeft;
+  };
+
+  const handleMouseLeave = () => {
+    if (isDown) {
+      isDown = false;
+      carousel.classList.remove('is-dragging');
+      carousel.style.cursor = 'grab';
+      updateProductLinks();
+    }
+  };
+
+  const handleMouseUp = (e) => {
+    if (isDown) {
+      isDown = false;
+      carousel.classList.remove('is-dragging');
+      carousel.style.cursor = 'grab';
+      updateProductLinks();
+    }
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDown) return;
+
+    e.preventDefault();
+    const x = e.pageX - carousel.offsetLeft;
+    const walk = (x - startX) * 1.5;
+
+    // Déterminer si l'utilisateur a dragué
+    if (Math.abs(walk) > dragThreshold) {
+      didDrag = true;
+      disableProductLinks();
+    }
+
+    carousel.scrollLeft = scrollLeft - walk;
+  };
+
+  const disableProductLinks = () => {
+    const links = section.querySelectorAll('.product-carousel-section__product-link');
+    links.forEach(link => {
+      link.classList.add('is-dragging');
+    });
+  };
+
+  const updateProductLinks = () => {
+    const links = section.querySelectorAll('.product-carousel-section__product-link');
+    links.forEach(link => {
+      link.classList.remove('is-dragging');
+    });
+  };
+
+  // Ajouter les event listeners
+  carousel.addEventListener('mousedown', handleMouseDown);
+  carousel.addEventListener('mouseleave', handleMouseLeave);
+  carousel.addEventListener('mouseup', handleMouseUp);
+  carousel.addEventListener('mousemove', handleMouseMove);
+
+  // Initialiser le curseur
+  carousel.style.cursor = 'grab';
+
+  // Nettoyer les listeners si la section est retirée
+  const observer = new MutationObserver(() => {
+    if (!document.contains(carousel)) {
+      carousel.removeEventListener('mousedown', handleMouseDown);
+      carousel.removeEventListener('mouseleave', handleMouseLeave);
+      carousel.removeEventListener('mouseup', handleMouseUp);
+      carousel.removeEventListener('mousemove', handleMouseMove);
+      observer.disconnect();
+    }
+  });
+
+  observer.observe(document.body, { childList: true, subtree: true });
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Carrousel Produits OxC",
+  "tag": "section",
+  "class": "section-product-carousel",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Contenu"
+    },
+    {
+      "type": "text",
+      "id": "section_title",
+      "label": "Titre de la section",
+      "default": "New In: Supreme FW25"
+    },
+    {
+      "type": "text",
+      "id": "count_text",
+      "label": "Texte après le nombre",
+      "default": "articles",
+      "info": "Texte à afficher après le nombre de produits (ex: 'articles', 'items', 'produits')"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection à afficher"
+    },
+    {
+      "type": "range",
+      "id": "products_limit",
+      "label": "Nombre de produits",
+      "min": 4,
+      "max": 50,
+      "step": 1,
+      "default": 20
+    },
+    {
+      "type": "checkbox",
+      "id": "show_product_info",
+      "label": "Afficher titre et prix des produits",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Apparence"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Couleur de fond de la section",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Couleur du texte",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "range",
+      "id": "image_size",
+      "label": "Taille des images",
+      "min": 120,
+      "max": 300,
+      "step": 10,
+      "default": 180,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Espace entre les images",
+      "min": 8,
+      "max": 30,
+      "step": 2,
+      "default": 12,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "section_padding",
+      "label": "Padding vertical de la section",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "default": 32,
+      "unit": "px"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Carrousel Produits OxC",
+      "category": "Produit"
+    }
+  ]
+}
+{% endschema %}

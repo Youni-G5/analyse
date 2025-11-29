@@ -1,0 +1,31 @@
+{% comment %}
+  Snippet: performance-preload.liquid
+  Description: Preload critical resources for optimal performance
+  Phase 2 - Performance Optimizations
+{% endcomment %}
+
+{%- comment -%} Preload Critical CSS {%- endcomment -%}
+<link rel="preload" href="{{ 'base.css' | asset_url }}" as="style">
+<link rel="preload" href="{{ 'accessibility.css' | asset_url }}" as="style">
+
+{%- comment -%} Preload Critical Fonts {%- endcomment -%}
+<link rel="preload" href="https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiA.woff2" as="font" type="font/woff2" crossorigin>
+
+{%- comment -%} Preload Logo if exists {%- endcomment -%}
+{%- if section.settings.logo -%}
+  <link rel="preload" href="{{ section.settings.logo | image_url: width: 200 }}" as="image">
+{%- elsif settings.logo -%}
+  <link rel="preload" href="{{ settings.logo | image_url: width: 200 }}" as="image">
+{%- endif -%}
+
+{%- comment -%} Preload Hero Image on Homepage {%- endcomment -%}
+{%- if template.name == 'index' -%}
+  {%- for block in section.blocks limit: 1 -%}
+    {%- if block.settings.image -%}
+      <link rel="preload" fetchpriority="high" as="image" href="{{ block.settings.image | image_url: width: 1200 }}" type="image/webp">
+    {%- endif -%}
+  {%- endfor -%}
+{%- endif -%}
+
+{%- comment -%} Preload Critical JavaScript {%- endcomment -%}
+<link rel="modulepreload" href="{{ 'theme.js' | asset_url }}">

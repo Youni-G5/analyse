@@ -1,0 +1,367 @@
+{% schema %}
+{
+  "name": "Brand Story",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Hero Section"
+    },
+    {
+      "type": "text",
+      "id": "hero_title",
+      "label": "Titre Hero",
+      "default": "Notre Mission"
+    },
+    {
+      "type": "textarea",
+      "id": "hero_subtitle",
+      "label": "Sous-titre Hero",
+      "default": "Apporter inspiration et innovation à chaque athlète* dans le monde"
+    },
+    {
+      "type": "text",
+      "id": "hero_note",
+      "label": "Note",
+      "default": "*Si tu as un corps, tu es un athlète"
+    },
+    {
+      "type": "image_picker",
+      "id": "hero_image",
+      "label": "Image Hero"
+    },
+    {
+      "type": "header",
+      "content": "Story Section"
+    },
+    {
+      "type": "text",
+      "id": "story_eyebrow",
+      "label": "Surtitre",
+      "default": "Notre Histoire"
+    },
+    {
+      "type": "textarea",
+      "id": "story_title",
+      "label": "Titre",
+      "default": "Tout a commencé avec une idée révolutionnaire"
+    },
+    {
+      "type": "richtext",
+      "id": "story_content",
+      "label": "Contenu",
+      "default": "<p>Depuis nos débuts, nous avons toujours cru au pouvoir du sport pour transformer les vies. Notre passion pour l'innovation et notre engagement envers les athlètes nous poussent à repousser constamment les limites.</p>"
+    },
+    {
+      "type": "image_picker",
+      "id": "story_image",
+      "label": "Image Story"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "value",
+      "name": "Valeur",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Titre",
+          "default": "Innovation"
+        },
+        {
+          "type": "textarea",
+          "id": "description",
+          "label": "Description",
+          "default": "Nous créons des produits qui aident les athlètes à se dépasser."
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Brand Story",
+      "category": "FAQ",
+      "blocks": [
+        {
+          "type": "value",
+          "settings": {
+            "title": "Innovation",
+            "description": "Nous créons des produits qui aident les athlètes à se dépasser."
+          }
+        },
+        {
+          "type": "value",
+          "settings": {
+            "title": "Performance",
+            "description": "Chaque détail compte pour améliorer les performances."
+          }
+        },
+        {
+          "type": "value",
+          "settings": {
+            "title": "Durabilité",
+            "description": "Notre engagement pour un avenir plus durable."
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
+
+<div class="nike-brand-story">
+  
+  <section class="brand-hero">
+    {% if section.settings.hero_image %}
+      <div class="hero-image">
+        <img 
+          src="{{ section.settings.hero_image | image_url: width: 2000 }}" 
+          alt="{{ section.settings.hero_title }}"
+          width="{{ section.settings.hero_image.width }}"
+          height="{{ section.settings.hero_image.height }}"
+          loading="eager"
+        >
+        <div class="hero-overlay"></div>
+      </div>
+    {% endif %}
+    
+    <div class="hero-content">
+      <h1>{{ section.settings.hero_title }}</h1>
+      <p class="hero-subtitle">{{ section.settings.hero_subtitle }}</p>
+      {% if section.settings.hero_note != blank %}
+        <p class="hero-note">{{ section.settings.hero_note }}</p>
+      {% endif %}
+    </div>
+  </section>
+  
+  <section class="brand-story-section">
+    <div class="story-container">
+      
+      <div class="story-content">
+        {% if section.settings.story_eyebrow != blank %}
+          <span class="story-eyebrow">{{ section.settings.story_eyebrow }}</span>
+        {% endif %}
+        <h2>{{ section.settings.story_title }}</h2>
+        <div class="story-text">
+          {{ section.settings.story_content }}
+        </div>
+      </div>
+      
+      {% if section.settings.story_image %}
+        <div class="story-image">
+          <img 
+            src="{{ section.settings.story_image | image_url: width: 1200 }}" 
+            alt="{{ section.settings.story_title }}"
+            width="{{ section.settings.story_image.width }}"
+            height="{{ section.settings.story_image.height }}"
+            loading="lazy"
+          >
+        </div>
+      {% endif %}
+      
+    </div>
+  </section>
+  
+  {% if section.blocks.size > 0 %}
+    <section class="brand-values">
+      <div class="values-container">
+        {% for block in section.blocks %}
+          <div class="value-item" {{ block.shopify_attributes }}>
+            <h3>{{ block.settings.title }}</h3>
+            <p>{{ block.settings.description }}</p>
+          </div>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+  
+</div>
+
+<style>
+  .nike-brand-story {
+    background: #ffffff;
+  }
+  
+  .brand-hero {
+    position: relative;
+    min-height: clamp(500px, 70vh, 700px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: #111111;
+  }
+  
+  .hero-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+  
+  .hero-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+  }
+  
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 0 clamp(20px, 5vw, 60px);
+    max-width: 900px;
+  }
+  
+  .hero-content h1 {
+    font-size: clamp(14px, 1.8vw, 18px);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #ffffff;
+    margin: 0 0 clamp(20px, 3vh, 32px);
+  }
+  
+  .hero-subtitle {
+    font-size: clamp(40px, 6vw, 72px);
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: #ffffff;
+    margin: 0 0 clamp(16px, 2vh, 24px);
+  }
+  
+  .hero-note {
+    font-size: clamp(14px, 1.8vw, 18px);
+    font-weight: 500;
+    font-style: italic;
+    color: #ffffff;
+    margin: 0;
+    opacity: 0.9;
+  }
+  
+  .brand-story-section {
+    padding: clamp(80px, 12vh, 140px) clamp(20px, 4vw, 60px);
+  }
+  
+  .story-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: clamp(60px, 8vw, 100px);
+    align-items: center;
+  }
+  
+  .story-eyebrow {
+    display: block;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #111111;
+    margin-bottom: 16px;
+  }
+  
+  .story-content h2 {
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    margin: 0 0 clamp(24px, 4vh, 32px);
+    color: #111111;
+  }
+  
+  .story-text {
+    font-size: clamp(16px, 2vw, 18px);
+    line-height: 1.7;
+    color: #111111;
+  }
+  
+  .story-text p {
+    margin: 0 0 20px;
+  }
+  
+  .story-text p:last-child {
+    margin-bottom: 0;
+  }
+  
+  .story-image {
+    width: 100%;
+    overflow: hidden;
+  }
+  
+  .story-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+  
+  .brand-values {
+    padding: clamp(60px, 10vh, 100px) clamp(20px, 4vw, 60px);
+    background: #f7f7f7;
+  }
+  
+  .values-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: clamp(40px, 6vw, 60px);
+  }
+  
+  .value-item h3 {
+    font-size: clamp(20px, 2.5vw, 28px);
+    font-weight: 700;
+    margin: 0 0 16px;
+    color: #111111;
+  }
+  
+  .value-item p {
+    font-size: clamp(15px, 1.8vw, 17px);
+    line-height: 1.6;
+    color: #111111;
+    margin: 0;
+  }
+  
+  @media (max-width: 1024px) {
+    .story-container {
+      grid-template-columns: 1fr;
+      gap: 40px;
+    }
+    
+    .values-container {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 40px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .brand-hero {
+      min-height: 500px;
+    }
+    
+    .brand-story-section {
+      padding: 60px 20px;
+    }
+    
+    .brand-values {
+      padding: 60px 20px;
+    }
+    
+    .values-container {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+  }
+</style>

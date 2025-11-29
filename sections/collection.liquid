@@ -1,0 +1,694 @@
+{%- style -%}
+  /* --- VARIABLES CSS & CONFIGURATION --- */
+  :root {
+    --color-black: #111111;
+    --color-white: #FFFFFF;
+    --color-grey-900: #1F1F21;
+    --color-grey-500: #707072;
+    --color-grey-300: #CACACB;
+    --color-grey-100: #F5F5F5;
+    --color-grey-50: #FAFAFA;
+    --spacing-l: 24px;
+    --spacing-m: 12px;
+    --spacing-s: 8px;
+    --duration: 250ms;
+    
+    --section-bg: {{ section.settings.section_bg }};
+    --section-text: {{ section.settings.section_text }};
+    --promo-opacity: {{ section.settings.promo_opacity }};
+    --promo-text-h-align: {{ section.settings.promo_text_h_align }};
+    --promo-text-v-align: {{ section.settings.promo_text_v_align }};
+    --promo-text-color: {{ section.settings.promo_text_color }};
+    --promo-cta-text-color: {{ section.settings.promo_cta_text_color }};
+    --promo-cta-bg-color: {{ section.settings.promo_cta_bg_color }};
+    --products-per-row-desktop: {{ section.settings.products_per_row_desktop }};
+    --products-per-row-tablet: {{ section.settings.products_per_row_tablet }};
+    --products-per-row-mobile: {{ section.settings.products_per_row_mobile }};
+  }
+
+  * { box-sizing: border-box; }
+
+  /* Anti-FOUC */
+  .collection-wall { opacity: 1; transition: opacity 0.3s ease; }
+  .left-nav-wrapper, .drawer-toggle, .dropdown { opacity: 1; transition: opacity 0.2s ease-in-out; }
+  .desktop-only { display: flex !important; }
+  @media (max-width: 1024px) { .desktop-only { display: none !important; } }
+
+  .collection-wall { width: 100%; margin: 0; padding: 0; position: relative; background: var(--section-bg); color: var(--section-text); }
+  
+  .wall-header { position: sticky; top: 0; background: var(--section-bg); z-index: 20; padding: 16px 32px; border-bottom: 1px solid var(--color-grey-300); display: flex; align-items: center; height: 80px; }
+  @media (max-width: 1024px) { .wall-header { padding: 16px 20px; border-bottom: 1px solid var(--color-grey-300); box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04); height: 72px; } }
+  
+  .wall-header__content { display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 32px; }
+  @media (max-width: 1024px) { .wall-header__content { align-items: center; gap: 12px; } }
+  
+  .wall-header__title-wrapper { display: flex; align-items: flex-end; gap: 16px; min-width: 0; flex: 1; }
+  @media (max-width: 1024px) { .wall-header__title-wrapper { flex-direction: row; align-items: center; gap: 8px; } }
+  
+  .wall-header__title { font-size: 2rem; font-weight: 600; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--section-text); }
+  @media (max-width: 1024px) { .wall-header__title { font-size: 1.25rem; font-weight: 600; white-space: normal; overflow: visible; text-overflow: clip; } }
+  @media (max-width: 768px) { .wall-header__title { font-size: 1.15rem; } }
+  
+  .wall-header__item_count { color: var(--color-grey-500); font-size: 1rem; padding-bottom: 4px; white-space: nowrap; display: inline; }
+  @media (max-width: 1024px) { .wall-header__item_count { padding-bottom: 0; font-size: 0.9rem; font-weight: 500; } }
+  
+  .wall-header__nav { display: flex; align-items: center; gap: 16px; margin-left: auto; flex-shrink: 0; }
+  @media (max-width: 1024px) { .wall-header__nav { margin-left: 0; } }
+  
+  .drawer-toggle { background: transparent; border: 1px solid var(--color-grey-300); padding: 8px 10px; cursor: pointer; display: none; align-items: center; justify-content: center; gap: 0; font-size: 0; font-weight: 500; color: var(--section-text); border-radius: 4px; transition: all var(--duration); white-space: nowrap; }
+  @media (max-width: 1024px) { .drawer-toggle { display: flex; padding: 8px 10px; } }
+  @media (max-width: 768px) { .drawer-toggle { padding: 7px 9px; } }
+  .drawer-toggle:hover { border-color: var(--section-text); background: var(--color-grey-50); }
+  .drawer-toggle:active { transform: scale(0.96); }
+  .drawer-toggle svg { width: 20px; height: 20px; flex-shrink: 0; stroke-width: 2; }
+  @media (max-width: 768px) { .drawer-toggle svg { width: 18px; height: 18px; } }
+  
+  .sort { position: relative; display: flex; }
+  .dropdown { position: relative; display: flex; }
+  .dropdown__btn { background: transparent; border: 1px solid var(--color-grey-300); padding: 10px 16px; cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 0.875rem; font-weight: 500; color: var(--section-text); border-radius: 0; transition: all var(--duration); }
+  .dropdown__btn:hover { border-color: var(--section-text); background: transparent; }
+  .dropdown__btn:hover .icon-chevron { stroke-width: 2.5; }
+  .dropdown__btn-text { white-space: nowrap; }
+  .icon-chevron { width: 16px; height: 16px; transition: all var(--duration); flex-shrink: 0; }
+  .dropdown__btn[aria-expanded="true"] .icon-chevron { transform: rotate(180deg); }
+  
+  .dropdown__options-wrapper { position: absolute; top: calc(100% + 8px); right: 0; background: var(--section-bg); border: 1px solid var(--color-grey-300); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12); z-index: 100; min-width: 220px; border-radius: 0; overflow: hidden; }
+  .dropdown__options-wrapper[hidden] { display: none; }
+  .dropdown__options-list { list-style: none; padding: 0; margin: 0; }
+  .dropdown__option { width: 100%; padding: 12px 16px; background: transparent; border: none; text-align: left; cursor: pointer; font-size: 0.875rem; color: var(--section-text); transition: background var(--duration); }
+  .dropdown__option:hover { background: var(--color-grey-50); }
+  
+  .collection-body { display: grid; grid-template-columns: 280px 1fr; gap: 32px; padding: 32px; position: relative; min-height: calc(100vh - 80px); }
+  @media (max-width: 1024px) { .collection-body { grid-template-columns: 1fr; padding: 0; gap: 0; min-height: calc(100vh - 72px); } }
+  
+  .drawer-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0); z-index: 99; pointer-events: none; transition: background var(--duration); }
+  .drawer-overlay.overlay-visible { background: rgba(0, 0, 0, 0.5); pointer-events: auto; }
+  
+  .left-nav-wrapper { position: sticky; top: 80px; height: fit-content; background: transparent; align-self: start; }
+  @media (max-width: 1024px) { .left-nav-wrapper { position: fixed; top: 0; left: 0; width: 85vw; max-width: 400px; height: 100vh; background: var(--section-bg); z-index: 1000; display: flex; flex-direction: column; transform: translateX(-100%); transition: transform var(--duration), opacity var(--duration); overflow-y: auto; box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15); } .left-nav-wrapper.drawer-open { transform: translateX(0); } }
+  
+  .left-nav-header { display: none; align-items: center; justify-content: space-between; padding: 20px; border-bottom: 1px solid var(--color-grey-300); gap: 12px; background: var(--section-bg); }
+  @media (max-width: 1024px) { .left-nav-header { display: flex; } }
+  .left-nav-header h2 { margin: 0; font-size: 1.25rem; font-weight: 600; flex: 1; color: var(--section-text); }
+  .close-drawer { background: transparent; border: none; padding: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; border-radius: 0; transition: all var(--duration); flex-shrink: 0; color: var(--section-text); }
+  .close-drawer:hover { background: var(--color-grey-100); }
+  .close-drawer svg { width: 24px; height: 24px; }
+  
+  .left-nav { display: flex; flex-direction: column; flex: 1; overflow-y: auto; }
+  .left-nav__filters { display: flex; flex-direction: column; }
+  .filters { display: flex; flex-direction: column; gap: 0; }
+  .filter-group { border-bottom: 1px solid var(--color-grey-300); }
+  .filter-group:last-child { border-bottom: none; }
+  .filter-group__btn { width: 100%; padding: 16px 20px; background: transparent; border: none; cursor: pointer; font-size: 1rem; font-weight: 600; text-align: left; display: flex; align-items: center; justify-content: space-between; transition: background var(--duration); color: var(--section-text); }
+  @media (max-width: 1024px) { .filter-group__btn { padding: 14px 16px; font-size: 0.95rem; } }
+  .filter-group__btn:hover { background: var(--color-grey-50); }
+  .trigger-content { display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 12px; }
+  .trigger-content__label { font-weight: 600; font-size: 1rem; }
+  .filter-group__btn[aria-expanded="true"] .icon-chevron { transform: rotate(180deg); }
+  .filter-group__content { padding: 0; max-height: 0; overflow: hidden; transition: max-height var(--duration); }
+  .filter-group__content[hidden="hidden"] { display: none; max-height: 0; }
+  .filter-group__content:not([hidden]) { max-height: 600px; padding: 8px 20px 16px; display: block; }
+  @media (max-width: 1024px) { .filter-group__content:not([hidden]) { padding: 8px 16px 14px; } }
+  .filter-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; cursor: pointer; font-size: 0.9rem; transition: color var(--duration); color: var(--section-text); }
+  .filter-item:hover { color: var(--color-grey-500); }
+  .filter-checkbox { display: none; }
+  .pseudo-checkbox { width: 18px; height: 18px; border: 2px solid var(--color-grey-500); flex-shrink: 0; transition: all var(--duration); border-radius: 3px; cursor: pointer; }
+  .filter-checkbox:checked + .pseudo-checkbox { background: var(--section-text); border-color: var(--section-text); }
+  .filter-item__label { display: flex; align-items: center; gap: 4px; flex: 1; }
+  .filter-count { color: var(--color-grey-500); font-size: 0.75rem; }
+  
+  .price-filter-wrapper { display: flex; flex-direction: column; gap: 12px; padding: 12px 0; }
+  .price-inputs { display: flex; gap: 10px; }
+  .price-input-group { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+  .price-label { font-size: 0.75rem; font-weight: 600; color: var(--color-grey-500); text-transform: uppercase; letter-spacing: 0.5px; }
+  .price-input { width: 100%; padding: 10px; border: 1px solid var(--color-grey-300); background: transparent; font-size: 0.875rem; color: var(--section-text); border-radius: 0; transition: all var(--duration); }
+  .price-input:focus { outline: none; border-color: var(--section-text); background: var(--color-grey-50); }
+  .price-filter-btn { padding: 10px 16px; background: var(--section-text); color: var(--section-bg); border: 1px solid var(--section-text); cursor: pointer; font-weight: 600; font-size: 0.875rem; border-radius: 0; transition: all var(--duration); }
+  .price-filter-btn:hover { background: transparent; color: var(--section-text); }
+  
+  .mobile-sort { display: none; }
+  @media (max-width: 1024px) { .mobile-sort { display: block; } }
+  .mobile-sort-option { width: 100%; padding: 12px 16px; background: transparent; border: none; text-align: left; cursor: pointer; font-size: 0.9rem; color: var(--section-text); transition: background var(--duration); }
+  .mobile-sort-option:hover { background: var(--color-grey-100); }
+  
+  .collection-main { flex: 1; min-width: 0; }
+  .product-grid { display: block; }
+  .product-grid__items { display: grid; grid-template-columns: repeat(var(--products-per-row-desktop), 1fr); gap: 28px; width: 100%; }
+  @media (min-width: 768px) and (max-width: 1024px) { .product-grid__items { grid-template-columns: repeat(var(--products-per-row-tablet), 1fr); gap: 24px; padding: 28px; } }
+  @media (max-width: 767px) { .product-grid__items { grid-template-columns: repeat(var(--products-per-row-mobile), 1fr); gap: 16px; padding: 16px; } }
+  @media (max-width: 480px) { .product-grid__items { gap: 14px; padding: 12px; } }
+  
+  .product-card-wrapper { position: relative; width: 100%; min-height: 400px; }
+  @media (max-width: 768px) { .product-card-wrapper { min-height: 320px; } }
+  .product-skeleton { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--section-bg); transition: opacity 0.3s ease-in-out; pointer-events: none; z-index: 2; }
+  .product-skeleton.hidden { opacity: 0; visibility: hidden; }
+  .skeleton-image { width: 100%; aspect-ratio: 1; background: linear-gradient(90deg, var(--color-grey-100) 25%, var(--color-grey-50) 50%, var(--color-grey-100) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 0; }
+  .skeleton-content { padding: 12px 0; display: flex; flex-direction: column; gap: 10px; }
+  .skeleton-line { height: 12px; background: linear-gradient(90deg, var(--color-grey-100) 25%, var(--color-grey-50) 50%, var(--color-grey-100) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 4px; }
+  .skeleton-title { width: 70%; height: 16px; }
+  .skeleton-price { width: 40%; height: 14px; }
+  
+  @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+  .product-card-loaded { opacity: 1; }
+  
+  .promo-banner { grid-column: 1 / -1; position: relative; height: 420px; margin: 48px 0; overflow: hidden; border-radius: 0; }
+  @media (max-width: 1024px) { .promo-banner { height: 320px; margin: 36px 0; } }
+  @media (max-width: 768px) { .promo-banner { height: 280px; margin: 28px 0; } }
+  .promo-banner__bg-image { position: absolute; width: 100%; height: 100%; object-fit: cover; object-position: center; }
+  .promo-banner__overlay { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, var(--promo-opacity)); display: flex; align-items: var(--promo-text-v-align); justify-content: var(--promo-text-h-align); }
+  @media (max-width: 768px) { .promo-banner__overlay { align-items: center; justify-content: center; } }
+  .promo-banner__content { position: relative; z-index: 2; display: flex; flex-direction: column; gap: 24px; align-items: var(--promo-text-h-align); justify-content: var(--promo-text-v-align); color: var(--promo-text-color); padding: 48px; text-align: var(--promo-text-h-align); }
+  @media (max-width: 768px) { .promo-banner__content { text-align: center; align-items: center; justify-content: center; } }
+  .promo-banner__text { font-size: 2.2rem; font-weight: 700; line-height: 1.2; }
+  @media (max-width: 768px) { .promo-banner__text { font-size: 1.6rem; } }
+  .promo-banner__cta { display: inline-block; padding: 14px 32px; background: var(--promo-cta-bg-color); color: var(--promo-cta-text-color); text-decoration: none; font-weight: 700; font-size: 0.9rem; border-radius: 0; border: 2px solid var(--promo-cta-bg-color); transition: all var(--duration); letter-spacing: 0.5px; }
+  .promo-banner__cta:hover { background: transparent; border-color: var(--promo-cta-bg-color); color: var(--promo-cta-bg-color); }
+  .empty-state { padding: 32px; text-align: center; color: var(--color-grey-500); grid-column: 1 / -1; font-size: 1rem; }
+{%- endstyle -%}
+
+<div class="collection-wall" id="collection-wall">
+  {% comment %} Header avec titre et filtres {% endcomment %}
+  <header class="wall-header">
+    <div class="wall-header__content">
+      <div class="wall-header__title-wrapper">
+        <h1 class="wall-header__title">{{ collection.title }} <span class="wall-header__item_count">({{ collection.products_count }})</span></h1>
+      </div>
+      <nav class="wall-header__nav">
+        <button class="drawer-toggle" id="drawer-toggle" aria-label="Ouvrir les filtres">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+
+        <div class="sort desktop-only">
+          <div class="dropdown">
+            <button class="dropdown__btn" id="dropdown-btn" aria-expanded="false" aria-label="Trier par">
+              <span class="dropdown__btn-text">Trier par</span>
+              <svg class="icon-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </button>
+            <div class="dropdown__options-wrapper" id="sort-options" hidden>
+              <div class="dropdown__options-list">
+                <button class="dropdown__option" data-sort-value="">En vedette</button>
+                <button class="dropdown__option" data-sort-value="?sort_by=newest">Les plus récents</button>
+                <button class="dropdown__option" data-sort-value="?sort_by=price-descending">Prix : décroissant</button>
+                <button class="dropdown__option" data-sort-value="?sort_by=price-ascending">Prix : croissant</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <div class="collection-body" id="collection-body">
+    <div class="drawer-overlay" id="drawer-overlay"></div>
+
+    <aside class="left-nav-wrapper" id="left-nav">
+      <div class="left-nav-header">
+        <h2>Filtres & Tri</h2>
+        <button class="close-drawer" id="close-drawer" aria-label="Fermer">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18"></line>
+            <line x1="6" y1="6" x2="18" y2="18"></line>
+          </svg>
+        </button>
+      </div>
+
+      <nav class="left-nav">
+        <div class="left-nav__filters">
+          <div class="filters">
+            <div class="mobile-sort filter-group">
+              <button class="filter-group__btn" aria-expanded="false">
+                <div class="trigger-content">
+                  <div class="trigger-content__label">Tri</div>
+                  <svg class="icon-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </div>
+              </button>
+              <div class="filter-group__content" hidden>
+                <button class="mobile-sort-option" data-sort-value="">En vedette</button>
+                <button class="mobile-sort-option" data-sort-value="?sort_by=newest">Les plus récents</button>
+                <button class="mobile-sort-option" data-sort-value="?sort_by=price-descending">Prix : décroissant</button>
+                <button class="mobile-sort-option" data-sort-value="?sort_by=price-ascending">Prix : croissant</button>
+              </div>
+            </div>
+
+            {%- for filter in collection.filters -%}
+              <div class="filter-group">
+                <button class="filter-group__btn" aria-expanded="false">
+                  <div class="trigger-content">
+                    <div class="trigger-content__label">{{ filter.label }}</div>
+                    <svg class="icon-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </div>
+                </button>
+                <div class="filter-group__content" hidden>
+                  {%- case filter.type -%}
+                    {%- when 'list' -%}
+                      {%- for value in filter.values -%}
+                        <label class="filter-item">
+                          <input type="checkbox" name="{{ value.param_name }}" value="{{ value.value }}" class="filter-checkbox" {% if value.active %}checked{% endif %}>
+                          <div class="pseudo-checkbox"></div>
+                          <span class="filter-item__label">{{ value.label }} <span class="filter-count">({{ value.count }})</span></span>
+                        </label>
+                      {%- endfor -%}
+                    {%- when 'price_range' -%}
+                      <div class="price-filter-wrapper">
+                        <div class="price-inputs">
+                          <div class="price-input-group">
+                            <label class="price-label">Min</label>
+                            <input type="number" class="price-input" placeholder="0" min="0" name="{{ filter.min_value.param_name }}" {% if filter.min_value.value %}value="{{ filter.min_value.value | money_without_currency | replace: ',', '' }}"{% endif %}>
+                          </div>
+                          <div class="price-input-group">
+                            <label class="price-label">Max</label>
+                            <input type="number" class="price-input" placeholder="{{ filter.range_max | money_without_currency | replace: ',', '' }}" min="0" name="{{ filter.max_value.param_name }}" {% if filter.max_value.value %}value="{{ filter.max_value.value | money_without_currency | replace: ',', '' }}"{% endif %}>
+                          </div>
+                        </div>
+                        <button class="price-filter-btn" type="button">Appliquer</button>
+                      </div>
+                  {%- endcase -%}
+                </div>
+              </div>
+            {%- endfor -%}
+          </div>
+        </div>
+      </nav>
+    </aside>
+
+    <main class="collection-main">
+      <section class="product-grid">
+        {% comment %} MODIFICATION: Augmentation de la limite de pagination à 1000 pour afficher "tout" {% endcomment %}
+        {% paginate collection.products by 1000 %}
+          <div class="product-grid__items" id="skip-to-products">
+            {% if collection.products.size > 0 %}
+              {% assign product_count = 0 %}
+              {% assign items_per_row_desktop = section.settings.products_per_row_desktop %}
+              {% assign row_promo_frequency = section.settings.row_promo_frequency | plus: 0 %}
+              {% assign banner_count = 0 %}
+
+              {% for product in collection.products %}
+                {% assign product_count = product_count | plus: 1 %}
+
+                {% if row_promo_frequency > 0 and product_count > 1 %}
+                  {% assign products_before_banner = row_promo_frequency | times: items_per_row_desktop %}
+                  {% assign check_banner = product_count | minus: 1 | modulo: products_before_banner %}
+                  {% if check_banner == 0 %}
+                    {% assign banner_count = banner_count | plus: 1 %}
+                    {% assign banner_type = banner_count | modulo: 2 %}
+                    
+                    {% if banner_type == 1 and section.settings.enable_promo_1 %}
+                      <div class="promo-banner">
+                        {% if section.settings.row_promo_image_1 %}
+                          <img src="{{ section.settings.row_promo_image_1 | image_url: width: 1200, height: 420 }}" alt="{{ section.settings.row_promo_text_1 }}" class="promo-banner__bg-image" width="1200" height="420" loading="lazy">
+                        {% endif %}
+                        <div class="promo-banner__overlay">
+                          <div class="promo-banner__content">
+                            {% if section.settings.row_promo_text_1 %}
+                              <div class="promo-banner__text">{{ section.settings.row_promo_text_1 }}</div>
+                            {% endif %}
+                            {% if section.settings.row_promo_cta_text_1 and section.settings.row_promo_url_1 %}
+                              <a href="{{ section.settings.row_promo_url_1 }}" class="promo-banner__cta">{{ section.settings.row_promo_cta_text_1 }}</a>
+                            {% endif %}
+                          </div>
+                        </div>
+                      </div>
+                    {% elsif banner_type == 0 and section.settings.enable_promo_2 %}
+                      <div class="promo-banner">
+                        {% if section.settings.row_promo_image_2 %}
+                          <img src="{{ section.settings.row_promo_image_2 | image_url: width: 1200, height: 420 }}" alt="{{ section.settings.row_promo_text_2 }}" class="promo-banner__bg-image" width="1200" height="420" loading="lazy">
+                        {% endif %}
+                        <div class="promo-banner__overlay">
+                          <div class="promo-banner__content">
+                            {% if section.settings.row_promo_text_2 %}
+                              <div class="promo-banner__text">{{ section.settings.row_promo_text_2 }}</div>
+                            {% endif %}
+                            {% if section.settings.row_promo_cta_text_2 and section.settings.row_promo_url_2 %}
+                              <a href="{{ section.settings.row_promo_url_2 }}" class="promo-banner__cta">{{ section.settings.row_promo_cta_text_2 }}</a>
+                            {% endif %}
+                          </div>
+                        </div>
+                      </div>
+                    {% endif %}
+                  {% endif %}
+                {% endif %}
+
+                <div class="product-card-wrapper">
+                  <div class="product-skeleton">
+                    <div class="skeleton-image"></div>
+                    <div class="skeleton-content">
+                      <div class="skeleton-line skeleton-title"></div>
+                      <div class="skeleton-line skeleton-price"></div>
+                    </div>
+                  </div>
+                  <div class="product-card-loaded">
+                    {% render 'product-card', product: product %}
+                  </div>
+                </div>
+              {% endfor %}
+            {% else %}
+              <div class="empty-state">
+                <p>Aucun produit trouvé</p>
+              </div>
+            {% endif %}
+          </div>
+          
+          {% comment %} 
+            MODIFICATION : Suppression totale des boutons de pagination
+            (Le code original affichait {{ paginate | default_pagination }} ici)
+          {% endcomment %}
+          
+        {% endpaginate %}
+      </section>
+    </main>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  requestAnimationFrame(() => {
+    document.querySelectorAll('.product-skeleton').forEach(skeleton => {
+      skeleton.classList.add('hidden');
+    });
+  });
+
+  const drawerToggle = document.getElementById('drawer-toggle');
+  const closeDrawer = document.getElementById('close-drawer');
+  const leftNav = document.getElementById('left-nav');
+  const drawerOverlay = document.getElementById('drawer-overlay');
+  const filterGroups = document.querySelectorAll('.filter-group__btn');
+  const dropdownBtn = document.getElementById('dropdown-btn');
+  const sortOptions = document.getElementById('sort-options');
+  const sortButtons = document.querySelectorAll('.dropdown__option');
+  const mobileSortOptions = document.querySelectorAll('.mobile-sort-option');
+
+  if (drawerToggle) {
+    drawerToggle.addEventListener('click', function(e) {
+      e.stopPropagation();
+      leftNav.classList.add('drawer-open');
+      drawerOverlay.classList.add('overlay-visible');
+      document.body.style.overflow = 'hidden';
+    });
+  }
+
+  if (closeDrawer) {
+    closeDrawer.addEventListener('click', function(e) {
+      e.stopPropagation();
+      leftNav.classList.remove('drawer-open');
+      drawerOverlay.classList.remove('overlay-visible');
+      document.body.style.overflow = 'auto';
+    });
+  }
+
+  if (drawerOverlay) {
+    drawerOverlay.addEventListener('click', function() {
+      leftNav.classList.remove('drawer-open');
+      drawerOverlay.classList.remove('overlay-visible');
+      document.body.style.overflow = 'auto';
+    });
+  }
+
+  filterGroups.forEach(btn => {
+    btn.addEventListener('click', function() {
+      const content = this.nextElementSibling;
+      const isExpanded = this.getAttribute('aria-expanded') === 'true';
+      this.setAttribute('aria-expanded', !isExpanded);
+      if (content && content.classList.contains('filter-group__content')) {
+        if (isExpanded) {
+          content.setAttribute('hidden', 'hidden');
+        } else {
+          content.removeAttribute('hidden');
+        }
+      }
+    });
+  });
+
+  if (dropdownBtn && sortOptions) {
+    dropdownBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      const isExpanded = this.getAttribute('aria-expanded') === 'true';
+      this.setAttribute('aria-expanded', !isExpanded);
+      if (isExpanded) {
+        sortOptions.setAttribute('hidden', '');
+      } else {
+        sortOptions.removeAttribute('hidden');
+      }
+    });
+
+    sortButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const sortValue = this.getAttribute('data-sort-value');
+        if (sortValue) {
+          window.location.search = sortValue;
+        } else {
+          window.location.search = '';
+        }
+      });
+    });
+
+    document.addEventListener('click', function(e) {
+      if (!e.target.closest('.sort')) {
+        dropdownBtn.setAttribute('aria-expanded', 'false');
+        sortOptions.setAttribute('hidden', '');
+      }
+    });
+  }
+
+  mobileSortOptions.forEach(button => {
+    button.addEventListener('click', function() {
+      const sortValue = this.getAttribute('data-sort-value');
+      if (sortValue) {
+        window.location.search = sortValue;
+      } else {
+        window.location.search = '';
+      }
+    });
+  });
+
+  const filterCheckboxes = document.querySelectorAll('.filter-checkbox');
+  filterCheckboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', function() {
+      const params = new URLSearchParams(window.location.search);
+      if(this.checked) {
+        params.append(this.name, this.value);
+      } else {
+        const values = params.getAll(this.name).filter(v => v !== this.value);
+        params.delete(this.name);
+        values.forEach(v => params.append(this.name, v));
+      }
+      window.location.search = params.toString();
+    });
+  });
+
+  const priceFilterBtns = document.querySelectorAll('.price-filter-btn');
+  priceFilterBtns.forEach(btn => {
+    btn.addEventListener('click', function() {
+      const wrapper = this.closest('.price-filter-wrapper');
+      const inputs = wrapper.querySelectorAll('.price-input');
+      const minInput = inputs[0];
+      const maxInput = inputs[1];
+      const params = new URLSearchParams(window.location.search);
+      if(minInput.value) params.set(minInput.name, minInput.value);
+      else params.delete(minInput.name);
+      if(maxInput.value) params.set(maxInput.name, maxInput.value);
+      else params.delete(maxInput.name);
+      window.location.search = params.toString();
+    });
+  });
+});
+</script>
+
+{% schema %}
+{
+  "name": "Collection",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Couleurs - Générale"
+    },
+    {
+      "type": "color",
+      "id": "section_bg",
+      "label": "Fond section",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "section_text",
+      "label": "Couleur texte",
+      "default": "#111111"
+    },
+    {
+      "type": "header",
+      "content": "Grille de produits"
+    },
+    {
+      "type": "range",
+      "id": "products_per_row_desktop",
+      "label": "Produits par ligne (PC)",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "products_per_row_tablet",
+      "label": "Produits par ligne (Tablette)",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "products_per_row_mobile",
+      "label": "Produits par ligne (Mobile)",
+      "min": 1,
+      "max": 3,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "header",
+      "content": "Filtres"
+    },
+    {
+      "type": "paragraph",
+      "content": "Les filtres sont gérés automatiquement via l'application 'Search & Discovery'."
+    },
+    {
+      "type": "header",
+      "content": "Bandeau Promo 1"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_promo_1",
+      "label": "Activer ce bandeau",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "row_promo_frequency",
+      "label": "Afficher tous les X rangées",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "default": 2
+    },
+    {
+      "type": "image_picker",
+      "id": "row_promo_image_1",
+      "label": "Image 1"
+    },
+    {
+      "type": "text",
+      "id": "row_promo_text_1",
+      "label": "Texte 1"
+    },
+    {
+      "type": "text",
+      "id": "row_promo_cta_text_1",
+      "label": "Bouton 1"
+    },
+    {
+      "type": "url",
+      "id": "row_promo_url_1",
+      "label": "Lien 1"
+    },
+    {
+      "type": "header",
+      "content": "Bandeau Promo 2"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_promo_2",
+      "label": "Activer ce bandeau",
+      "default": true
+    },
+    {
+      "type": "image_picker",
+      "id": "row_promo_image_2",
+      "label": "Image 2"
+    },
+    {
+      "type": "text",
+      "id": "row_promo_text_2",
+      "label": "Texte 2"
+    },
+    {
+      "type": "text",
+      "id": "row_promo_cta_text_2",
+      "label": "Bouton 2"
+    },
+    {
+      "type": "url",
+      "id": "row_promo_url_2",
+      "label": "Lien 2"
+    },
+    {
+      "type": "header",
+      "content": "Style Bandeaux"
+    },
+    {
+      "type": "range",
+      "id": "promo_opacity",
+      "label": "Opacité Overlay",
+      "min": 0,
+      "max": 1,
+      "step": 0.1,
+      "default": 0.3
+    },
+    {
+      "type": "color",
+      "id": "promo_text_color",
+      "label": "Couleur Texte",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "promo_cta_bg_color",
+      "label": "Fond Bouton",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "promo_cta_text_color",
+      "label": "Texte Bouton",
+      "default": "#111111"
+    },
+    {
+      "type": "select",
+      "id": "promo_text_h_align",
+      "label": "Alignement Horizontal",
+      "options": [
+        { "value": "flex-start", "label": "Gauche" },
+        { "value": "center", "label": "Centre" },
+        { "value": "flex-end", "label": "Droite" }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "promo_text_v_align",
+      "label": "Alignement Vertical",
+      "options": [
+        { "value": "flex-start", "label": "Haut" },
+        { "value": "center", "label": "Centre" },
+        { "value": "flex-end", "label": "Bas" }
+      ],
+      "default": "center"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection Wall"
+    }
+  ]
+}
+{% endschema %}

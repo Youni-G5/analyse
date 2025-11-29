@@ -1,0 +1,627 @@
+<div class="collection-grid-wrapper-{{ section.id }}" 
+     data-section-id="{{ section.id }}" 
+     data-theme 
+     invert-colors="{{ section.settings.invert_colors | default: false }}" 
+     style="padding-top: {{ section.settings.section_padding_top }}px; padding-bottom: {{ section.settings.section_padding_bottom }}px;">
+
+  {% if section.settings.show_collection_title %}
+    <div class="collection-header" style="color: {% if section.settings.invert_colors %}#fff{% else %}#000{% endif %}; background: {% if section.settings.invert_colors %}#000{% else %}#fff{% endif %}; margin-bottom: {{ section.settings.title_spacing | default: 24 }}px;">
+      <h1 class="collection-title" style="color: {% if section.settings.invert_colors %}#fff{% else %}#000{% endif %};">
+        {{ collection.title }}
+      </h1>
+      {% if section.settings.show_collection_description and collection.description != blank %}
+        <div class="collection-description" style="color: {% if section.settings.invert_colors %}rgba(255,255,255,0.85){% else %}rgba(0,0,0,0.7){% endif %};">
+          {{ collection.description }}
+        </div>
+      {% endif %}
+    </div>
+  {% else %}
+    <div style="height: {{ section.settings.top_spacing }}px;"></div>
+  {% endif %}
+
+  <div class="collection-container" style="color: {% if section.settings.invert_colors %}#fff{% else %}#000{% endif %}; padding-left: {{ section.settings.section_horizontal_padding | default: 0 }}px; padding-right: {{ section.settings.section_horizontal_padding | default: 0 }}px;">
+    <div class="no-scrollbar" style="position: relative; width: 100%; background: {% if section.settings.invert_colors %}#000{% else %}#fff{% endif %};">
+      <div class="tw-grid tw-absolute tw-left-0 tw-right-0" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0px;">
+        {% paginate collection.products by section.settings.products_per_page %}
+          {% for product in collection.products %}
+            <div data-page="{{ paginate.current_page }}" style="width: 100%; height: 100%; box-sizing: border-box;">
+              <!-- Carte avec bordure unique -->
+              <div class="GridStyles__GridCellWrapper" data-grid-cell-position="{{ forloop.index0 }}" data-grid-cell-name="{{ product.id }}" style="height: 100%; position: relative; border: 0;">
+                <!-- Contour unique autour de la carte -->
+                <div class="GridCellCardBorder" aria-hidden="true" style="position:absolute; top:0; left:0; right:0; bottom:0; pointer-events:none; box-sizing: border-box;"></div>
+
+                <a aria-label="{{ product.title | escape | downcase }}" href="{{ product.url }}" class="GridCellLink__Link" style="display: block; height: 100%;">
+                  <div class="GridCellProductInfo__ProductInfo" style="background: {% if section.settings.invert_colors %}#111{% else %}#fff{% endif %}; color: {% if section.settings.invert_colors %}#fff{% else %}#000{% endif %};">
+                    <div class="GridCellProductInfo__YearNameWrapper">
+                      <div data-qa="grid_cell_product_name" class="GridCellProductInfo__ProductName" style="color: {% if section.settings.invert_colors %}#fff{% else %}#000{% endif %};">
+                        {{ product.title }}
+                      </div>
+                      {% if section.settings.show_vendor and product.vendor != blank %}
+                        <div class="GridCellProductInfo__ProductVendor" style="color: {% if section.settings.invert_colors %}#fff{% else %}#000{% endif %};">
+                          {{ product.vendor }}
+                        </div>
+                      {% endif %}
+                      {% if section.settings.show_release_date and product.metafields.custom.release_date %}
+                        <div data-qa="grid_cell_product_release_date" class="GridCellProductInfo__ReleaseDate" style="color: {% if section.settings.invert_colors %}#fff{% else %}#000{% endif %};">
+                          {{ product.metafields.custom.release_date }}
+                        </div>
+                      {% endif %}
+                    </div>
+
+                    <div class="GridCellProductInfo__PriceOrWantWrapper">
+                      <div class="GridCellProductInfo__PriceWrapper">
+                        <div data-qa="grid_cell_product_price" class="GridCellProductInfo__ProductPrice">
+                          <span class="GridCellProductInfo__CurrentPrice">{{ product.price | money }}</span>
+                          {% if product.compare_at_price > product.price %}
+                            <span class="GridCellProductInfo__ComparePrice">{{ product.compare_at_price | money }}</span>
+                          {% endif %}
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="GridCellProductImage__ImageWrapper" style="background: {% if section.settings.invert_colors %}#000{% else %}#fff{% endif %};">
+                    <img
+                      alt="{{ product.title | escape }}"
+                      data-qa="grid_cell_product_image"
+                      width="1200"
+                      height="1200"
+                      sizes="(min-width: 1024px) calc({{ 100 | divided_by: section.settings.columns_desktop }}vw - 48px), (min-width: 768px) calc({{ 100 | divided_by: section.settings.columns_tablet }}vw - 48px), 50vw"
+                      class="GridCellProductImage__Image"
+                      src="{{ product.featured_image | image_url: width: 1200 }}"
+                      srcset="{{ product.featured_image | image_url: width: 300 }} 300w,
+                              {{ product.featured_image | image_url: width: 400 }} 400w,
+                              {{ product.featured_image | image_url: width: 500 }} 500w,
+                              {{ product.featured_image | image_url: width: 600 }} 600w,
+                              {{ product.featured_image | image_url: width: 700 }} 700w,
+                              {{ product.featured_image | image_url: width: 800 }} 800w,
+                              {{ product.featured_image | image_url: width: 900 }} 900w,
+                              {{ product.featured_image | image_url: width: 1000 }} 1000w,
+                              {{ product.featured_image | image_url: width: 1200 }} 1200w,
+                              {{ product.featured_image | image_url: width: 1400 }} 1400w,
+                              {{ product.featured_image | image_url: width: 1600 }} 1600w,
+                              {{ product.featured_image | image_url: width: 1800 }} 1800w,
+                              {{ product.featured_image | image_url: width: 2000 }} 2000w,
+                              {{ product.featured_image | image_url: width: 2400 }} 2400w"
+                      loading="lazy" />
+                  </div>
+                </a>
+              </div>
+            </div>
+          {% endfor %}
+        {% endpaginate %}
+      </div>
+    </div>
+
+    {% paginate collection.products by section.settings.products_per_page %}
+      {% if paginate.pages > 1 %}
+        <div class="pagination-wrapper">
+          <nav class="pagination" role="navigation" aria-label="Pagination">
+            {% if paginate.previous %}
+              <a href="{{ paginate.previous.url }}" class="pagination-item pagination-prev" aria-label="Page précédente">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                
+              </a>
+            {% else %}
+              <span class="pagination-item pagination-prev pagination-disabled">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M10 12L6 8L10 4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                
+              </span>
+            {% endif %}
+
+            <div class="pagination-numbers">
+              {% for part in paginate.parts %}
+                {% if part.is_link %}
+                  <a href="{{ part.url }}" class="pagination-item pagination-number">{{ part.title }}</a>
+                {% else %}
+                  {% if part.title == paginate.current_page %}
+                    <span class="pagination-item pagination-number pagination-current">{{ part.title }}</span>
+                  {% else %}
+                    <span class="pagination-item pagination-number pagination-ellipsis">{{ part.title }}</span>
+                  {% endif %}
+                {% endif %}
+              {% endfor %}
+            </div>
+
+            {% if paginate.next %}
+              <a href="{{ paginate.next.url }}" class="pagination-item pagination-next" aria-label="Page suivante">
+              
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </a>
+            {% else %}
+              <span class="pagination-item pagination-next pagination-disabled">
+                
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M6 4L10 8L6 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+            {% endif %}
+          </nav>
+        </div>
+      {% endif %}
+    {% endpaginate %}
+  </div>
+</div>
+
+<style>
+  .collection-grid-wrapper-{{ section.id }} {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    background: #fff;
+  }
+  .collection-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0;
+  }
+  .collection-header {
+    text-align: center;
+    padding: 20px;
+    margin-bottom: {{ section.settings.title_spacing }}px;
+  }
+  .collection-title {
+    font-size: 32px;
+    font-weight: 700;
+    margin: 0 0 12px 0;
+    color: {% if section.settings.invert_colors %}#fff{% else %}#000{% endif %};
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .collection-description {
+    font-size: 16px;
+    line-height: 1.6;
+    color: rgba(0,0,0,0.7);
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .tw-grid {
+    display: grid;
+  }
+  
+  /* Gestion des bordures de la grille */
+  .GridStyles__GridCellWrapper {
+    width: 100%;
+    height: 100%;
+    /* Condition pour masquer les bordures */
+    border-top: {% if section.settings.hide_borders %}0{% else %}1px solid {% if section.settings.invert_colors %}#fff{% else %}#000{% endif %}{% endif %};
+    border-left: 0;
+    border-right: {% if section.settings.hide_borders %}0{% else %}1px solid {% if section.settings.invert_colors %}#fff{% else %}#000{% endif %}{% endif %};
+    border-bottom: 0;
+    box-sizing: border-box;
+    position: relative;
+  }
+  
+  /* Gestion du contour de la carte */
+  .GridCellCardBorder {
+    border: {% if section.settings.hide_borders %}0{% else %}1px solid {% if section.settings.invert_colors %}#fff{% else %}#000{% endif %}{% endif %};
+  }
+
+  .GridCellLink__Link {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    text-decoration: none;
+    color: inherit;
+  }
+  .GridCellProductInfo__ProductInfo {
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: {% if section.settings.invert_colors %}#111{% else %}#fff{% endif %};
+    color: {% if section.settings.invert_colors %}#fff{% else %}#000{% endif %};
+  }
+  .GridCellProductInfo__YearNameWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .GridCellProductInfo__ProductName {
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 1.3;
+    color: {% if section.settings.invert_colors %}#fff{% else %}#000{% endif %};
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .GridCellProductInfo__ProductVendor {
+    font-size: 11px;
+    font-weight: 600;
+    color: {% if section.settings.invert_colors %}#fff{% else %}#000{% endif %};
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .GridCellProductInfo__ReleaseDate {
+    font-size: 12px;
+    font-weight: 400;
+    color: {% if section.settings.invert_colors %}#fff{% else %}#000{% endif %};
+  }
+  .GridCellProductInfo__PriceOrWantWrapper {
+    display: flex;
+    align-items: center;
+    margin-top: 4px;
+  }
+  .GridCellProductInfo__PriceWrapper {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .GridCellProductInfo__ProductPrice {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  
+  .GridCellProductInfo__CurrentPrice {
+    font-size: 14px;
+    font-weight: 600;
+    color: {% if section.settings.invert_colors %}#fff{% else %}#000{% endif %};
+  }
+  
+  .GridCellProductInfo__ComparePrice {
+    font-size: 13px;
+    font-weight: 400;
+    color: {% if section.settings.invert_colors %}rgba(255,255,255,0.5){% else %}rgba(0,0,0,0.5){% endif %};
+    text-decoration: line-through;
+  }
+  
+  .GridCellProductImage__ImageWrapper {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: {% if section.settings.invert_colors %}#000{% else %}#fff{% endif %};
+  }
+  .GridCellProductImage__Image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    display: block;
+  }
+  .collection-grid-wrapper-{{ section.id }}[data-theme][invert-colors="true"] {
+    background: #000;
+    color: #fff;
+  }
+  .collection-grid-wrapper-{{ section.id }}[data-theme][invert-colors="true"] .GridCellProductInfo__ProductName,
+  .collection-grid-wrapper-{{ section.id }}[data-theme][invert-colors="true"] .GridCellProductInfo__ProductVendor,
+  .collection-grid-wrapper-{{ section.id }}[data-theme][invert-colors="true"] .GridCellProductInfo__ReleaseDate,
+  .collection-grid-wrapper-{{ section.id }}[data-theme][invert-colors="true"] .GridCellProductInfo__CurrentPrice {
+    color: #fff;
+  }
+  .collection-grid-wrapper-{{ section.id }}[data-theme][invert-colors="true"] .GridCellProductInfo__ComparePrice {
+    color: rgba(255,255,255,0.5);
+  }
+  .collection-grid-wrapper-{{ section.id }}[data-theme][invert-colors="true"] .GridCellProductInfo__ProductInfo {
+    background: #111;
+  }
+  .collection-grid-wrapper-{{ section.id }}[data-theme][invert-colors="true"] .GridCellProductImage__ImageWrapper {
+    background: #000;
+  }
+  
+  /* Styles de pagination */
+  .pagination-wrapper {
+    margin-top: 40px;
+    padding: 30px 20px;
+    border-top: 1px solid rgba(0,0,0,0.1);
+  }
+  .pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .pagination-item {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    height: 40px;
+    padding: 0 12px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #000;
+    background: #fff;
+    
+    border-radius: 4px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    gap: 6px;
+  }
+  .pagination-item:hover:not(.pagination-disabled):not(.pagination-current) {
+    background: #000;
+    color: #fff;
+    border-color: #000;
+  }
+  .pagination-current {
+    background: #000;
+    color: #fff;
+    border-color: #000;
+    cursor: default;
+  }
+  .pagination-disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
+  }
+  .pagination-ellipsis {
+    border: none;
+    background: transparent;
+    cursor: default;
+    min-width: auto;
+    padding: 0 4px;
+  }
+
+  /* Correction : Styles de pagination spécifiques pour le mode Inversé/Sombre */
+  .collection-grid-wrapper-{{ section.id }}[data-theme][invert-colors="true"] .pagination-item {
+    background: transparent;
+    color: #fff;
+    border-color: #fff;
+  }
+  
+  /* Hover en mode sombre (inverse du mode sombre par défaut) */
+  .collection-grid-wrapper-{{ section.id }}[data-theme][invert-colors="true"] .pagination-item:hover:not(.pagination-disabled):not(.pagination-current) {
+    background: #fff;
+    color: #000;
+    border-color: #fff;
+  }
+  
+  /* État actif en mode sombre */
+  .collection-grid-wrapper-{{ section.id }}[data-theme][invert-colors="true"] .pagination-current {
+    background: #fff;
+    color: #000;
+    border-color: #fff;
+  }
+  
+  /* Correction pour les bordures de pagination en mode sombre */
+  .collection-grid-wrapper-{{ section.id }}[data-theme][invert-colors="true"] .pagination-wrapper {
+    border-top: 1px solid rgba(255,255,255,0.1);
+  }
+  
+  /* Correction SVG pagination en mode sombre */
+  .collection-grid-wrapper-{{ section.id }}[data-theme][invert-colors="true"] .pagination-item svg path {
+    stroke: #fff;
+  }
+  .collection-grid-wrapper-{{ section.id }}[data-theme][invert-colors="true"] .pagination-item:hover svg path,
+  .collection-grid-wrapper-{{ section.id }}[data-theme][invert-colors="true"] .pagination-current svg path {
+    stroke: #000;
+  }
+
+  @media (min-width: 768px) {
+    .collection-container {
+      padding: 0 20px;
+    }
+    .collection-header {
+      padding: 30px 20px;
+    }
+    .collection-title {
+      font-size: 42px;
+    }
+    .tw-grid {
+      grid-template-columns: repeat({{ section.settings.columns_tablet }}, 1fr) !important;
+    }
+  }
+  @media (min-width: 1024px) {
+    .collection-header {
+      padding: 40px 20px;
+    }
+    .collection-title {
+      font-size: 48px;
+    }
+    .tw-grid {
+      grid-template-columns: repeat({{ section.settings.columns_desktop }}, 1fr) !important;
+    }
+  }
+  .GridCellLink__Link:hover .GridCellProductImage__Image {
+    transform: none;
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const gridWrapper = document.querySelector('[data-section-id="{{ section.id }}"]');
+    if (gridWrapper) {
+      const invertColors = {{ section.settings.invert_colors | default: false | json }};
+      if (invertColors) {
+        gridWrapper.setAttribute('invert-colors', 'true');
+      }
+      const images = gridWrapper.querySelectorAll('.GridCellProductImage__Image');
+      if ('IntersectionObserver' in window) {
+        const imageObserver = new IntersectionObserver((entries, observer) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              const img = entry.target;
+              if (img.dataset.src) {
+                img.src = img.dataset.src;
+                img.removeAttribute('data-src');
+              }
+              observer.unobserve(img);
+            }
+          });
+        });
+        images.forEach(img => imageObserver.observe(img));
+      }
+    }
+  });
+</script>
+
+{% schema %}
+{
+  "name": "Collection Concept",
+  "class": "section-collection-grid",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Espacement de la section"
+    },
+    {
+      "type": "range",
+      "id": "section_padding_top",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Marge supérieure de la section",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "section_padding_bottom",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "label": "Marge inférieure de la section",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "En-tête de collection"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_collection_title",
+      "label": "Afficher le titre de la collection",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_collection_description",
+      "label": "Afficher la description",
+      "default": true
+    },
+    {
+      "type": "range",
+      "id": "title_spacing",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Espacement sous le titre",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "top_spacing",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "label": "Espacement en haut (si titre masqué)",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Grille de produits"
+    },
+    {
+      "type": "range",
+      "id": "columns_tablet",
+      "min": 2,
+      "max": 4,
+      "step": 1,
+      "label": "Colonnes sur tablette",
+      "default": 4
+    },
+    {
+      "type": "range",
+      "id": "columns_desktop",
+      "min": 3,
+      "max": 6,
+      "step": 1,
+      "label": "Colonnes sur PC",
+      "default": 5
+    },
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 12,
+      "max": 60,
+      "step": 4,
+      "label": "Produits par page",
+      "default": 24
+    },
+    {
+      "type": "checkbox",
+      "id": "invert_colors",
+      "label": "Inverser les couleurs (fond noir, texte blanc)",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "hide_borders",
+      "label": "Masquer les bordures des cartes",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Informations produit"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Afficher la marque",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_release_date",
+      "label": "Afficher la date de sortie",
+      "default": true,
+      "info": "Nécessite un metafield 'custom.release_date'"
+    },
+    {
+      "type": "header",
+      "content": "Pagination et limites"
+    },
+    {
+      "type": "range",
+      "id": "pagination_size",
+      "min": 1,
+      "max": 1,
+      "step": 1,
+      "label": "Taille pagination (fixe)",
+      "default": 1
+    },
+    {
+      "type": "range",
+      "id": "section_horizontal_padding",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "label": "Rembourrage horizontal de la section",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Collection Concept",
+      "category": "Collection"
+    }
+  ]
+}
+{% endschema %}

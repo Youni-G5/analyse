@@ -1,0 +1,472 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin language editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "customer_accounts": {
+    "B2B": {
+      "draft_order_details": {
+        "payment_status": {
+          "pending": {
+            "banner_due": {
+              "many": "Ihre Zahlung ist in {{count}} Tagen fällig."
+            },
+            "banner_overdue": {
+              "many": "Sie sind {{count}} Tage mit Ihrer Zahlung im Verzug."
+            }
+          }
+        }
+      },
+      "orders": {
+        "draft_order_list": {
+          "pending_tab_accessibility_label": {
+            "pending_orders": {
+              "many": "Sie haben {{count}} offene Bestellungen"
+            }
+          }
+        }
+      }
+    },
+    "errors": {
+      "banner_title": {
+        "many": "Es gibt {{count}} Fehler"
+      }
+    },
+    "ui_components": {
+      "autocompleteOptionsAvailable": {
+        "many": "{{count}} Artikel verfügbar"
+      },
+      "month": {
+        "many": "Monat"
+      },
+      "mapClusterTitle": {
+        "many": "Gruppe von {{number}} -Markierungen"
+      }
+    },
+    "date": {
+      "humanize": {
+        "lessThanOneHourAgo": {
+          "many": "{{count}} Minuten zuvor"
+        }
+      }
+    },
+    "subscriptions": {
+      "subscription_contracts": {
+        "more_items": {
+          "many": "{{count}} weitere Produkte"
+        },
+        "product_count": {
+          "many": "{{count}} Produkte"
+        }
+      },
+      "updating_contracts": {
+        "many": "Aktualisierung der {{count}} Abonnementverträge..."
+      },
+      "contracts_updated": {
+        "many": "{{count}} Abonnementverträge erfolgreich aktualisiert"
+      }
+    },
+    "orders": {
+      "order_list": {
+        "items": {
+          "many": "{{count}} Artikel"
+        }
+      },
+      "order_status": {
+        "delivered_description_gift_card": {
+          "many": "Die Geschenkgutscheine wurden per E-Mail verschickt."
+        },
+        "gift_card_label": {
+          "many": "Geschenkgutscheine"
+        },
+        "confirmed_gift_card_additional_description": {
+          "many": "Jede Geschenkkarte wird in einer separaten E-Mail versendet."
+        },
+        "delivered_description_gift_card_text": {
+          "many": "Die Geschenkkarten wurden per SMS verschickt."
+        },
+        "confirmed_gift_card_additional_description_text": {
+          "many": "Jede Geschenkkarte wird in einer separaten SMS versendet."
+        },
+        "gift_resend_success": {
+          "many": "Zurückgegebene Geschenkkarten"
+        },
+        "gift_resend_failure": {
+          "many": "Es gab ein Problem beim Versenden Ihrer Geschenkgutscheine. Bitte versuchen Sie es erneut oder kontaktieren Sie uns."
+        },
+        "tracking_number": {
+          "many": "Sendungsnummern"
+        },
+        "gift_card_resend_button": {
+          "many": "Senden Sie die Geschenkkarten erneut."
+        }
+      }
+    },
+    "order_details": {
+      "image_gallery": {
+        "load_more_items": {
+          "many": "Laden Sie {{count}} weitere Elemente"
+        }
+      }
+    }
+  },
+  "shopify": {
+    "checkout": {
+      "general": {
+        "map": {
+          "cluster_title": {
+            "many": "Gruppe von {{number}} -Markierungen"
+          }
+        }
+      },
+      "customer_account": {
+        "saved_address_option_description": {
+          "many": "Sie haben {{count}} gespeicherte Adressen."
+        }
+      },
+      "stock": {
+        "unshippable_product": {
+          "header": {
+            "many": "Für %{count} Artikel ist keine Lieferung möglich."
+          },
+          "message": {
+            "many": "Diese Artikel werden aus Ihrem Warenkorb entfernt, da für Ihre Adresse keine Liefermethoden verfügbar sind."
+          }
+        },
+        "item_label": {
+          "many": "{{count}} Artikel"
+        },
+        "unfulfillable_product": {
+          "message": {
+            "many": "%{delivery_method} ist für diese Artikel nicht mehr verfügbar."
+          },
+          "default_message": {
+            "many": "Die gewählte Versandart ist für diese Artikel nicht mehr verfügbar."
+          }
+        }
+      },
+      "order_summary": {
+        "unit_price": {
+          "per_item": {
+            "many": "%{price} für %{count} Artikel"
+          }
+        },
+        "expand_component_information": {
+          "many": "%{count} Elemente anzeigen"
+        },
+        "collapse_component_information": {
+          "many": "%{count} Elemente ausblenden"
+        },
+        "discount_discovery": {
+          "merchandise_quantity_label": {
+            "many": "%{count} Elemente"
+          }
+        },
+        "discount_title_stacking": {
+          "many": "Rabatte"
+        },
+        "discount_order_stacking": {
+          "many": "Rabatte auf Ihre Bestellung"
+        },
+        "subtotal_label_with_quantity": {
+          "many": "Zwischensumme %{Anzahl} Artikel"
+        },
+        "number_items": {
+          "many": "%{count} Elemente"
+        },
+        "view_all_items": {
+          "many": "Alle Elemente anzeigen %{count}"
+        },
+        "pickup_unavailable_banner_title": {
+          "many": "Für Ihre Artikel ist kein Geschäft verfügbar."
+        }
+      },
+      "shipping": {
+        "estimated_delivery_date": {
+          "many": "%{count} Arbeitstage"
+        },
+        "other_method": {
+          "many": "%{count} Weitere verfügbare Methoden von"
+        },
+        "subscription_delivery_description": {
+          "prepaid_delivery_frequency": {
+            "many": "für %{count} Lieferungen"
+          },
+          "subscription_delivery_frequency": {
+            "day": {
+              "many": "alle %{count} Tage"
+            },
+            "week": {
+              "many": "alle %{count} Wochen"
+            },
+            "month": {
+              "many": "alle %{count} Monate"
+            },
+            "year": {
+              "many": "alle %{count} Jahre"
+            }
+          },
+          "first_n_order_free": {
+            "many": "%{count} erste Bestellungen kostenlos"
+          },
+          "free_for_first_n_order": {
+            "many": "Für die ersten %{count} Bestellungen"
+          },
+          "free_shipping_cycles": {
+            "many": "Kostenloser Versand für %{count} plus Lieferungen"
+          },
+          "free_shipping_cycles_delivery_not_included": {
+            "many": "Kostenloser Versand für %{count} Lieferungen"
+          },
+          "first_n_order_free_with_cycle": {
+            "many": "Kostenloser Versand ab %{count} weiteren Lieferungen, danach %{recurring_order_shipping_price}"
+          },
+          "first_n_order_free_with_cycle_delivery_not_included": {
+            "many": "Kostenloser Versand ab %{count} Lieferungen, danach %{recurring_order_shipping_price}"
+          },
+          "max_cycles_base_shipping": {
+            "many": "%{count} zusätzliche Lieferungen für jeweils %{shipping_price}"
+          },
+          "max_cycles_base_shipping_delivery_not_included": {
+            "many": "%{count} zusätzliche Lieferungen für jeweils %{shipping_price}"
+          },
+          "prepaid_free_shipping_with_cycles": {
+            "many": "Kostenloser Versand für die ersten %{cycle}, danach %{recurring_order_shipping_price}"
+          },
+          "prepaid_order_one_cycle": {
+            "many": "%{shipping_price} für %{count} zuzüglich Lieferungen (%{per_delivery_cost})"
+          },
+          "prepaid_order_one_cycle_delivery_not_included": {
+            "many": "%{shipping_price} für %{count} Lieferungen (%{per_delivery_cost})"
+          },
+          "prepaid_order_no_cycle": {
+            "many": "%{shipping_price} für %{count} zuzüglich Lieferungen (%{per_delivery_cost}), gefolgt von %{recurring_order_shipping_price}"
+          },
+          "prepaid_order_no_cycle_delivery_not_included": {
+            "many": "%{shipping_price} für %{count} Lieferungen (%{per_delivery_cost}), gefolgt von %{recurring_order_shipping_price}"
+          }
+        },
+        "shipping_method_first_shipment_group_title": {
+          "many": "Erste Lieferungen"
+        },
+        "shipping_method_recurring_shipments_group_title": {
+          "many": "Wiederkehrende Mailings"
+        }
+      },
+      "payment": {
+        "order_covered_by_gift_cards_notice": {
+          "many": "Ihre Bestellungen sind durch Ihre Geschenkkarten abgedeckt."
+        },
+        "card_fields_unavailable_html": {
+          "many": "Zahlungen mit Kredit- und Debitkarte sind derzeit nicht möglich.<br> <a href=\"%{current_url}\">Aktualisieren Sie diese Seite</a> oder versuchen Sie eine andere Zahlungsmethode."
+        },
+        "expired_cards_info": {
+          "many": "In Ihrem Konto befinden sich %{count} abgelaufene Karten, die Sie einsehen und bearbeiten können."
+        },
+        "order_edit_banner_items_added": {
+          "many": "%{count} hinzugefügt(e)"
+        },
+        "discount_show_more_warnings": {
+          "many": "Mehr anzeigen %{count}"
+        }
+      },
+      "shipping_errors": {
+        "shipping_method_not_available_generic": {
+          "many": "Einige Artikel in Ihrem Warenkorb können nicht an die von Ihnen angegebene Adresse versendet werden. Bitte überprüfen Sie Ihre Adresse und versuchen Sie es erneut oder wählen Sie eine andere Adresse."
+        },
+        "shipping_method_not_available_updated": {
+          "many": "Wir können mindestens einen der von Ihnen hinzugefügten Artikel nicht versenden. Bitte entfernen Sie diesen/diese, um bezahlen zu können, oder kontaktieren Sie uns."
+        }
+      },
+      "processing": {
+        "wait": {
+          "medium": {
+            "many": "Ihre Bestellung wird bearbeitet. Die voraussichtliche Wartezeit beträgt %{count} Minuten."
+          }
+        }
+      },
+      "thank_you": {
+        "login_reorder_link_text": {
+          "many": "Kaufen Sie auch diese Produkte"
+        },
+        "gift_card_confirmation_by_text_typ": {
+          "many": "Sie erhalten in wenigen Minuten eine SMS mit Ihren Geschenkkarten."
+        },
+        "gift_card_confirmation_by_email_typ": {
+          "many": "Sie erhalten in wenigen Minuten eine E-Mail mit Ihren Geschenkkarten."
+        },
+        "gift_card_email_title": {
+          "many": "Die Geschenkgutscheine wurden per E-Mail verschickt."
+        },
+        "gift_card_text_title": {
+          "many": "Die Geschenkkarten wurden per SMS verschickt."
+        },
+        "gift_card_resent_confirmation": {
+          "many": "Die Geschenkkarten wurden zurückgegeben."
+        },
+        "gift_card_resend_failure": {
+          "many": "Es gab ein Problem beim Versenden Ihrer Geschenkgutscheine. Bitte versuchen Sie es erneut oder kontaktieren Sie uns."
+        },
+        "thank_you_unconfirmed_items_heading": {
+          "many": "Einige Punkte sind noch nicht bestätigt."
+        },
+        "thank_you_unconfirmed_items_description": {
+          "many": "Diese Kosten wurden Ihnen nicht in Rechnung gestellt."
+        },
+        "thank_you_item_label": {
+          "many": "%{count} Elemente"
+        },
+        "thank_you_confirmed_items_with_email": {
+          "many": "Sie erhalten in Kürze eine Bestätigungs-E-Mail."
+        },
+        "thank_you_confirmed_items_with_phone": {
+          "many": "Sie erhalten in Kürze Bestätigungsnachrichten."
+        },
+        "items_fulfilled_by_store": {
+          "many": "Die von Ihnen gekauften Artikel werden von anderen Filialen versendet."
+        }
+      },
+      "order_payment_collection": {
+        "changes_summary": {
+          "added": {
+            "many": "%{count} hinzugefügt(e)"
+          }
+        }
+      },
+      "open_graph_meta_tag": {
+        "title_with_products": {
+          "many": "Kaufen Sie %{product_name} und %{count} weitere Artikel"
+        }
+      },
+      "subscriptions": {
+        "recurring_totals_with_policies": {
+          "first_cycles": {
+            "many": "Zunächst werden %{count} Zahlungen zu je %{total_price} geleistet."
+          }
+        },
+        "recurring_total_intervals": {
+          "day": {
+            "many": "%{count} Tage"
+          },
+          "week": {
+            "many": "%{count} Wochen"
+          },
+          "month": {
+            "many": "%{count} Monate"
+          },
+          "year": {
+            "many": "%{count} Jahre"
+          }
+        },
+        "recurring_totals_with_initial_order_shipping_discount_with_policies": {
+          "first_cycles": {
+            "many": "dann %{count} Zahlungen von jeweils %{total_price}"
+          }
+        }
+      },
+      "contextual_availability": {
+        "title": {
+          "many": "Produkte nicht verfügbar"
+        },
+        "products_not_available": {
+          "many": "Diese Produkte werden aus Ihrem Warenkorb entfernt, da sie in Ihrem Land/Ihrer Region nicht verfügbar sind."
+        },
+        "all_products_in_cart_unavailable": {
+          "many": "Diese Produkte sind in Ihrem Land/Ihrer Region nicht erhältlich."
+        }
+      },
+      "throttle": {
+        "estimated_wait_time": {
+          "many": "Die geschätzte Wartezeit beträgt {{count}} Minuten"
+        }
+      },
+      "deliverability": {
+        "not_deliverable": {
+          "title": {
+            "many": "Für %{count} Artikel ist keine Lieferung möglich."
+          },
+          "message": {
+            "many": "Diese Artikel werden aus Ihrem Warenkorb entfernt, da für Ihre Adresse keine Liefermethoden verfügbar sind."
+          }
+        }
+      },
+      "pickup_point": {
+        "paginator": {
+          "header": {
+            "many": "Anzeige von %{first} – %{last} Punkten von %{count}"
+          },
+          "selected_pickup_point_label": {
+            "many": "%{pickup_point_index} von %{count} Punkten"
+          },
+          "selected_page": {
+            "many": "%{first} - %{last} von %{count} Punkten"
+          }
+        },
+        "number_of_pickup_points_near_location": {
+          "many": "%{count} Sammelstellen in Ihrer Nähe gefunden"
+        },
+        "pickup_unavailable_banner_title": {
+          "many": "Für Ihre Artikel stehen keine Abholstellen zur Verfügung."
+        }
+      },
+      "local_pickup": {
+        "location_information": {
+          "many": "Es gibt %{count} Standorte mit Lagerbestand in der Nähe."
+        },
+        "paginator": {
+          "label": {
+            "many": "%{first} – %{last} auf %{count} Filialen"
+          }
+        },
+        "reveal_more_label": {
+          "many": "Weitere Standorte anzeigen"
+        }
+      },
+      "merchandise_unavailable_in_buyer_location": {
+        "remove_items_action": {
+          "many": "Nicht verfügbare Artikel entfernen"
+        }
+      },
+      "review_address_modal": {
+        "subtitle": {
+          "many": "Diese Bestellung wird an eine von {{merchant}} angegebene Adresse versandt. Wählen Sie eine Lieferadresse aus."
+        }
+      },
+      "remote_merchandise_only": {
+        "detail_item_label": {
+          "many": "{{count}} Artikel"
+        }
+      }
+    },
+    "notices": {
+      "order": {
+        "cancel_reason": {
+          "many": "Andere"
+        }
+      }
+    },
+      "page_titles": {
+      "search_results": {
+        "many": "Suche: %{count} Ergebnisse für \"%{terms}\" gefunden"
+      }
+    },
+    "localization": {
+      "country_label": "Land / Region",
+      "language_label": "Sprache",
+      "update_language": "Aktualisieren",
+      "modal_title": "Ländereinstellungen"
+    },
+    "general": {
+      "accessibility": {
+        "close_modal": "Modal schließen",
+        "close": "Schließen"
+      }
+    }
+  }
+}
+

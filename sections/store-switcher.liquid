@@ -1,0 +1,834 @@
+{%- if section.settings.enable_switcher -%}
+  <div id="store-switcher-{{ section.id }}" class="store-switcher-container" data-menu-style="{{ section.settings.menu_style }}">
+    <button id="switcher-btn-{{ section.id }}" class="store-switcher-btn" aria-label="Basculer entre les boutiques">
+      <div class="button-content">
+        {%- if section.settings.show_logo and section.settings.button_logo -%}
+          <img 
+            src="{{ section.settings.button_logo | image_url: width: 256 }}" 
+            alt="Logo" 
+            class="button-logo"
+            width="256"
+            height="256"
+            loading="lazy"
+          >
+        {%- else -%}
+          <span class="switcher-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+              <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2M9 5a2 2 0 1 0 4 0m0 0a2 2 0 1 0-4 0"/>
+            </svg>
+          </span>
+        {%- endif -%}
+      </div>
+    </button>
+
+
+    <div id="switcher-menu-{{ section.id }}" class="switcher-menu hidden">
+      <!-- LIEN 1 : Forcé vers l'accueil -->
+      <a href="{{ routes.root_url }}" class="switcher-option shop-1">
+        <div class="option-content">
+          {%- if section.settings.shop1_logo -%}
+            <img 
+              src="{{ section.settings.shop1_logo | image_url: width: 128 }}" 
+              alt="{{ section.settings.shop1_name }}" 
+              class="option-logo"
+              width="128"
+              height="128"
+              loading="lazy"
+            >
+          {%- endif -%}
+          <div class="option-info">
+            <span class="option-text">{{ section.settings.shop1_name }}</span>
+            {%- if section.settings.shop1_description -%}
+              <span class="option-description">{{ section.settings.shop1_description }}</span>
+            {%- endif -%}
+          </div>
+        </div>
+      </a>
+      
+      <!-- LIEN 2 : Utilise le paramètre URL -->
+      <a href="{{ section.settings.shop2_link }}" class="switcher-option shop-2">
+        <div class="option-content">
+          {%- if section.settings.shop2_logo -%}
+            <img 
+              src="{{ section.settings.shop2_logo | image_url: width: 128 }}" 
+              alt="{{ section.settings.shop2_name }}" 
+              class="option-logo"
+              width="128"
+              height="128"
+              loading="lazy"
+            >
+          {%- endif -%}
+          <div class="option-info">
+            <span class="option-text">{{ section.settings.shop2_name }}</span>
+            {%- if section.settings.shop2_description -%}
+              <span class="option-description">{{ section.settings.shop2_description }}</span>
+            {%- endif -%}
+          </div>
+        </div>
+      </a>
+    </div>
+  </div>
+
+
+  <style>
+    #store-switcher-{{ section.id }} {
+      position: fixed;
+      bottom: {{ section.settings.position_bottom }}px;
+      right: {{ section.settings.position_right }}px;
+      z-index: 999;
+      font-family: inherit;
+    }
+
+
+    #store-switcher-{{ section.id }} .store-switcher-btn {
+      width: {{ section.settings.button_size }}px;
+      height: {{ section.settings.button_size }}px;
+      border-radius: {% if section.settings.button_shape == 'circle' %}50%{% elsif section.settings.button_shape == 'square' %}0{% else %}{{ section.settings.button_radius }}px{% endif %};
+      background: linear-gradient(135deg, {{ section.settings.button_color }} 0%, {{ section.settings.button_color_hover }} 100%);
+      border: {{ section.settings.border_width }}px solid {{ section.settings.border_color }};
+      color: {{ section.settings.text_color }};
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 16px {{ section.settings.shadow_color }};
+      transition: all 0.3s ease;
+      padding: 0;
+    }
+
+
+    #store-switcher-{{ section.id }} .store-switcher-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 8px 24px {{ section.settings.shadow_color }};
+    }
+
+
+    #store-switcher-{{ section.id }} .store-switcher-btn:active {
+      transform: scale(0.95);
+    }
+
+
+    #store-switcher-{{ section.id }} .button-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      padding: 8px;
+    }
+
+
+    #store-switcher-{{ section.id }} .button-logo {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      border-radius: {% if section.settings.button_shape == 'circle' %}50%{% elsif section.settings.button_shape == 'square' %}0{% else %}{{ section.settings.button_radius | minus: 2 }}px{% endif %};
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: crisp-edges;
+    }
+
+
+    #store-switcher-{{ section.id }} .switcher-icon {
+      width: 24px;
+      height: 24px;
+      transition: transform 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+
+    #store-switcher-{{ section.id }} .store-switcher-btn.active .switcher-icon {
+      transform: rotate(180deg);
+    }
+
+
+    /* MODE DROPDOWN - Menu flottant classique */
+    #store-switcher-{{ section.id }}[data-menu-style="dropdown"] .switcher-menu {
+      position: absolute;
+      bottom: {{ section.settings.button_size | plus: 20 }}px;
+      right: 0;
+      background: {{ section.settings.menu_bg_color }};
+      border-radius: {{ section.settings.menu_radius }}px;
+      box-shadow: 0 12px 32px {{ section.settings.menu_shadow_color }};
+      overflow: hidden;
+      min-width: {{ section.settings.menu_width }}px;
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      visibility: visible;
+      transition: all 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+      border: {{ section.settings.border_width }}px solid {{ section.settings.border_color }};
+      transform-origin: bottom right;
+    }
+
+
+    #store-switcher-{{ section.id }}[data-menu-style="dropdown"] .switcher-menu.hidden {
+      opacity: 0;
+      transform: translateY(10px) scale(0.95);
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+
+    /* MODE EXPAND - Menu s'ouvre depuis le bouton */
+    #store-switcher-{{ section.id }}[data-menu-style="expand"] .store-switcher-btn {
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+
+    #store-switcher-{{ section.id }}[data-menu-style="expand"] .store-switcher-btn.active {
+      opacity: 0;
+      pointer-events: none;
+      transform: scale(0.5);
+    }
+
+
+    #store-switcher-{{ section.id }}[data-menu-style="expand"] .switcher-menu {
+      position: fixed;
+      bottom: {{ section.settings.position_bottom }}px;
+      right: {{ section.settings.position_right }}px;
+      background: {{ section.settings.menu_bg_color }};
+      border-radius: {{ section.settings.menu_radius }}px;
+      box-shadow: 0 12px 32px {{ section.settings.menu_shadow_color }};
+      overflow: hidden;
+      width: {{ section.settings.menu_width }}px;
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      visibility: visible;
+      transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      border: {{ section.settings.border_width }}px solid {{ section.settings.border_color }};
+      transform-origin: bottom right;
+    }
+
+
+    #store-switcher-{{ section.id }}[data-menu-style="expand"] .switcher-menu.hidden {
+      opacity: 0;
+      transform: translateY(20px) scale(0.8);
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+
+    /* Styles communs au menu */
+    #store-switcher-{{ section.id }} .switcher-option {
+      display: flex;
+      align-items: center;
+      padding: {{ section.settings.menu_padding }}px;
+      text-decoration: none;
+      color: {{ section.settings.menu_text_color }};
+      transition: all 0.2s ease;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+    }
+
+
+    #store-switcher-{{ section.id }} .switcher-option {
+      border-bottom: 1px solid {{ section.settings.menu_separator_color }};
+    }
+
+
+    #store-switcher-{{ section.id }} .switcher-option:last-child {
+      border-bottom: none;
+    }
+
+
+    /* Styles spécifiques Shop 1 */
+    #store-switcher-{{ section.id }} .switcher-option.shop-1 {
+      background: {{ section.settings.shop1_bg_color }};
+    }
+
+
+    #store-switcher-{{ section.id }} .switcher-option.shop-1::before {
+      background: {{ section.settings.shop1_hover_bg_color }};
+    }
+
+
+    #store-switcher-{{ section.id }} .switcher-option.shop-1 .option-text {
+      color: {{ section.settings.shop1_title_color }};
+    }
+
+
+    #store-switcher-{{ section.id }} .switcher-option.shop-1 .option-description {
+      color: {{ section.settings.shop1_desc_color }};
+    }
+
+
+    /* Styles spécifiques Shop 2 */
+    #store-switcher-{{ section.id }} .switcher-option.shop-2 {
+      background: {{ section.settings.shop2_bg_color }};
+    }
+
+
+    #store-switcher-{{ section.id }} .switcher-option.shop-2::before {
+      background: {{ section.settings.shop2_hover_bg_color }};
+    }
+
+
+    #store-switcher-{{ section.id }} .switcher-option.shop-2 .option-text {
+      color: {{ section.settings.shop2_title_color }};
+    }
+
+
+    #store-switcher-{{ section.id }} .switcher-option.shop-2 .option-description {
+      color: {{ section.settings.shop2_desc_color }};
+    }
+
+
+    #store-switcher-{{ section.id }} .switcher-option::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      transition: left 0.3s ease;
+      z-index: -1;
+    }
+
+
+    #store-switcher-{{ section.id }} .switcher-option:hover::before {
+      left: 0;
+    }
+
+
+    #store-switcher-{{ section.id }} .option-content {
+      display: flex;
+      align-items: center;
+      gap: {{ section.settings.menu_item_gap }}px;
+      width: 100%;
+    }
+
+
+    #store-switcher-{{ section.id }} .option-logo {
+      width: {{ section.settings.menu_logo_size }}px;
+      height: {{ section.settings.menu_logo_size }}px;
+      object-fit: contain;
+      border-radius: {{ section.settings.menu_logo_radius }}px;
+      flex-shrink: 0;
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: crisp-edges;
+    }
+
+
+    #store-switcher-{{ section.id }} .option-info {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1;
+    }
+
+
+    #store-switcher-{{ section.id }} .option-text {
+      font-size: {{ section.settings.menu_title_size }}px;
+      font-weight: {{ section.settings.menu_title_weight }};
+    }
+
+
+    #store-switcher-{{ section.id }} .option-description {
+      font-size: {{ section.settings.menu_desc_size }}px;
+      font-weight: 400;
+      line-height: 1.3;
+    }
+
+
+    @media (max-width: 640px) {
+      #store-switcher-{{ section.id }} {
+        bottom: 20px;
+        right: 20px;
+      }
+
+
+      #store-switcher-{{ section.id }} .store-switcher-btn {
+        width: 48px;
+        height: 48px;
+      }
+
+
+      #store-switcher-{{ section.id }}[data-menu-style="dropdown"] .switcher-menu {
+        min-width: {{ section.settings.menu_width_mobile }}px;
+      }
+
+
+      #store-switcher-{{ section.id }}[data-menu-style="expand"] .switcher-menu {
+        width: {{ section.settings.menu_width_mobile }}px;
+      }
+    }
+  </style>
+
+
+  <script>
+    (function() {
+      const btnId = 'switcher-btn-{{ section.id }}';
+      const menuId = 'switcher-menu-{{ section.id }}';
+      const containerId = 'store-switcher-{{ section.id }}';
+      const menuStyle = '{{ section.settings.menu_style }}';
+
+
+      function initSwitcher() {
+        const btn = document.getElementById(btnId);
+        const menu = document.getElementById(menuId);
+        const container = document.getElementById(containerId);
+
+
+        if (!btn || !menu) return;
+
+
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          menu.classList.toggle('hidden');
+          btn.classList.toggle('active');
+        });
+
+
+        document.addEventListener('click', function(e) {
+          if (container && !container.contains(e.target)) {
+            menu.classList.add('hidden');
+            btn.classList.remove('active');
+          }
+        });
+
+
+        const options = menu.querySelectorAll('.switcher-option');
+        options.forEach(option => {
+          option.addEventListener('click', function(e) {
+            if (menuStyle === 'expand') {
+              btn.classList.remove('active');
+              menu.classList.add('hidden');
+            }
+          });
+        });
+      }
+
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initSwitcher);
+      } else {
+        initSwitcher();
+      }
+    })();
+  </script>
+{%- endif -%}
+
+
+{% schema %}
+{
+  "name": "Store Switcher",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Configuration"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_switcher",
+      "label": "Activer le switcher",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "menu_style",
+      "label": "Style du menu",
+      "options": [
+        {
+          "value": "dropdown",
+          "label": "Dropdown (menu flottant au clic)"
+        },
+        {
+          "value": "expand",
+          "label": "Expand (menu s'ouvre)"
+        }
+      ],
+      "default": "dropdown"
+    },
+    {
+      "type": "header",
+      "content": "Boutique 1"
+    },
+    {
+      "type": "text",
+      "id": "shop1_name",
+      "label": "Nom",
+      "default": "Basique"
+    },
+    {
+      "type": "text",
+      "id": "shop1_description",
+      "label": "Description",
+      "default": "Collection classique"
+    },
+    {
+      "type": "image_picker",
+      "id": "shop1_logo",
+      "label": "Logo"
+    },
+    {
+      "type": "header",
+      "content": "Boutique 2"
+    },
+    {
+      "type": "text",
+      "id": "shop2_name",
+      "label": "Nom",
+      "default": "Concept"
+    },
+    {
+      "type": "text",
+      "id": "shop2_description",
+      "label": "Description",
+      "default": "Collection exclusive"
+    },
+    {
+      "type": "url",
+      "id": "shop2_link",
+      "label": "Lien vers la collection/page"
+    },
+    {
+      "type": "image_picker",
+      "id": "shop2_logo",
+      "label": "Logo"
+    },
+    {
+      "type": "header",
+      "content": "Bouton principal"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_logo",
+      "label": "Afficher logo sur bouton",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "button_logo",
+      "label": "Logo du bouton"
+    },
+    {
+      "type": "range",
+      "id": "button_size",
+      "min": 40,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "label": "Taille",
+      "default": 56
+    },
+    {
+      "type": "select",
+      "id": "button_shape",
+      "label": "Forme",
+      "options": [
+        {
+          "value": "circle",
+          "label": "Cercle"
+        },
+        {
+          "value": "square",
+          "label": "Carré"
+        },
+        {
+          "value": "rounded",
+          "label": "Arrondi"
+        }
+      ],
+      "default": "circle"
+    },
+    {
+      "type": "range",
+      "id": "button_radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Rayon d'arrondi (si arrondi)",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Bordure"
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "min": 0,
+      "max": 8,
+      "step": 1,
+      "unit": "px",
+      "label": "Épaisseur",
+      "default": 0
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Couleur",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Position"
+    },
+    {
+      "type": "range",
+      "id": "position_bottom",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "unit": "px",
+      "label": "Distance du bas",
+      "default": 30
+    },
+    {
+      "type": "range",
+      "id": "position_right",
+      "min": 0,
+      "max": 100,
+      "step": 10,
+      "unit": "px",
+      "label": "Distance de la droite",
+      "default": 30
+    },
+    {
+      "type": "header",
+      "content": "Couleurs du bouton"
+    },
+    {
+      "type": "color",
+      "id": "button_color",
+      "label": "Couleur principale",
+      "default": "#F49335"
+    },
+    {
+      "type": "color",
+      "id": "button_color_hover",
+      "label": "Couleur au survol",
+      "default": "#ff7d00"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Couleur icône",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "shadow_color",
+      "label": "Couleur ombre",
+      "default": "rgba(244, 147, 53, 0.35)"
+    },
+    {
+      "type": "header",
+      "content": "Menu - Dimensions"
+    },
+    {
+      "type": "range",
+      "id": "menu_width",
+      "min": 140,
+      "max": 300,
+      "step": 10,
+      "unit": "px",
+      "label": "Largeur (desktop)",
+      "default": 200
+    },
+    {
+      "type": "range",
+      "id": "menu_width_mobile",
+      "min": 120,
+      "max": 240,
+      "step": 10,
+      "unit": "px",
+      "label": "Largeur (mobile)",
+      "default": 160
+    },
+    {
+      "type": "range",
+      "id": "menu_radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Rayon d'arrondi",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "menu_padding",
+      "min": 8,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "label": "Padding interne",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "menu_item_gap",
+      "min": 8,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Espace logo-texte",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Menu - Logos"
+    },
+    {
+      "type": "range",
+      "id": "menu_logo_size",
+      "min": 20,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "label": "Taille logo",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "menu_logo_radius",
+      "min": 0,
+      "max": 12,
+      "step": 1,
+      "unit": "px",
+      "label": "Rayon logo",
+      "default": 4
+    },
+    {
+      "type": "header",
+      "content": "Menu - Couleurs générales"
+    },
+    {
+      "type": "color",
+      "id": "menu_bg_color",
+      "label": "Fond menu",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "menu_separator_color",
+      "label": "Couleur séparateur",
+      "default": "#f0f0f0"
+    },
+    {
+      "type": "color",
+      "id": "menu_shadow_color",
+      "label": "Couleur ombre",
+      "default": "rgba(0,0,0,0.15)"
+    },
+    {
+      "type": "color",
+      "id": "menu_item_bg",
+      "label": "Fond items (défaut)",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "menu_title_size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "label": "Taille titre",
+      "default": 14
+    },
+    {
+      "type": "select",
+      "id": "menu_title_weight",
+      "label": "Poids titre",
+      "options": [
+        {
+          "value": "400",
+          "label": "Normal"
+        },
+        {
+          "value": "500",
+          "label": "Moyen"
+        },
+        {
+          "value": "600",
+          "label": "Semi-bold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
+      ],
+      "default": "600"
+    },
+    {
+      "type": "range",
+      "id": "menu_desc_size",
+      "min": 10,
+      "max": 14,
+      "step": 1,
+      "unit": "px",
+      "label": "Taille description",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Boutique 1 - Couleurs"
+    },
+    {
+      "type": "color",
+      "id": "shop1_bg_color",
+      "label": "Couleur fond",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "shop1_hover_bg_color",
+      "label": "Couleur fond au survol",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "shop1_title_color",
+      "label": "Couleur titre",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "shop1_desc_color",
+      "label": "Couleur description",
+      "default": "#666666"
+    },
+    {
+      "type": "header",
+      "content": "Boutique 2 - Couleurs"
+    },
+    {
+      "type": "color",
+      "id": "shop2_bg_color",
+      "label": "Couleur fond",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "shop2_hover_bg_color",
+      "label": "Couleur fond au survol",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "shop2_title_color",
+      "label": "Couleur titre",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "shop2_desc_color",
+      "label": "Couleur description",
+      "default": "#cccccc"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Store Switcher",
+      "category": "Navigation"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,583 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+
+<style>
+  .section-banner-wrapper-{{ section.id }} {
+    max-width: {{ section.settings.section_width }};
+    margin: {{ section.settings.margin_top }}px auto {{ section.settings.margin_bottom }}px auto;
+    position: relative;
+  }
+
+  .banner-slideshow-{{ section.id }} {
+    position: relative;
+    overflow: hidden;
+    height: {{ section.settings.desktop_height }}px;
+    border-radius: 0;
+  }
+
+  .banner-slideshow-{{ section.id }} .slides {
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .banner-slideshow-{{ section.id }} .slide {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.6s ease, visibility 0.6s;
+    z-index: 1;
+  }
+
+  .banner-slideshow-{{ section.id }} .slide.is-active {
+    opacity: 1;
+    visibility: visible;
+    z-index: 2;
+  }
+  
+  /* --- Styles pour le bloc : Bannière Média --- */
+  .media-banner-block {
+    position: relative; display: block; overflow: hidden;
+    width: 100%; height: 100%; background-color: #f0f0f0;
+  }
+  .media-banner-block .media-banner__link { display: block; width: 100%; height: 100%; position: relative; }
+  .media-banner-block .media-banner__media-wrapper { position: absolute; inset: 0; overflow: hidden; }
+  .media-banner-block .media-banner__media-wrapper::after { content: ''; position: absolute; inset: 0; background-color: var(--overlay-color, #000); opacity: var(--overlay-opacity, 0.2); pointer-events: none; }
+  .media-banner-block .media-banner__media { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .media-banner-block .media-banner__media--mobile { display: none; }
+  .media-banner-block .media-banner__content-wrapper { position: absolute; inset: 0; display: flex; padding: 30px; justify-content: var(--horizontal-align-desktop, center); align-items: var(--vertical-align-desktop, center); }
+  .media-banner-block .media-banner__content { color: var(--text-color, #FFFFFF); text-align: var(--text-align-desktop, center); }
+  .media-banner-block .media-banner__title { font-family: 'Anton', sans-serif; font-size: clamp(2.2rem, 5vw, 3.5rem); font-weight: 400; text-transform: uppercase; line-height: 1.1; margin: 0 0 10px 0; }
+  .media-banner-block .media-banner__subtitle { font-size: clamp(1rem, 2vw, 1.2rem); text-transform: uppercase; font-family: sans-serif; margin: 0 0 25px 0; }
+  .media-banner-block .media-banner__button { display: inline-block; padding: 12px 30px; font-size: 1rem; font-family: sans-serif; font-weight: 700; text-decoration: none; border: 2px solid; transition: all 0.3s ease; text-transform: uppercase; cursor: pointer; background-color: var(--button-bg-color, #FFFFFF); color: var(--button-text-color, #000000); border-color: var(--button-bg-color, #FFFFFF); white-space: nowrap; }
+  .media-banner-block .media-banner__button:hover { background-color: transparent; color: var(--button-bg-color, #FFFFFF); }
+
+  /* --- Styles améliorés pour le bloc : Joueur de la semaine --- */
+  .player-banner-block {
+    display: grid; grid-template-columns: 1fr 1.2fr; align-items: center;
+    background-color: var(--bg-color, #FAFAFA); color: var(--text-color, #000000);
+    overflow: hidden; width: 100%; height: 100%;
+  }
+  .player-banner-block__image-wrapper {
+    width: 100%; height: 100%; overflow: hidden;
+    padding: 30px 0 0 30px; display: flex; align-items: flex-end;
+  }
+  .player-banner-block__image {
+    width: 100%; height: 100%; object-fit: contain; object-position: bottom center;
+  }
+  .player-banner-block__content {
+    padding: 40px; height: 100%; display: flex; flex-direction: column; justify-content: center;
+  }
+  .player-banner-block__status-title { font-family: sans-serif; text-transform: uppercase; font-size: 0.9rem; font-weight: 600; margin: 0 0 5px 0; opacity: 0.7; }
+  .player-banner-block__player-name { font-family: 'Anton', sans-serif; font-size: clamp(2rem, 4.5vw, 3.2rem); text-transform: uppercase; line-height: 1.1; margin: 0 0 15px 0; }
+  .player-banner-block__info { font-family: sans-serif; margin: 0 0 25px 0; line-height: 1.6; font-size: 0.95rem; }
+  .player-banner-block__stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 30px; }
+  .player-banner-block__stat-item { background: rgba(0,0,0,0.04); padding: 15px 10px; border-radius: 6px; text-align: center; }
+  .player-banner-block__stat-value { font-family: 'Anton', sans-serif; font-size: 1.5rem; line-height: 1; }
+  .player-banner-block__stat-label { font-size: 0.75rem; font-family: sans-serif; text-transform: uppercase; opacity: 0.7; margin-top: 5px; }
+  
+  .player-banner-block__actions-wrapper {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 30px;
+    margin-bottom: 15px;
+  }
+  
+  .player-banner-block__button {
+    display: inline-block; padding: 12px 30px; font-size: 1rem;
+    font-family: sans-serif; font-weight: 700; text-decoration: none; border: 2px solid;
+    transition: all 0.3s ease; text-transform: uppercase; cursor: pointer;
+    background-color: var(--button-bg-color, #000000); color: var(--button-text-color, #FFFFFF);
+    border-color: var(--button-bg-color, #000000); white-space: nowrap;
+  }
+  .player-banner-block__button:hover { background-color: transparent; color: var(--button-bg-color, #000000); }
+
+  .player-banner-block__support-text {
+    font-style: italic;
+    font-size: 0.85rem;
+    opacity: 0.7;
+    font-family: sans-serif;
+    margin-top: 0;
+  }
+
+  .player-banner-block__poll {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    font-family: sans-serif;
+  }
+  .player-banner-block__poll-question {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 0;
+    white-space: nowrap;
+  }
+  .player-banner-block__poll-options {
+    display: flex;
+    gap: 10px;
+  }
+  .player-banner-block__poll-button {
+    background-color: transparent;
+    border: 1px solid rgba(0,0,0,0.2);
+    border-radius: 5px;
+    padding: 8px 15px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: var(--text-color, #000000);
+  }
+  .player-banner-block__poll-button:hover {
+    background-color: rgba(0,0,0,0.05);
+    border-color: rgba(0,0,0,0.4);
+  }
+  .player-banner-block__poll-feedback {
+    display: none;
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+  .player-banner-block__poll.voted .player-banner-block__poll-options,
+  .player-banner-block__poll.voted .player-banner-block__poll-question {
+    display: none;
+  }
+  .player-banner-block__poll.voted .player-banner-block__poll-feedback {
+    display: block;
+  }
+
+  /* --- NOUVEAUX STYLES DE NAVIGATION --- */
+  .slideshow__dots {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 5px;
+    z-index: 3;
+  }
+  .slideshow__dot {
+    appearance: none;
+    -webkit-appearance: none;
+    padding: 0;
+    margin: 0;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+  }
+  .slideshow__dots.dots-on-dark .slideshow__dot {
+    background-color: rgba(255, 255, 255, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0);
+  }
+  .slideshow__dots.dots-on-dark .slideshow__dot.active {
+    background-color: #FFFFFF;
+  }
+  .slideshow__dots.dots-on-light .slideshow__dot {
+    background-color: rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(0, 0, 0, 0);
+  }
+  .slideshow__dots.dots-on-light .slideshow__dot.active {
+    background-color: #000000;
+  }
+  .slideshow__dot:hover {
+    transform: scale(1.2);
+  }
+  
+  .section-banner-wrapper-{{ section.id }} .banner-navigation__controls { position: absolute; bottom: 20px; right: 20px; z-index: 3; display: flex; gap: 10px; }
+  .section-banner-wrapper-{{ section.id }} .banner-navigation__button { background-color: rgba(255, 255, 255, 0.8); border: 1px solid rgba(0,0,0,0.08); border-radius: 50%; width: 42px; height: 42px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.3s; }
+  .section-banner-wrapper-{{ section.id }} .banner-navigation__button:hover { background-color: #FFFFFF; transform: scale(1.1); }
+  .section-banner-wrapper-{{ section.id }} .banner-navigation__button svg { width: 14px; height: 14px; fill: #000; }
+
+  /* --- Corrections pour le Responsive --- */
+  @media (max-width: 749px) {
+    .banner-slideshow-{{ section.id }} {
+      height: auto;
+      transition: height 0.4s ease-out;
+    }
+    .banner-slideshow-{{ section.id }} .slides {
+      height: auto;
+    }
+    .banner-slideshow-{{ section.id }} .slide {
+      position: relative;
+      display: none;
+      transition: none;
+    }
+    .banner-slideshow-{{ section.id }} .slide.is-active {
+      display: block;
+    }
+    .media-banner-block {
+      height: {{ section.settings.mobile_height }}px;
+    }
+    .media-banner-block .media-banner__media--desktop { display: none; }
+    .media-banner-block .media-banner__media--mobile { display: block; }
+    .media-banner-block .media-banner__content-wrapper { padding: 20px; justify-content: var(--horizontal-align-mobile, center); align-items: var(--vertical-align-mobile, center); }
+    .media-banner-block .media-banner__content { text-align: var(--text-align-mobile, center); }
+    .player-banner-block { grid-template-columns: 1fr; height: auto; padding: 20px; }
+    .player-banner-block__image-wrapper { height: 300px; padding: 0 0 20px 0; }
+    .player-banner-block__content { padding: 0; }
+    .player-banner-block__stats { grid-template-columns: repeat(3, 1fr); }
+    .player-banner-block__button, .media-banner-block .media-banner__button { padding: 10px 22px; font-size: 0.9rem; }
+    
+    .player-banner-block__actions-wrapper {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 20px;
+    }
+    .player-banner-block__poll-question {
+      white-space: normal;
+    }
+    .section-banner-wrapper-{{ section.id }} .banner-navigation__controls { display: none; }
+    
+    .slideshow__dots {
+      bottom: 25px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 5;
+      gap: 4px;
+    }
+    .slideshow__dot {
+      width: 8px;
+      height: 8px;
+    }
+  }
+</style>
+
+<div class="section-banner-wrapper-{{ section.id }}" data-section-id="{{ section.id }}" data-autoplay="{{ section.settings.autoplay }}" data-autoplay-speed="{{ section.settings.autoplay_speed | times: 1000 }}">
+  <div class="banner-slideshow-{{ section.id }}">
+    <div class="slides">
+      {%- for block in section.blocks -%}
+        <div class="slide" {{ block.shopify_attributes }}>
+          {%- case block.type -%}
+            {%- when 'media_banner' -%}
+              {%- liquid
+                assign image_desktop = block.settings.image_desktop
+                assign image_mobile = block.settings.image_mobile | default: image_desktop
+                assign css_vars = "" | append: '--overlay-color: ' | append: block.settings.overlay_color | append: ';' | append: '--overlay-opacity: ' | append: block.settings.overlay_opacity | append: ';' | append: '--text-color: ' | append: block.settings.text_color | append: ';' | append: '--button-bg-color: ' | append: block.settings.button_color | append: ';' | append: '--button-text-color: ' | append: block.settings.button_text_color | append: ';' | append: '--vertical-align-desktop: ' | append: block.settings.vertical_align_desktop | append: ';' | append: '--horizontal-align-desktop: ' | append: block.settings.horizontal_align_desktop | append: ';' | append: '--text-align-desktop: ' | append: block.settings.text_align_desktop | append: ';' | append: '--vertical-align-mobile: ' | append: block.settings.vertical_align_mobile | append: ';' | append: '--horizontal-align-mobile: ' | append: block.settings.horizontal_align_mobile | append: ';' | append: '--text-align-mobile: ' | append: block.settings.text_align_mobile | append: ';'
+              -%}
+              <div class="media-banner-block" style="{{ css_vars | escape }}">
+                <a href="{{ block.settings.link_url | default: "#" }}" class="media-banner__link" aria-label="{{ block.settings.title | strip_html | escape }}">
+                  <div class="media-banner__media-wrapper">
+                    {% if image_desktop != blank %}<img class="media-banner__media media-banner__media--desktop" src="{{ image_desktop | image_url: width: 2000 }}" width="{{ image_desktop.width }}" height="{{ image_desktop.height }}" alt="{{ image_desktop.alt | escape }}" loading="lazy">{% else %}{{ 'lifestyle-1' | placeholder_svg_tag: 'media-banner__media media-banner__media--desktop' }}{% endif %}
+                    {% if image_mobile != blank %}<img class="media-banner__media media-banner__media--mobile" src="{{ image_mobile | image_url: width: 1000 }}" width="{{ image_mobile.width }}" height="{{ image_mobile.height }}" alt="{{ image_mobile.alt | escape }}" loading="lazy">{% else %}{{ 'lifestyle-2' | placeholder_svg_tag: 'media-banner__media media-banner__media--mobile' }}{% endif %}
+                  </div>
+                  <div class="media-banner__content-wrapper"><div class="media-banner__content">
+                    {% if block.settings.title != blank %}<h2 class="media-banner__title">{{ block.settings.title | newline_to_br }}</h2>{% endif %}
+                    {% if block.settings.subtitle != blank %}<p class="media-banner__subtitle">{{ block.settings.subtitle }}</p>{% endif %}
+                    {% if block.settings.button_label != blank %}<div class="media-banner__button">{{ block.settings.button_label }}</div>{% endif %}
+                  </div></div>
+                </a>
+              </div>
+
+            {%- when 'player_of_the_week' -%}
+              {%- liquid
+                assign css_vars_player = "" | append: '--bg-color: ' | append: block.settings.background_color | append: ';' | append: '--text-color: ' | append: block.settings.text_color | append: ';' | append: '--button-bg-color: ' | append: block.settings.button_color | append: ';' | append: '--button-text-color: ' | append: block.settings.button_text_color | append: ';'
+              -%}
+              <div class="player-banner-block" style="{{ css_vars_player | escape }}">
+                <div class="player-banner-block__image-wrapper">
+                  {%- if block.settings.player_image != blank -%}<img class="player-banner-block__image" src="{{ block.settings.player_image | image_url: width: 800 }}" width="{{ block.settings.player_image.width }}" height="{{ block.settings.player_image.height }}" alt="{{ block.settings.player_image.alt | escape }}" loading="lazy">{%- else -%}{{ 'image' | placeholder_svg_tag: 'player-banner-block__image' }}{%- endif -%}
+                </div>
+                <div class="player-banner-block__content">
+                  {%- if block.settings.status_title != blank -%}<p class="player-banner-block__status-title">{{ block.settings.status_title }}</p>{%- endif -%}
+                  {%- if block.settings.player_name != blank -%}<h2 class="player-banner-block__player-name">{{ block.settings.player_name }}</h2>{%- endif -%}
+                  {%- if block.settings.player_info != blank -%}<div class="player-banner-block__info">{{ block.settings.player_info }}</div>{%- endif -%}
+                  <div class="player-banner-block__stats">
+                    {%- if block.settings.stat_1_value != blank -%}<div class="player-banner-block__stat-item"><div class="player-banner-block__stat-value">{{ block.settings.stat_1_value }}</div><div class="player-banner-block__stat-label">{{ block.settings.stat_1_label }}</div></div>{%- endif -%}
+                    {%- if block.settings.stat_2_value != blank -%}<div class="player-banner-block__stat-item"><div class="player-banner-block__stat-value">{{ block.settings.stat_2_value }}</div><div class="player-banner-block__stat-label">{{ block.settings.stat_2_label }}</div></div>{%- endif -%}
+                    {%- if block.settings.stat_3_value != blank -%}<div class="player-banner-block__stat-item"><div class="player-banner-block__stat-value">{{ block.settings.stat_3_value }}</div><div class="player-banner-block__stat-label">{{ block.settings.stat_3_label }}</div></div>{%- endif -%}
+                  </div>
+
+                  <div class="player-banner-block__actions-wrapper">
+                    {%- if block.settings.button_label != blank and block.settings.jersey_product != blank -%}
+                      <a href="{{ block.settings.jersey_product.url }}" class="player-banner-block__button">{{ block.settings.button_label }}</a>
+                    {%- endif -%}
+                    
+                    {%- if block.settings.enable_poll and block.settings.poll_question != blank -%}
+                      <div class="player-banner-block__poll" data-block-id="{{ block.id }}">
+                        <p class="player-banner-block__poll-question">{{ block.settings.poll_question }}</p>
+                        <div class="player-banner-block__poll-options">
+                          <button type="button" class="player-banner-block__poll-button">{{ block.settings.poll_option_yes | default: 'OUI' }}</button>
+                          <button type="button" class="player-banner-block__poll-button">{{ block.settings.poll_option_no | default: 'NON' }}</button>
+                        </div>
+                        <p class="player-banner-block__poll-feedback">{{ block.settings.poll_feedback_text | default: 'Merci pour votre vote !' }}</p>
+                      </div>
+                    {%- endif -%}
+                  </div>
+
+                  {%- if block.settings.support_text != blank -%}
+                    <p class="player-banner-block__support-text">{{ block.settings.support_text }}</p>
+                  {%- endif -%}
+                </div>
+              </div>
+          {%- endcase -%}
+        </div>
+      {%- endfor -%}
+    </div>
+  </div>
+  
+  {% if section.blocks.size > 1 %}
+    <div class="slideshow__dots {{ section.settings.dots_style }}"></div>
+    <div class="banner-navigation__controls">
+      <button class="banner-navigation__button banner-navigation__button--prev" aria-label="Previous">
+        <svg viewBox="0 0 8 12"><path d="M7.41 1.41L6 0L0 6L6 12L7.41 10.59L2.83 6L7.41 1.41Z" /></svg>
+      </button>
+      <button class="banner-navigation__button banner-navigation__button--next" aria-label="Next">
+        <svg viewBox="0 0 8 12"><path d="M0.59 10.59L2 12L8 6L2 0L0.59 1.41L5.17 6L0.59 10.59Z" /></svg>
+      </button>
+    </div>
+  {% endif %}
+</div>
+
+<script>
+(function() {
+  const initBannerSlideshow = (wrapper) => {
+    if (!wrapper) return;
+    const sectionId = wrapper.dataset.sectionId;
+    const slideshowContainer = wrapper.querySelector(`.banner-slideshow-${sectionId}`);
+    const slides = wrapper.querySelectorAll('.slide');
+    const nextButton = wrapper.querySelector('.banner-navigation__button--next');
+    const prevButton = wrapper.querySelector('.banner-navigation__button--prev');
+    const dotsContainer = wrapper.querySelector('.slideshow__dots');
+    
+    if (!slideshowContainer || slides.length < 2) {
+      if (slides.length > 0) slides[0].classList.add('is-active');
+      if (dotsContainer) dotsContainer.remove();
+      const controls = wrapper.querySelector('.banner-navigation__controls');
+      if (controls) controls.remove();
+      return;
+    }
+
+    let currentIndex = 0;
+    let slideInterval;
+
+    const adjustHeight = () => {
+      if (window.matchMedia('(max-width: 749px)').matches) {
+        const activeSlide = slides[currentIndex];
+        if (activeSlide) {
+          slideshowContainer.style.height = `${activeSlide.offsetHeight}px`;
+        }
+      } else {
+        slideshowContainer.style.height = '';
+      }
+    };
+
+    const createDots = () => {
+      if (!dotsContainer) return;
+      dotsContainer.innerHTML = '';
+      slides.forEach((_, index) => {
+        const dot = document.createElement('button');
+        dot.type = 'button';
+        dot.classList.add('slideshow__dot');
+        dot.setAttribute('aria-label', `Go to slide ${index + 1}`);
+        dot.addEventListener('click', () => {
+          stopAutoplay();
+          goToSlide(index);
+          startAutoplay();
+        });
+        dotsContainer.appendChild(dot);
+      });
+    };
+
+    const updateDots = () => {
+      if (!dotsContainer) return;
+      dotsContainer.querySelectorAll('.slideshow__dot').forEach((dot, index) => {
+        dot.classList.toggle('active', index === currentIndex);
+      });
+    };
+    
+    const goToSlide = (index) => {
+      slides.forEach(slide => slide.classList.remove('is-active'));
+      slides[index].classList.add('is-active');
+      currentIndex = index;
+      updateDots();
+      setTimeout(adjustHeight, 50);
+    };
+
+    const startAutoplay = () => {
+      stopAutoplay();
+      if (wrapper.dataset.autoplay === 'true') {
+        const speed = parseInt(wrapper.dataset.autoplaySpeed, 10);
+        if (speed > 0) {
+            slideInterval = setInterval(() => {
+                goToSlide((currentIndex + 1) % slides.length);
+            }, speed);
+        }
+      }
+    };
+
+    const stopAutoplay = () => clearInterval(slideInterval);
+
+    if (nextButton) {
+      nextButton.addEventListener('click', () => {
+        stopAutoplay();
+        goToSlide((currentIndex + 1) % slides.length);
+        startAutoplay();
+      });
+    }
+    if (prevButton) {
+      prevButton.addEventListener('click', () => {
+        stopAutoplay();
+        goToSlide((currentIndex - 1 + slides.length) % slides.length);
+        startAutoplay();
+      });
+    }
+
+    wrapper.addEventListener('mouseenter', stopAutoplay);
+    wrapper.addEventListener('mouseleave', startAutoplay);
+    window.addEventListener('resize', adjustHeight);
+
+    createDots();
+    goToSlide(0);
+    startAutoplay();
+  };
+
+  const initPlayerPolls = (wrapper) => {
+    const polls = wrapper.querySelectorAll('.player-banner-block__poll');
+    polls.forEach(poll => {
+        if (poll.dataset.pollInitialized) return;
+
+        const blockId = poll.dataset.blockId;
+        const storageKey = `poll-voted-${blockId}`;
+        
+        if (localStorage.getItem(storageKey)) {
+            poll.classList.add('voted');
+        } else {
+            const buttons = poll.querySelectorAll('.player-banner-block__poll-button');
+            buttons.forEach(button => {
+                button.addEventListener('click', () => {
+                    if (poll.classList.contains('voted')) return;
+                    poll.classList.add('voted');
+                    localStorage.setItem(storageKey, 'true');
+                });
+            });
+        }
+        
+        poll.dataset.pollInitialized = 'true';
+    });
+  };
+
+  const initializeSection = () => {
+    const sectionWrapper = document.querySelector(`#shopify-section-{{ section.id }} .section-banner-wrapper-{{ section.id }}`);
+    if (sectionWrapper && !sectionWrapper.dataset.initialized) {
+      initBannerSlideshow(sectionWrapper);
+      initPlayerPolls(sectionWrapper);
+      sectionWrapper.dataset.initialized = 'true';
+    }
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeSection);
+  } else {
+    initializeSection();
+  }
+
+  if (typeof Shopify !== 'undefined' && Shopify.designMode) {
+    document.addEventListener('shopify:section:load', function(event) {
+        if (event.detail.sectionId === '{{ section.id }}') {
+            const loadedSection = event.target;
+            if(loadedSection) {
+              const sectionWrapper = loadedSection.querySelector('.section-banner-wrapper-{{ section.id }}');
+              if (sectionWrapper) {
+                sectionWrapper.dataset.initialized = 'false';
+                initializeSection();
+              }
+            }
+        }
+    });
+  }
+})();
+</script>
+
+{% schema %}
+{
+  "name": "Bannière (Slideshow)",
+  "settings": [
+    { "type": "header", "content": "Paramètres de la Section" },
+    { "type": "select", "id": "section_width", "label": "Largeur", "options": [ { "value": "100%", "label": "Pleine largeur" }, { "value": "1600px", "label": "Contenue" } ], "default": "100%" },
+    { "type": "range", "id": "margin_top", "min": 0, "max": 100, "step": 2, "unit": "px", "label": "Marge en haut", "default": 0 },
+    { "type": "range", "id": "margin_bottom", "min": 0, "max": 100, "step": 2, "unit": "px", "label": "Marge en bas", "default": 0 },
+    { "type": "header", "content": "Hauteur du Slideshow" },
+    { "type": "range", "id": "desktop_height", "min": 200, "max": 800, "step": 10, "unit": "px", "label": "Hauteur sur PC", "default": 500 },
+    { "type": "range", "id": "mobile_height", "min": 150, "max": 800, "step": 10, "unit": "px", "label": "Hauteur de la bannière sur Mobile", "default": 550, "info": "Hauteur pour les bannières simples. Les blocs plus longs s'adapteront." },
+    { "type": "header", "content": "Paramètres de Navigation" },
+    { "type": "checkbox", "id": "autoplay", "label": "Activer la lecture automatique", "default": true },
+    { "type": "range", "id": "autoplay_speed", "min": 3, "max": 10, "step": 1, "unit": "s", "label": "Vitesse de lecture auto", "default": 5 },
+    { "type": "select", "id": "dots_style", "label": "Style des points de navigation", "options": [ { "value": "dots-on-dark", "label": "Pour fond sombre" }, { "value": "dots-on-light", "label": "Pour fond clair" } ], "default": "dots-on-dark" }
+  ],
+  "blocks": [
+    {
+      "type": "media_banner",
+      "name": "Bannière Média",
+      "settings": [
+        { "type": "header", "content": "Contenu" },
+        { "type": "image_picker", "id": "image_desktop", "label": "Image (PC)" },
+        { "type": "image_picker", "id": "image_mobile", "label": "Image (Mobile)", "info": "Si vide, utilise l'image PC." },
+        { "type": "url", "id": "link_url", "label": "Lien de la bannière" },
+        { "type": "textarea", "id": "title", "label": "Titre", "default": "CONÇU POUR<br>LE QUOTIDIEN" },
+        { "type": "text", "id": "subtitle", "label": "Sous-titre" },
+        { "type": "text", "id": "button_label", "label": "Texte du bouton", "default": "DÉCOUVRIR" },
+        { "type": "header", "content": "Style & Superposition" },
+        { "type": "color", "id": "text_color", "label": "Couleur du texte", "default": "#FFFFFF" },
+        { "type": "color", "id": "button_color", "label": "Couleur du bouton", "default": "#FFFFFF" },
+        { "type": "color", "id": "button_text_color", "label": "Couleur texte du bouton", "default": "#000000" },
+        { "type": "color", "id": "overlay_color", "label": "Couleur de superposition", "default": "#000000" },
+        { "type": "range", "id": "overlay_opacity", "min": 0, "max": 1, "step": 0.1, "label": "Opacité de la superposition", "default": 0.2 },
+        { "type": "header", "content": "Disposition (PC)" },
+        { "type": "select", "id": "vertical_align_desktop", "label": "Alignement vertical", "options": [ { "value": "flex-start", "label": "Haut" }, { "value": "center", "label": "Centre" }, { "value": "flex-end", "label": "Bas" } ], "default": "center" },
+        { "type": "select", "id": "horizontal_align_desktop", "label": "Alignement horizontal", "options": [ { "value": "flex-start", "label": "Gauche" }, { "value": "center", "label": "Centre" }, { "value": "flex-end", "label": "Droite" } ], "default": "center" },
+        { "type": "select", "id": "text_align_desktop", "label": "Alignement du texte", "options": [ { "value": "left", "label": "Gauche" }, { "value": "center", "label": "Centre" }, { "value": "right", "label": "Droite" } ], "default": "center" },
+        { "type": "header", "content": "Disposition (Mobile)" },
+        { "type": "select", "id": "vertical_align_mobile", "label": "Alignement vertical", "options": [ { "value": "flex-start", "label": "Haut" }, { "value": "center", "label": "Centre" }, { "value": "flex-end", "label": "Bas" } ], "default": "center" },
+        { "type": "select", "id": "horizontal_align_mobile", "label": "Alignement horizontal", "options": [ { "value": "center", "label": "Centre" }, { "value": "flex-start", "label": "Gauche" }, { "value": "flex-end", "label": "Droite" } ], "default": "center" },
+        { "type": "select", "id": "text_align_mobile", "label": "Alignement du texte", "options": [ { "value": "center", "label": "Centre" }, { "value": "left", "label": "Gauche" }, { "value": "right", "label": "Droite" } ], "default": "center" }
+      ]
+    },
+    {
+      "type": "player_of_the_week",
+      "name": "Joueur de la Semaine",
+      "settings": [
+        { "type": "header", "content": "Contenu du Joueur" },
+        { "type": "image_picker", "id": "player_image", "label": "Image du joueur" },
+        { "type": "text", "id": "status_title", "label": "Titre (Ex: Contre-performance)", "default": "Contre-performance de la Semaine" },
+        { "type": "text", "id": "player_name", "label": "Nom du joueur", "default": "Nom du Joueur" },
+        { "type": "richtext", "id": "player_info", "label": "Description", "default": "<p>Décrivez ici pourquoi le joueur a eu une semaine difficile.</p>" },
+        { "type": "header", "content": "Statistiques" },
+        { "type": "text", "id": "stat_1_value", "label": "Stat 1 : Valeur", "default": "4.2" },
+        { "type": "text", "id": "stat_1_label", "label": "Stat 1 : Label", "default": "Note / 10" },
+        { "type": "text", "id": "stat_2_value", "label": "Stat 2 : Valeur", "default": "0" },
+        { "type": "text", "id": "stat_2_label", "label": "Stat 2 : Label", "default": "Buts" },
+        { "type": "text", "id": "stat_3_value", "label": "Stat 3 : Valeur", "default": "18" },
+        { "type": "text", "id": "stat_3_label", "label": "Stat 3 : Label", "default": "Ballons perdus" },
+        { "type": "header", "content": "Bouton d'action et Soutien" },
+        { "type": "product", "id": "jersey_product", "label": "Produit (Maillot)" },
+        { "type": "text", "id": "button_label", "label": "Texte du bouton", "default": "Soutenir le joueur" },
+        { "type": "text", "id": "support_text", "label": "Texte de soutien (sous le bouton)", "default": "*Même les légendes ont des mauvais jours. Soutenez-le dans l'épreuve." },
+        { "type": "header", "content": "Sondage Interactif" },
+        { "type": "checkbox", "id": "enable_poll", "label": "Activer le sondage", "default": true },
+        { "type": "text", "id": "poll_question", "label": "Question du sondage", "default": "Va-t-il se rattraper la semaine prochaine ?" },
+        { "type": "text", "id": "poll_option_yes", "label": "Option 'Oui'", "default": "OUI" },
+        { "type": "text", "id": "poll_option_no", "label": "Option 'Non'", "default": "NON" },
+        { "type": "text", "id": "poll_feedback_text", "label": "Message après vote", "default": "Merci pour votre vote !" },
+        { "type": "header", "content": "Style du bloc" },
+        { "type": "color", "id": "background_color", "label": "Couleur de fond", "default": "#FAFAFA" },
+        { "type": "color", "id": "text_color", "label": "Couleur du texte", "default": "#000000" },
+        { "type": "color", "id": "button_color", "label": "Couleur du bouton", "default": "#000000" },
+        { "type": "color", "id": "button_text_color", "label": "Couleur texte du bouton", "default": "#FFFFFF" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Bannière (Slideshow)",
+      "category": "Bannière",
+      "blocks": [
+        { "type": "media_banner" },
+        { "type": "player_of_the_week" }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,313 @@
+{% comment %}
+  Template: Customer Account
+  Description: Tableau de bord principal du compte client
+  Affiche les commandes et informations du compte
+{% endcomment %}
+
+<div class="customer account page-width">
+  <div class="account-header">
+    <h1 class="customer-title">{{ 'customer.account.title' | t }}</h1>
+    <a href="{{ routes.account_logout_url }}" class="button button--secondary">
+      {{ 'customer.log_out' | t }}
+    </a>
+  </div>
+
+  <div class="account-content">
+    <div class="account-section">
+      <h2 class="account-section__title">{{ 'customer.orders.title' | t }}</h2>
+      
+      {% paginate customer.orders by 20 %}
+        {%- if customer.orders.size > 0 -%}
+          <table role="table" class="order-history">
+            <caption class="visually-hidden">{{ 'customer.orders.title' | t }}</caption>
+            <thead role="rowgroup">
+              <tr role="row">
+                <th id="ColumnOrder" scope="col" role="columnheader">{{ 'customer.orders.order_number' | t }}</th>
+                <th id="ColumnDate" scope="col" role="columnheader">{{ 'customer.orders.date' | t }}</th>
+                <th id="ColumnPayment" scope="col" role="columnheader">{{ 'customer.orders.payment_status' | t }}</th>
+                <th id="ColumnFulfillment" scope="col" role="columnheader">{{ 'customer.orders.fulfillment_status' | t }}</th>
+                <th id="ColumnTotal" scope="col" role="columnheader">{{ 'customer.orders.total' | t }}</th>
+              </tr>
+            </thead>
+            <tbody role="rowgroup">
+              {%- for order in customer.orders -%}
+                <tr role="row">
+                  <td role="cell" headers="ColumnOrder" data-label="{{ 'customer.orders.order_number' | t }}">
+                    <a href="{{ order.customer_url }}" aria-label="{{ 'customer.orders.order_number_link' | t: number: order.name }}">
+                      {{ order.name }}
+                    </a>
+                  </td>
+                  <td role="cell" headers="ColumnDate" data-label="{{ 'customer.orders.date' | t }}">
+                    {{ order.created_at | time_tag: format: 'date' }}
+                  </td>
+                  <td role="cell" headers="ColumnPayment" data-label="{{ 'customer.orders.payment_status' | t }}">
+                    {{ order.financial_status_label }}
+                  </td>
+                  <td role="cell" headers="ColumnFulfillment" data-label="{{ 'customer.orders.fulfillment_status' | t }}">
+                    {{ order.fulfillment_status_label }}
+                  </td>
+                  <td role="cell" headers="ColumnTotal" data-label="{{ 'customer.orders.total' | t }}">
+                    <strong>{{ order.total_price | money_with_currency }}</strong>
+                  </td>
+                </tr>
+              {%- endfor -%}
+            </tbody>
+          </table>
+        {%- else -%}
+          <p class="empty-state">{{ 'customer.orders.none' | t }}</p>
+        {%- endif -%}
+        
+        {%- if paginate.pages > 1 -%}
+          <nav class="pagination" role="navigation" aria-label="{{ 'general.pagination.label' | t }}">
+            <ul class="pagination__list list-unstyled">
+              {%- if paginate.previous -%}
+                <li>
+                  <a href="{{ paginate.previous.url }}" class="pagination__item pagination__item--prev">
+                    <span aria-hidden="true">&lsaquo;</span>
+                    {{ 'general.pagination.previous' | t }}
+                  </a>
+                </li>
+              {%- endif -%}
+              
+              {%- for part in paginate.parts -%}
+                {%- if part.is_link -%}
+                  <li>
+                    <a href="{{ part.url }}" class="pagination__item" aria-label="{{ 'general.pagination.page' | t: number: part.title }}">
+                      {{ part.title }}
+                    </a>
+                  </li>
+                {%- else -%}
+                  <li>
+                    <span class="pagination__item pagination__item--current" aria-current="page" aria-label="{{ 'general.pagination.page' | t: number: part.title }}">
+                      {{ part.title }}
+                    </span>
+                  </li>
+                {%- endif -%}
+              {%- endfor -%}
+              
+              {%- if paginate.next -%}
+                <li>
+                  <a href="{{ paginate.next.url }}" class="pagination__item pagination__item--next">
+                    {{ 'general.pagination.next' | t }}
+                    <span aria-hidden="true">&rsaquo;</span>
+                  </a>
+                </li>
+              {%- endif -%}
+            </ul>
+          </nav>
+        {%- endif -%}
+      {% endpaginate %}
+    </div>
+
+    <div class="account-section">
+      <h2 class="account-section__title">{{ 'customer.account.details' | t }}</h2>
+      
+      <div class="account-info">
+        <p><strong>{{ customer.name }}</strong></p>
+        <p>{{ customer.email }}</p>
+        
+        {%- if customer.default_address -%}
+          <div class="account-address">
+            <h3>{{ 'customer.addresses.default' | t }}</h3>
+            {{ customer.default_address | format_address }}
+          </div>
+        {%- endif -%}
+        
+        <a href="{{ routes.account_addresses_url }}" class="button button--secondary">
+          {{ 'customer.account.view_addresses' | t }}
+          {%- if customer.addresses_count > 0 -%}
+            ({{ customer.addresses_count }})
+          {%- endif -%}
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .customer.account {
+    padding: 60px 20px;
+  }
+
+  .account-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+
+  .customer-title {
+    font-size: 32px;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .account-content {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 40px;
+  }
+
+  .account-section {
+    background: white;
+    padding: 24px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+
+  .account-section__title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 24px;
+  }
+
+  .order-history {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .order-history th,
+  .order-history td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+  }
+
+  .order-history th {
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .order-history td a {
+    color: rgb(var(--foreground-color));
+    text-decoration: underline;
+  }
+
+  .empty-state {
+    padding: 40px 20px;
+    text-align: center;
+    color: rgba(var(--foreground-color), 0.6);
+  }
+
+  .account-info p {
+    margin-bottom: 8px;
+  }
+
+  .account-address {
+    margin: 24px 0;
+    padding: 16px;
+    background: rgba(0,0,0,0.02);
+    border-radius: 4px;
+  }
+
+  .account-address h3 {
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+
+  .button {
+    display: inline-block;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .button--secondary {
+    background: transparent;
+    color: rgb(var(--foreground-color));
+    border: 2px solid rgb(var(--foreground-color));
+  }
+
+  .button--secondary:hover {
+    background: rgb(var(--foreground-color));
+    color: rgb(var(--background-color));
+  }
+
+  .pagination {
+    margin-top: 32px;
+  }
+
+  .pagination__list {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    list-style: none;
+    padding: 0;
+  }
+
+  .pagination__item {
+    padding: 8px 12px;
+    border: 1px solid rgba(0,0,0,0.15);
+    border-radius: 4px;
+    text-decoration: none;
+    color: rgb(var(--foreground-color));
+    transition: all 0.2s ease;
+  }
+
+  .pagination__item:hover {
+    background: rgb(var(--foreground-color));
+    color: rgb(var(--background-color));
+  }
+
+  .pagination__item--current {
+    background: rgb(var(--foreground-color));
+    color: rgb(var(--background-color));
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+  }
+
+  @media (max-width: 990px) {
+    .account-content {
+      grid-template-columns: 1fr;
+    }
+
+    .order-history thead {
+      display: none;
+    }
+
+    .order-history tr {
+      display: block;
+      margin-bottom: 16px;
+      border: 1px solid rgba(0,0,0,0.1);
+      border-radius: 4px;
+    }
+
+    .order-history td {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 12px;
+      border-bottom: none;
+    }
+
+    .order-history td:before {
+      content: attr(data-label);
+      font-weight: 600;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .customer-title {
+      font-size: 24px;
+    }
+  }
+</style>

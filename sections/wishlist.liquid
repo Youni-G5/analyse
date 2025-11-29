@@ -1,0 +1,377 @@
+<section class="wishlist-sig-section" data-section-id="{{ section.id }}">
+  <div class="wishlist-sig-container page-width">
+
+    <div class="wishlist-sig-header">
+      <svg class="wishlist-sig-header-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+      <h1 class="wishlist-sig-title">{{ section.settings.title }}</h1>
+    </div>
+
+    <div class="wishlist-sig-top-actions">
+        <a href="{{ collections.all.url }}" class="wishlist-sig-back-link">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            Retourner à tous les produits
+        </a>
+    </div>
+
+    <div class="wishlist-sig-content-wrapper" data-wishlist-container>
+      {% comment %} Les produits de la wishlist seront injectés ici par le JavaScript. {% endcomment %}
+    </div>
+
+    <div class="wishlist-sig-footer-actions">
+      <div class="wishlist-sig-bulk-actions" data-bulk-actions>
+        <label for="bulk-action-select">Appliquer aux articles sélectionnés :</label>
+        <div class="wishlist-sig-bulk-controls">
+          <select id="bulk-action-select" class="wishlist-sig-bulk-select">
+            <option value="add">Ajouter au panier</option>
+            <option value="remove">Supprimer</option>
+          </select>
+          <button class="button button--secondary button--small" data-bulk-apply disabled>Appliquer</button>
+        </div>
+      </div>
+
+      <div class="wishlist-sig-page-actions">
+        <button class="button button--primary" data-add-all-to-cart>Tout ajouter au panier</button>
+        <button class="button button--secondary">Mettre à jour la liste</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  :root {
+    /*
+      Exemples de liaison avec les paramètres de la section Shopify.
+      Vous devrez créer ces paramètres dans le schéma de votre section.
+    */
+    --sig-color-text: {{ section.settings.color_text | default: '#212121' }};
+    --sig-color-text-light: {{ section.settings.color_text_light | default: '#757575' }};
+    --sig-color-border: {{ section.settings.color_border | default: '#E0E0E0' }};
+    --sig-color-background: {{ section.settings.color_background | default: '#FFFFFF' }};
+    --sig-color-background-alt: {{ section.settings.color_background_alt | default: '#F5F5F5' }};
+    
+    /* Souvent lié aux polices globales du thème */
+    --sig-font-family: {{ settings.type_body_font.family }}, {{ settings.type_body_font.fallback_families }};
+    
+    --sig-shadow: {{ section.settings.card_shadow | default: '0 4px 15px rgba(0, 0, 0, 0.07)' }};
+    --sig-radius: {{ section.settings.card_border_radius | default: 6 }}px;
+
+    /* Vous pouvez aussi lier les couleurs des boutons */
+    --button-primary-bg: {{ section.settings.button_primary_bg | default: '#212121' }};
+    --button-primary-text: {{ section.settings.button_primary_text | default: '#FFFFFF' }};
+  }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  class WishlistSig {
+    constructor(sectionEl) {
+      this.NAMESPACE = 'wishlist-sig-';
+      this.STORAGE_KEY = this.NAMESPACE + 'items';
+      this.section = sectionEl;
+      if (!this.section) return;
+
+      this.container = this.section.querySelector('[data-wishlist-container]');
+      this.bulkActionsBar = this.section.querySelector('[data-bulk-actions]');
+      this.bulkActionSelect = this.section.querySelector('#bulk-action-select');
+      this.bulkApplyBtn = this.section.querySelector('[data-bulk-apply]');
+      this.addAllBtn = this.section.querySelector('[data-add-all-to-cart]');
+      
+      this.moneyFormat = {{ shop.money_format | json }};
+      this.state = { wishlist: [], products: {}, selectedItems: [] };
+      this.init();
+    }
+
+    init() {
+      this.render();
+      window.addEventListener(this.NAMESPACE + 'updated', () => this.render());
+      this.attachGlobalListeners();
+    }
+
+    async render() {
+      this.state.wishlist = this.getWishlist();
+      this.togglePageElements(this.state.wishlist.length > 0);
+      
+      if (this.state.wishlist.length === 0) {
+        this.container.innerHTML = this.getEmptyStateHTML();
+        return;
+      }
+      
+      this.renderSkeleton();
+      await this.fetchProductData();
+      const listHTML = this.state.wishlist.map(item => this.state.products[item.handle] ? this.createListRowHTML(item, this.state.products[item.handle]) : '').join('');
+      this.container.innerHTML = `<div class="wishlist-sig-list">${listHTML}</div>`;
+      this.updateBulkActionsUI();
+    }
+    
+    getWishlist() {
+      try {
+        const items = JSON.parse(localStorage.getItem(this.STORAGE_KEY) || '[]');
+        return Array.isArray(items) ? items : [];
+      } catch (e) { localStorage.removeItem(this.STORAGE_KEY); return []; }
+    }
+    
+    async fetchProductData() {
+      const handlesToFetch = this.state.wishlist.map(item => item.handle).filter(h => h && !this.state.products[h]);
+      if (handlesToFetch.length === 0) return;
+      try {
+        const promises = handlesToFetch.map(h => fetch(`/products/${h}.js`).then(res => res.ok ? res.json() : null));
+        const results = await Promise.all(promises);
+        this.state.products = { ...this.state.products, ...results.filter(Boolean).reduce((acc, p) => { acc[p.handle] = p; return acc; }, {}) };
+      } catch (error) { console.error('[Wishlist] Fetch Error:', error); }
+    }
+
+    resizeImage(url, size) {
+      if (!url) return '';
+      try {
+        if (url.includes('_pico.')) return url.replace('_pico.', `_${size}.`);
+        const urlParts = url.split('?');
+        const coreUrl = urlParts[0];
+        const extension = coreUrl.split('.').pop();
+        const pathWithoutExtension = coreUrl.replace(/\.[^/.]+$/, "");
+        return `${pathWithoutExtension}_${size}.${extension}${urlParts[1] ? `?${urlParts[1]}`: ''}`;
+      } catch(e) { return url; }
+    }
+
+    formatMoney(cents) {
+      if (typeof cents !== 'number') cents = 0;
+      let value = (cents / 100).toFixed(2);
+      return this.moneyFormat.replace(/\{\{\s*amount\s*\}\}/, value).replace(/\{\{\s*amount_with_comma_separator\s*\}\}/, value.replace('.', ','));
+    }
+
+    createListRowHTML(item, product) {
+      const variant = product.variants[0];
+      const price = this.formatMoney(variant.price);
+      const stockStatus = variant.available ? 'En stock' : 'Épuisé';
+      const addedDate = new Date(item.added_at || Date.now()).toLocaleDateString('fr-FR', { year: 'numeric', month: 'long', day: 'numeric' });
+      const imageUrl = this.resizeImage(product.featured_image, '360x');
+      const noteHTML = item.note
+        ? `<p class="wishlist-item-card__note-display" data-action="edit-note" title="Modifier la note">${item.note}</p>`
+        : `<a href="#" class="wishlist-item-card__note-link" data-action="add-note">Ajouter une note</a>`;
+
+      // --- CORRECTION DANS LE HTML GÉNÉRÉ ---
+      return `
+        <div class="wishlist-item-card" data-handle="${item.handle}">
+          <div class="wishlist-item-card__image-wrapper">
+            <a href="${product.url}">
+              <img class="wishlist-item-card__image" src="${imageUrl}" alt="${product.title || ''}" loading="lazy">
+            </a>
+            <input type="checkbox" class="wishlist-item-card__checkbox" data-handle="${item.handle}" aria-label="Sélectionner ${product.title}">
+          </div>
+          <div class="wishlist-item-card__right">
+            <h3 class="wishlist-item-card__title"><a href="${product.url}">${product.title}</a></h3>
+            <dl class="wishlist-item-card__details">
+              <dt>Ajouté le:</dt><dd>${addedDate}</dd>
+              <dt>Prix:</dt><dd>${price}</dd>
+              <dt>Quantité:</dt>
+              <dd>
+                <div class="wishlist-item-card__quantity-selector">
+                  <button data-action="decrease-qty" aria-label="Diminuer">-</button>
+                  <input type="text" value="${item.quantity}" readonly>
+                  <button data-action="increase-qty" aria-label="Augmenter">+</button>
+                </div>
+              </dd>
+              <dt>Stock:</dt><dd>${stockStatus}</dd>
+              <dt>Note:</dt>
+              <dd data-note-area>
+                <div data-note-container>${noteHTML}</div>
+                <div class="wishlist-item-card__note-editor" data-note-editor>
+                  <textarea>${item.note || ''}</textarea>
+                  <button data-action="save-note" class="button button--primary" style="padding: 0.4rem 1rem;">OK</button>
+                </div>
+              </dd>
+            </dl>
+            <div class="wishlist-item-card__actions">
+              <button class="button button--primary" data-action="add-to-cart" ${!variant.available ? 'disabled' : ''}>
+                ${variant.available ? 'Ajouter au panier' : 'Épuisé'}
+              </button>
+            </div>
+            <div class="wishlist-item-card__sub-actions">
+                <button class="wishlist-item-card__remove-btn" data-action="remove-item" aria-label="Supprimer l'article" title="Supprimer">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6"></path></svg>
+                </button>
+            </div>
+          </div>
+        </div>`;
+    }
+    
+    attachGlobalListeners() {
+      this.container.addEventListener('click', this.handleContainerClick.bind(this));
+      this.container.addEventListener('change', e => {
+        if (e.target.matches('.wishlist-item-card__checkbox')) this.handleItemSelection(e.target.dataset.handle, e.target.checked);
+      });
+      this.bulkApplyBtn.addEventListener('click', () => this.handleBulkApply());
+      if (this.addAllBtn) this.addAllBtn.addEventListener('click', () => this.bulkAddToCart(true));
+    }
+    
+    handleContainerClick(e) {
+      const target = e.target.closest('[data-action]');
+      if (!target) return;
+      const card = e.target.closest('.wishlist-item-card');
+      const handle = card?.dataset.handle;
+      if (!handle) return;
+      
+      const action = target.dataset.action;
+      if (action !== 'add-note' && action !== 'edit-note') e.preventDefault();
+
+      switch (action) {
+        case 'remove-item': this.removeItem(handle); break;
+        case 'add-to-cart': this.addToCart(target, handle); break;
+        case 'increase-qty': this.updateQuantity(handle, 1); break;
+        case 'decrease-qty': this.updateQuantity(handle, -1); break;
+        case 'add-note':
+        case 'edit-note': e.preventDefault(); this.toggleNoteEditor(handle, true); break;
+        case 'save-note': this.saveNote(handle); break;
+      }
+    }
+
+    updateQuantity(handle, change) {
+      const wishlist = this.getWishlist();
+      const itemIndex = wishlist.findIndex(item => item.handle === handle);
+      if (itemIndex > -1) {
+        const newQuantity = wishlist[itemIndex].quantity + change;
+        if (newQuantity > 0) {
+          wishlist[itemIndex].quantity = newQuantity;
+          this.setWishlist(wishlist);
+        }
+      }
+    }
+
+    removeItem(handle) {
+      if (confirm("Voulez-vous vraiment supprimer cet article de votre liste d'envies ?")) {
+        this.setWishlist(this.getWishlist().filter(i => i.handle !== handle));
+      }
+    }
+
+    async addToCart(button, handle) {
+      const item = this.state.wishlist.find(i => i.handle === handle);
+      const product = this.state.products[handle];
+      if (!item || !product) return;
+      const variant = product.variants[0];
+
+      button.textContent = '...';
+      button.disabled = true;
+
+      try {
+        await fetch('/cart/add.js', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ items: [{ id: variant.id, quantity: item.quantity }] })
+        });
+        document.querySelector('cart-drawer')?.open();
+      } catch (e) { console.error(e); }
+      finally {
+        button.textContent = 'Ajouter au panier';
+        button.disabled = !variant.available;
+      }
+    }
+    
+    toggleNoteEditor(handle, show) {
+      const area = this.container.querySelector(`[data-handle="${handle}"] [data-note-area]`);
+      if (!area) return;
+      area.querySelector('[data-note-container]').style.display = show ? 'none' : 'block';
+      area.querySelector('[data-note-editor]').style.display = show ? 'block' : 'none';
+      if(show) area.querySelector('textarea').focus();
+    }
+
+    saveNote(handle) {
+      const area = this.container.querySelector(`[data-handle="${handle}"] [data-note-area]`);
+      const note = area.querySelector('textarea').value.trim();
+      const wishlist = this.getWishlist();
+      const itemIndex = wishlist.findIndex(item => item.handle === handle);
+      if (itemIndex > -1) {
+        wishlist[itemIndex].note = note;
+        this.setWishlist(wishlist);
+      }
+    }
+
+    handleItemSelection(handle, isSelected) {
+      const selectedItemsSet = new Set(this.state.selectedItems);
+      if (isSelected) selectedItemsSet.add(handle); else selectedItemsSet.delete(handle);
+      this.state.selectedItems = [...selectedItemsSet];
+      this.updateBulkActionsUI();
+    }
+
+    handleBulkApply() {
+      const action = this.bulkActionSelect.value;
+      if (action === 'remove') this.bulkRemove();
+      if (action === 'add') this.bulkAddToCart();
+    }
+
+    updateBulkActionsUI() {
+      this.bulkApplyBtn.disabled = this.state.selectedItems.length === 0;
+      this.bulkActionsBar.classList.toggle('is-visible', this.state.wishlist.length > 0);
+    }
+    
+    togglePageElements(hasItems) {
+      const footerActions = this.section.querySelector('.wishlist-sig-footer-actions');
+      const topActions = this.section.querySelector('.wishlist-sig-top-actions');
+      if (footerActions) footerActions.style.display = hasItems ? 'flex' : 'none';
+      if (topActions) topActions.style.display = hasItems ? 'block' : 'none';
+    }
+
+    bulkRemove() {
+      if (confirm(`Supprimer les ${this.state.selectedItems.length} articles sélectionnés ?`)) {
+        this.setWishlist(this.getWishlist().filter(i => !this.state.selectedItems.includes(i.handle)));
+        this.state.selectedItems = [];
+      }
+    }
+
+    async bulkAddToCart(all = false) {
+      const button = all ? this.addAllBtn : this.bulkApplyBtn;
+      if (button) button.disabled = true;
+      
+      const handlesToAdd = all ? this.state.wishlist.map(i => i.handle) : this.state.selectedItems;
+      const items = this.state.wishlist
+        .filter(i => handlesToAdd.includes(i.handle) && this.state.products[i.handle]?.variants[0]?.available)
+        .map(i => ({ id: this.state.products[i.handle].variants[0].id, quantity: i.quantity }));
+      
+      if (items.length > 0) {
+        try {
+          await fetch('/cart/add.js', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items }) });
+          document.querySelector('cart-drawer')?.open();
+        } catch (e) { console.error('Bulk add failed:', e); }
+      }
+      if (button) button.disabled = false;
+    }
+    
+    renderSkeleton() {
+      const skeletonCard = `<div class="wishlist-item-card" style="opacity: 0.5; animation: pulse 1.5s infinite ease-in-out;"><div class="wishlist-item-card__image-wrapper" style="background-color: var(--sig-color-background-alt);"></div><div class="wishlist-item-card__right"><div style="height: 20px; width: 80%; background-color: var(--sig-color-background-alt); margin-bottom: 1.5rem; border-radius: 4px;"></div><div style="height: 100px; width: 100%; background-color: var(--sig-color-background-alt); border-radius: 4px;"></div><div style="margin-top: auto; padding-top: 1.5rem; height: 45px; background-color: var(--sig-color-background-alt); border-radius: 4px;"></div></div></div>`;
+      this.container.innerHTML = `<div class="wishlist-sig-list">${skeletonCard.repeat(Math.min(this.state.wishlist.length, 6))}</div><style>@keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }</style>`;
+    }
+    
+    setWishlist(list) {
+      const updatedList = list.map(item => ({ ...item, added_at: item.added_at || new Date().toISOString() }));
+      localStorage.setItem(this.STORAGE_KEY, JSON.stringify(updatedList));
+      window.dispatchEvent(new CustomEvent(this.NAMESPACE + 'updated'));
+    }
+    
+    getEmptyStateHTML() {
+      return `<div class="wishlist-sig-empty-state">
+        <h2>Votre liste d'envies est vide</h2>
+        <div><p>Parcourez nos collections pour trouver vos prochains coups de cœur.</p></div>
+        <a href="{{ routes.all_products_collection_url }}" class="button button--primary" style="margin-top: 1.5rem;">Découvrir les produits</a>
+      </div>`;
+    }
+  }
+  
+  new WishlistSig(document.querySelector('.wishlist-sig-section[data-section-id]'));
+});
+</script>
+
+{% schema %}
+{
+  "name": "Page Wishlist Signature",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Contenu de la page"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Titre",
+      "default": "Ma Wishlist"
+    }
+  ]
+}
+{% endschema %}

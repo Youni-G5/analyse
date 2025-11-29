@@ -1,0 +1,357 @@
+<!-- page.liquid -->
+
+<div class="nike-page">
+  
+  <!-- Page Header -->
+  <section class="page-header">
+    <div class="page-container">
+      <h1 class="page-title">{{ page.title }}</h1>
+    </div>
+  </section>
+
+  <!-- Page Content -->
+  <section class="page-content">
+    <div class="page-container">
+      <div class="content-wrapper">
+        {{ page.content }}
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<style>
+  /* Reset & Base */
+  .nike-page {
+    background: #ffffff;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    color: #111111;
+  }
+  
+  .page-container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 clamp(20px, 5vw, 60px);
+  }
+  
+  /* Page Header - Bold Nike Style */
+  .page-header {
+    padding: clamp(60px, 10vh, 120px) 0 clamp(40px, 6vh, 60px);
+    background: #f7f7f7;
+    text-align: center;
+  }
+  
+  .page-title {
+    font-size: clamp(40px, 6vw, 72px);
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    line-height: 1;
+    margin: 0;
+    text-transform: uppercase;
+    color: #111111;
+  }
+  
+  /* Page Content - Minimalist & Clean */
+  .page-content {
+    padding: clamp(60px, 10vh, 100px) 0 clamp(80px, 12vh, 140px);
+  }
+  
+  .content-wrapper {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  /* Typography - Nike Helvetica Style */
+  .content-wrapper h1,
+  .content-wrapper h2,
+  .content-wrapper h3,
+  .content-wrapper h4,
+  .content-wrapper h5,
+  .content-wrapper h6 {
+    font-weight: 700;
+    color: #111111;
+    margin: clamp(40px, 6vh, 60px) 0 clamp(16px, 2vh, 24px);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+  
+  .content-wrapper h1 {
+    font-size: clamp(32px, 5vw, 56px);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.03em;
+  }
+  
+  .content-wrapper h2 {
+    font-size: clamp(28px, 4vw, 44px);
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: -0.03em;
+  }
+  
+  .content-wrapper h3 {
+    font-size: clamp(24px, 3vw, 36px);
+    font-weight: 700;
+  }
+  
+  .content-wrapper h4 {
+    font-size: clamp(20px, 2.5vw, 28px);
+    font-weight: 700;
+  }
+  
+  .content-wrapper h5 {
+    font-size: clamp(18px, 2vw, 24px);
+    font-weight: 700;
+  }
+  
+  .content-wrapper h6 {
+    font-size: clamp(16px, 1.8vw, 20px);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  
+  /* Paragraphs - Generous Line Height */
+  .content-wrapper p {
+    font-size: clamp(16px, 1.8vw, 20px);
+    line-height: 1.8;
+    color: #111111;
+    margin: 0 0 clamp(20px, 3vh, 32px);
+    font-weight: 400;
+  }
+  
+  .content-wrapper p:last-child {
+    margin-bottom: 0;
+  }
+  
+  /* Strong & Bold */
+  .content-wrapper strong,
+  .content-wrapper b {
+    font-weight: 700;
+    color: #111111;
+  }
+  
+  /* Emphasis */
+  .content-wrapper em,
+  .content-wrapper i {
+    font-style: italic;
+  }
+  
+  /* Links - Nike Style */
+  .content-wrapper a {
+    color: #111111;
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    text-decoration-thickness: 2px;
+    transition: all 0.2s ease;
+    font-weight: 600;
+  }
+  
+  .content-wrapper a:hover {
+    text-decoration-thickness: 3px;
+    opacity: 0.7;
+  }
+  
+  /* Lists - Clean & Spaced */
+  .content-wrapper ul,
+  .content-wrapper ol {
+    font-size: clamp(16px, 1.8vw, 20px);
+    line-height: 1.8;
+    margin: 0 0 clamp(24px, 4vh, 40px);
+    padding-left: clamp(24px, 4vw, 40px);
+  }
+  
+  .content-wrapper ul {
+    list-style-type: none;
+  }
+  
+  .content-wrapper ul li {
+    position: relative;
+    margin-bottom: clamp(12px, 2vh, 16px);
+  }
+  
+  .content-wrapper ul li:before {
+    content: "";
+    position: absolute;
+    left: -24px;
+    top: 12px;
+    width: 8px;
+    height: 8px;
+    background: #111111;
+    border-radius: 50%;
+  }
+  
+  .content-wrapper ol {
+    list-style-type: decimal;
+    list-style-position: outside;
+  }
+  
+  .content-wrapper ol li {
+    margin-bottom: clamp(12px, 2vh, 16px);
+    font-weight: 500;
+  }
+  
+  .content-wrapper li:last-child {
+    margin-bottom: 0;
+  }
+  
+  /* Blockquote - Bold Statement */
+  .content-wrapper blockquote {
+    margin: clamp(40px, 6vh, 60px) 0;
+    padding: clamp(32px, 5vh, 48px) clamp(24px, 4vw, 40px);
+    background: #f7f7f7;
+    border-left: 4px solid #111111;
+    font-size: clamp(18px, 2vw, 24px);
+    line-height: 1.6;
+    font-weight: 600;
+    font-style: italic;
+    color: #111111;
+  }
+  
+  .content-wrapper blockquote p {
+    margin: 0;
+  }
+  
+  .content-wrapper blockquote cite {
+    display: block;
+    margin-top: 16px;
+    font-size: clamp(14px, 1.5vw, 16px);
+    font-style: normal;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+  
+  /* Images - Full Width Impact */
+  .content-wrapper img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: clamp(40px, 6vh, 60px) 0;
+  }
+  
+  /* Tables - Minimal & Clean */
+  .content-wrapper table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: clamp(32px, 5vh, 48px) 0;
+    font-size: clamp(14px, 1.6vw, 16px);
+  }
+  
+  .content-wrapper table thead {
+    background: #111111;
+    color: #ffffff;
+  }
+  
+  .content-wrapper table th,
+  .content-wrapper table td {
+    padding: clamp(12px, 2vh, 16px) clamp(16px, 2.5vw, 20px);
+    text-align: left;
+    border-bottom: 1px solid #e5e5e5;
+  }
+  
+  .content-wrapper table th {
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: clamp(13px, 1.5vw, 14px);
+  }
+  
+  .content-wrapper table tbody tr:hover {
+    background: #f7f7f7;
+  }
+  
+  /* Code - Monospace */
+  .content-wrapper code {
+    font-family: "SF Mono", Monaco, "Cascadia Code", "Roboto Mono", Consolas, "Courier New", monospace;
+    background: #f7f7f7;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.9em;
+    color: #111111;
+  }
+  
+  .content-wrapper pre {
+    background: #f7f7f7;
+    padding: clamp(20px, 3vh, 24px);
+    margin: clamp(32px, 5vh, 48px) 0;
+    overflow-x: auto;
+    border-left: 4px solid #111111;
+  }
+  
+  .content-wrapper pre code {
+    background: none;
+    padding: 0;
+  }
+  
+  /* Horizontal Rule - Simple Line */
+  .content-wrapper hr {
+    border: none;
+    border-top: 2px solid #e5e5e5;
+    margin: clamp(48px, 8vh, 80px) 0;
+  }
+  
+  /* Video Embeds */
+  .content-wrapper iframe {
+    max-width: 100%;
+    margin: clamp(40px, 6vh, 60px) 0;
+  }
+  
+  /* Buttons - Nike CTA Style */
+  .content-wrapper .button,
+  .content-wrapper a.button {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: clamp(14px, 2vh, 18px) clamp(32px, 5vw, 48px);
+    background: #111111;
+    color: #ffffff;
+    font-size: clamp(14px, 1.6vw, 16px);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    text-decoration: none;
+    border-radius: 30px;
+    transition: all 0.3s ease;
+    margin: clamp(20px, 3vh, 32px) 0;
+  }
+  
+  .content-wrapper .button:hover,
+  .content-wrapper a.button:hover {
+    background: #333333;
+    transform: scale(1.05);
+    opacity: 1;
+    text-decoration: none;
+  }
+  
+  /* Responsive Adjustments */
+  @media (max-width: 768px) {
+    .page-header {
+      padding: 60px 0 40px;
+    }
+    
+    .page-content {
+      padding: 40px 0 60px;
+    }
+    
+    .content-wrapper ul li:before {
+      left: -20px;
+      top: 10px;
+    }
+    
+    .content-wrapper ul,
+    .content-wrapper ol {
+      padding-left: 20px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .page-header {
+      padding: 40px 0 32px;
+    }
+    
+    .page-content {
+      padding: 32px 0 48px;
+    }
+  }
+</style>

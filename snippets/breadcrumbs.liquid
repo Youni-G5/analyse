@@ -1,0 +1,74 @@
+{%- assign template_name = template.name -%}
+{%- assign template_suffix = template.suffix -%}
+
+{%- unless template_name == 'index' or template_name == 'cart' or template_name == '404' -%}
+  <nav class="breadcrumbs" aria-label="Fil d'Ariane">
+    <ol>
+      <li>
+        <a href="{{ routes.root_url }}" title="Accueil">Accueil</a>
+      </li>
+
+      {%- case template_name -%}
+        {%- when 'list-collections' -%}
+          <li>
+            <span aria-current="page">Collections</span>
+          </li>
+
+        {%- when 'collection' -%}
+          <li>
+            <a href="{{ routes.collections_url }}">Collections</a>
+          </li>
+          <li>
+            <span aria-current="page">{{ collection.title }}</span>
+          </li>
+
+        {%- when 'product' -%}
+          {%- if collection.url -%}
+            <li><a href="{{ collection.url }}">{{ collection.title }}</a></li>
+          {%- elsif product.collections.first.url -%}
+            <li><a href="{{ product.collections.first.url }}">{{ product.collections.first.title }}</a></li>
+          {%- endif -%}
+          <li>
+            <span aria-current="page">{{ product.title }}</span>
+          </li>
+
+        {%- when 'blog' -%}
+          <li>
+            {%- if current_tags -%}
+              <a href="{{ blog.url }}">{{ blog.title }}</a>
+            {%- else -%}
+              <span aria-current="page">{{ blog.title }}</span>
+            {%- endif -%}
+          </li>
+          {%- if current_tags -%}
+            <li>
+              <span aria-current="page">{{ current_tags | join: ', ' }}</span>
+            </li>
+          {%- endif -%}
+
+        {%- when 'article' -%}
+          <li>
+            <a href="{{ blog.url }}">{{ blog.title }}</a>
+          </li>
+          <li>
+            <span aria-current="page">{{ article.title }}</span>
+          </li>
+          
+        {%- when 'page' -%}
+          <li>
+            <span aria-current="page">{{ page.title }}</span>
+          </li>
+
+        {%- when 'search' -%}
+          <li>
+            <span aria-current="page">Recherche</span>
+          </li>
+
+        {%- else -%}
+          <li>
+            <span aria-current="page">{{ page_title }}</span>
+          </li>
+      {%- endcase -%}
+    </ol>
+  </nav>
+{%- endunless -%}

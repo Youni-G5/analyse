@@ -1,0 +1,312 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "OFFSIDE",
+    "theme_version": "1.0.0",
+    "theme_author": "Youni",
+    "theme_documentation_url": "https://help.shopify.com/manual/online-store/themes",
+    "theme_support_url": "https://support.shopify.com/"
+  },
+  {
+    "name": "Analytics & Tracking",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Google Analytics 4"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_google_analytics",
+        "label": "Activer Google Analytics 4",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "google_analytics_id",
+        "label": "ID de mesure GA4",
+        "info": "Format: G-XXXXXXXXXX. Trouvez-le dans Google Analytics > Admin > Flux de données"
+      },
+      {
+        "type": "checkbox",
+        "id": "ga4_enhanced_ecommerce",
+        "label": "Activer le e-commerce amélioré",
+        "default": true,
+        "info": "Suit automatiquement les vues de produits, ajouts au panier, et achats"
+      },
+      {
+        "type": "header",
+        "content": "Facebook Pixel"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_facebook_pixel",
+        "label": "Activer Facebook Pixel",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "facebook_pixel_id",
+        "label": "ID Facebook Pixel",
+        "info": "Format: 1234567890123456. Trouvez-le dans Gestionnaire d'événements Facebook"
+      },
+      {
+        "type": "checkbox",
+        "id": "fb_advanced_matching",
+        "label": "Activer la mise en correspondance avancée",
+        "default": true,
+        "info": "Améliore le suivi en envoyant les données clients chiffrées"
+      },
+      {
+        "type": "header",
+        "content": "Google Tag Manager"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_google_tag_manager",
+        "label": "Activer Google Tag Manager",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "google_tag_manager_id",
+        "label": "ID de conteneur GTM",
+        "info": "Format: GTM-XXXXXXX. Trouvez-le dans Google Tag Manager > Admin > Conteneur"
+      },
+      {
+        "type": "header",
+        "content": "TikTok Pixel"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_tiktok_pixel",
+        "label": "Activer TikTok Pixel",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "tiktok_pixel_id",
+        "label": "ID TikTok Pixel",
+        "info": "Trouvez-le dans TikTok Ads Manager > Outils > Événements"
+      },
+      {
+        "type": "header",
+        "content": "Snapchat Pixel"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_snapchat_pixel",
+        "label": "Activer Snapchat Pixel",
+        "default": false
+      },
+      {
+        "type": "text",
+        "id": "snapchat_pixel_id",
+        "label": "ID Snapchat Pixel",
+        "info": "Trouvez-le dans Snap Ads Manager > Événements Manager"
+      },
+      {
+        "type": "header",
+        "content": "Options avancées"
+      },
+      {
+        "type": "checkbox",
+        "id": "tracking_anonymize_ip",
+        "label": "Anonymiser les adresses IP",
+        "default": true,
+        "info": "Recommandé pour la conformité RGPD"
+      },
+      {
+        "type": "checkbox",
+        "id": "tracking_respect_dnt",
+        "label": "Respecter Do Not Track",
+        "default": false,
+        "info": "Désactive le tracking si l'utilisateur a activé DNT dans son navigateur"
+      }
+    ]
+  },
+  {
+    "name": "t:general.typography",
+    "settings": [
+      {
+        "type": "header",
+        "content": "t:general.fonts"
+      },
+      {
+        "type": "font_picker",
+        "id": "type_primary_font",
+        "default": "work_sans_n4",
+        "label": "t:general.primary"
+      }
+    ]
+  },
+  {
+    "name": "t:general.layout",
+    "settings": [
+      {
+        "type": "select",
+        "id": "max_page_width",
+        "label": "t:labels.page_width",
+        "options": [
+          {
+            "value": "90rem",
+            "label": "t:options.page_width.narrow"
+          },
+          {
+            "value": "110rem",
+            "label": "t:options.page_width.wide"
+          }
+        ],
+        "default": "90rem"
+      },
+      {
+        "type": "range",
+        "id": "min_page_margin",
+        "min": 0,
+        "max": 100,
+        "step": 1,
+        "unit": "px",
+        "label": "t:labels.page_margin",
+        "default": 20
+      }
+    ]
+  },
+  {
+  "name": "Favicon",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "favicon",
+      "label": "Favicon",
+      "info": "Choisissez une image carrée de 32x32 pixels ou plus. Formats supportés : JPG, PNG, GIF"
+    }
+  ]
+  },
+  {
+    "name": "Cartes Produits",
+    "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_wishlist_btn",
+      "label": "Afficher le bouton wishlist"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_quick_add_btn",
+      "label": "Afficher le bouton ajout rapide"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Afficher le fournisseur"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_color_swatches",
+      "label": "Afficher les nuanciers de couleurs"
+    }
+  ]
+},
+  {
+    "name": "t:general.colors",
+    "settings": [
+      {
+        "type": "color",
+        "id": "background_color",
+        "default": "#FFFFFF",
+        "label": "t:labels.background"
+      },
+      {
+        "type": "color",
+        "id": "foreground_color",
+        "default": "#333333",
+        "label": "t:labels.foreground"
+      },
+      {
+        "type": "range",
+        "id": "input_corner_radius",
+        "min": 0,
+        "max": 10,
+        "step": 1,
+        "unit": "px",
+        "label": "t:labels.input_corner_radius",
+        "default": 4
+      }
+    ]
+  },
+  {
+  "name": "Réseaux sociaux",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Profils sociaux"
+    },
+    {
+      "type": "text",
+      "id": "social_facebook_link",
+      "label": "Facebook",
+      "info": "ex: https://facebook.com/shopify"
+    },
+    {
+      "type": "text",
+      "id": "social_instagram_link",
+      "label": "Instagram",
+      "info": "ex: https://instagram.com/shopify"
+    },
+    {
+      "type": "text",
+      "id": "social_x_link",
+      "label": "X (Twitter)",
+      "info": "ex: https://x.com/shopify"
+    },
+    {
+      "type": "text",
+      "id": "social_tiktok_link",
+      "label": "TikTok"
+    },
+    {
+      "type": "text",
+      "id": "social_pinterest_link",
+      "label": "Pinterest"
+    },
+    {
+      "type": "text",
+      "id": "social_youtube_link",
+      "label": "YouTube"
+    }
+  ]
+},
+  {
+  "name": "Préchargement Signature",
+  "settings": [
+    { "type": "checkbox", "id": "enable_signature_preloader", "label": "Activer le préchargement", "default": true },
+    { "type": "checkbox", "id": "signature_preloader_force", "label": "Forcer l'affichage (dev)", "default": true },
+    { "type": "image_picker", "id": "signature_preloader_logo", "label": "Logo (SVG recommandé)" },
+    { "type": "range", "id": "signature_preloader_logo_size", "label": "Taille du logo (px)", "min": 64, "max": 240, "step": 8, "default": 152 },
+    { "type": "text", "id": "signature_preloader_text", "label": "Texte sous le logo", "default": "Chargement..." },
+    { "type": "color", "id": "signature_preloader_text_color", "label": "Couleur du texte de chargement", "default": "#24262e" },
+    { "type": "range", "id": "signature_preloader_duration", "label": "Durée de l'animation (ms)", "min": 1000, "max": 7000, "step": 500, "default": 5000 },
+    { "type": "select", "id": "signature_preloader_bg", "label": "Fond", "options": [
+      { "value": "solid", "label": "Uni" },
+      { "value": "gradient", "label": "Dégradé" },
+      { "value": "fade", "label": "Fondu" }
+    ], "default": "solid" },
+    { "type": "color", "id": "signature_preloader_bg_color", "label": "Couleur principale de fond", "default": "#ffffff" },
+    { "type": "color", "id": "signature_preloader_bg_color2", "label": "Couleur secondaire", "default": "#f1f3f6" },
+    { "type": "select", "id": "signature_preloader_logo_anim", "label": "Animation du logo", "options": [
+      { "value": "fadein", "label": "Apparition fluide" },
+      { "value": "soft_pulse", "label": "Pulse doux" },
+      { "value": "subtle_slide", "label": "Léger slide vertical" },
+      { "value": "spin_smooth", "label": "Rotation soyeuse" }
+    ], "default": "fadein" },
+    { "type": "select", "id": "signature_preloader_loader_style", "label": "Style du loader", "options": [
+      { "value": "line", "label": "Ligne carrée élégante" },
+      { "value": "spinner", "label": "Cercle fluide" },
+      { "value": "dots", "label": "Points raffinés" }
+    ], "default": "line" },
+    { "type": "color", "id": "signature_preloader_accent", "label": "Couleur du loader", "default": "#fff" },
+    { "type": "range", "id": "signature_preloader_padding_top", "label": "Espacement haut", "min": 0, "max": 120, "step": 4, "default": 56 },
+    { "type": "range", "id": "signature_preloader_padding_bottom", "label": "Espacement bas", "min": 0, "max": 120, "step": 4, "default": 56 },
+    { "type": "checkbox", "id": "signature_preloader_show_mobile", "label": "Afficher sur mobile", "default": true }
+  ]
+}
+]

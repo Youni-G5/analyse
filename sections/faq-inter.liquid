@@ -1,0 +1,533 @@
+{%- style -%}
+  #shopify-section-{{ section.id }} {
+    --bg-color: {{ section.settings.bg_color }};
+    --text-color: {{ section.settings.text_color }};
+    --border-color: {{ section.settings.text_color | color_modify: 'alpha', 0.1 }};
+    --input-bg: {{ section.settings.text_color | color_modify: 'alpha', 0.04 }};
+    --accent-color: {{ section.settings.accent_color }};
+    --spacing-y: {{ section.settings.spacing_y }}px;
+  }
+
+  .section-{{ section.id }}-padding {
+    padding-top: var(--spacing-y);
+    padding-bottom: var(--spacing-y);
+    background-color: var(--bg-color);
+  }
+
+  .faq-sport-container {
+    max-width: 900px; /* Nike style: plus étroit pour la lecture */
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+
+  /* -- Header & Search -- */
+  .faq-header-wrapper {
+    text-align: center;
+    margin-bottom: 50px;
+  }
+
+  .faq-title {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    color: var(--text-color);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    line-height: 0.95;
+  }
+
+  .faq-subtitle {
+    font-size: 1.1rem;
+    color: var(--text-color);
+    opacity: 0.6;
+    margin-bottom: 30px;
+  }
+
+  /* -- Search Bar Style Nike -- */
+  .faq-search-box {
+    position: relative;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  .faq-search-input {
+    width: 100%;
+    padding: 18px 24px 18px 54px;
+    font-size: 1.1rem;
+    border: 2px solid transparent;
+    border-radius: 8px; /* Légèrement arrondi, pas pill */
+    background-color: var(--input-bg);
+    color: var(--text-color);
+    font-weight: 500;
+    transition: all 0.2s ease;
+    outline: none;
+  }
+
+  .faq-search-input:focus {
+    background-color: #fff;
+    border-color: var(--text-color);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  }
+
+  .faq-search-icon {
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 20px;
+    height: 20px;
+    color: var(--text-color);
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  /* -- Filters -- */
+  .faq-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 40px;
+  }
+
+  .faq-filter-btn {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    padding: 10px 20px;
+    border-radius: 100px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .faq-filter-btn:hover {
+    border-color: var(--text-color);
+  }
+
+  .faq-filter-btn.active {
+    background: var(--text-color);
+    color: var(--bg-color);
+    border-color: var(--text-color);
+  }
+
+  /* -- Accordion List -- */
+  .faq-list {
+    border-top: 1px solid var(--border-color);
+  }
+
+  .faq-item {
+    border-bottom: 1px solid var(--border-color);
+    /* Permet de cacher l'élément proprement via JS */
+    display: block; 
+  }
+
+  .faq-item.hidden {
+    display: none !important;
+  }
+
+  .faq-trigger {
+    width: 100%;
+    display: flex;
+    align-items: flex-start; /* Aligner en haut si question longue */
+    justify-content: space-between;
+    padding: 24px 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    color: var(--text-color);
+    gap: 20px;
+  }
+
+  .faq-question {
+    font-size: 1.2rem;
+    font-weight: 700;
+    line-height: 1.4;
+  }
+
+  .faq-icon {
+    position: relative;
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    margin-top: 6px; /* Ajustement optique */
+  }
+
+  .faq-icon::before, .faq-icon::after {
+    content: '';
+    position: absolute;
+    background-color: var(--text-color);
+    transition: transform 0.3s ease;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .faq-icon::before { width: 100%; height: 2px; }
+  .faq-icon::after { height: 100%; width: 2px; }
+
+  .faq-item[open] .faq-icon::before { transform: translate(-50%, -50%) rotate(180deg); }
+  .faq-item[open] .faq-icon::after { transform: translate(-50%, -50%) rotate(90deg); }
+
+  .faq-content {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows 0.3s ease-out;
+    opacity: 0;
+  }
+
+  .faq-content-inner {
+    overflow: hidden;
+    color: var(--text-color);
+    opacity: 0.8;
+    line-height: 1.6;
+    padding-bottom: 0;
+    font-size: 1rem;
+  }
+  
+  .faq-content-inner a {
+    color: var(--accent-color);
+    text-decoration: underline;
+    font-weight: 600;
+  }
+
+  .faq-item[open] .faq-content {
+    grid-template-rows: 1fr;
+    opacity: 1;
+    padding-bottom: 24px;
+  }
+
+  /* Message "Aucun résultat" */
+  .faq-no-results {
+    display: none;
+    text-align: center;
+    padding: 40px 0;
+    color: var(--text-color);
+    opacity: 0.6;
+  }
+{%- endstyle -%}
+
+<div class="section-{{ section.id }}-padding">
+  <div class="faq-sport-container">
+    
+    <!-- Header & Search -->
+    <div class="faq-header-wrapper">
+      {% if section.settings.title != blank %}
+        <h2 class="faq-title">{{ section.settings.title }}</h2>
+      {% endif %}
+      {% if section.settings.subtitle != blank %}
+        <div class="faq-subtitle">{{ section.settings.subtitle }}</div>
+      {% endif %}
+
+      <div class="faq-search-box">
+        <!-- Icone Loupe SVG -->
+        <svg class="faq-search-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+        <input type="text" 
+               class="faq-search-input" 
+               placeholder="{{ section.settings.search_placeholder }}" 
+               aria-label="Rechercher dans la FAQ">
+      </div>
+    </div>
+
+    <!-- Filters -->
+    {%- assign categories = section.blocks | map: 'settings' | map: 'category' | uniq -%}
+    {% if categories.size > 0 %}
+      <div class="faq-filters">
+        <button class="faq-filter-btn active" data-filter="all">Tout voir</button>
+        {% for cat in categories %}
+          {% if cat != blank %}
+            <button class="faq-filter-btn" data-filter="{{ cat | handleize }}">{{ cat }}</button>
+          {% endif %}
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <!-- List -->
+    <div class="faq-list" id="FaqList-{{ section.id }}">
+      {% for block in section.blocks %}
+        <div class="faq-item" 
+             data-category="{{ block.settings.category | handleize }}"
+             {{ block.shopify_attributes }}>
+          
+          <button class="faq-trigger" aria-expanded="false">
+            <span class="faq-question">{{ block.settings.question }}</span>
+            <div class="faq-icon"></div>
+          </button>
+          
+          <div class="faq-content">
+            <div class="faq-content-inner">
+              {{ block.settings.answer }}
+            </div>
+          </div>
+          
+          <!-- Hidden searchable text for JS -->
+          <span style="display:none;" class="search-data">{{ block.settings.question | downcase }} {{ block.settings.answer | strip_html | downcase }}</span>
+        </div>
+      {% endfor %}
+      
+      <div class="faq-no-results">
+        <p>Aucun résultat trouvé pour votre recherche.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const section = document.querySelector('#shopify-section-{{ section.id }}');
+    const searchInput = section.querySelector('.faq-search-input');
+    const filterBtns = section.querySelectorAll('.faq-filter-btn');
+    const items = section.querySelectorAll('.faq-item');
+    const noResultsMsg = section.querySelector('.faq-no-results');
+
+    // -- 1. SEARCH LOGIC --
+    searchInput.addEventListener('input', (e) => {
+      const term = e.target.value.toLowerCase();
+      
+      // Si on tape, on reset visuellement les boutons de catégorie sur "Tout voir"
+      if(term.length > 0) {
+        filterBtns.forEach(b => b.classList.remove('active'));
+        section.querySelector('[data-filter="all"]').classList.add('active');
+      }
+
+      let visibleCount = 0;
+
+      items.forEach(item => {
+        const data = item.querySelector('.search-data').textContent;
+        // On cherche si le terme est dans la question ou la réponse
+        if(data.includes(term)) {
+          item.classList.remove('hidden');
+          visibleCount++;
+        } else {
+          item.classList.add('hidden');
+          item.removeAttribute('open'); // On ferme si caché
+        }
+      });
+
+      // Gérer le message "Pas de résultat"
+      noResultsMsg.style.display = (visibleCount === 0) ? 'block' : 'none';
+    });
+
+    // -- 2. FILTER LOGIC --
+    filterBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Reset Search Input
+        searchInput.value = '';
+        noResultsMsg.style.display = 'none';
+
+        // Active Class
+        filterBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const filter = btn.dataset.filter;
+
+        items.forEach(item => {
+          if (filter === 'all' || item.dataset.category === filter) {
+            item.classList.remove('hidden');
+          } else {
+            item.classList.add('hidden');
+            item.removeAttribute('open');
+          }
+        });
+      });
+    });
+
+    // -- 3. ACCORDION LOGIC --
+    section.querySelectorAll('.faq-trigger').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = btn.closest('.faq-item');
+        const isOpen = item.hasAttribute('open');
+        
+        // Mode "Exclusif" (Un seul ouvert à la fois)
+        section.querySelectorAll('.faq-item').forEach(i => {
+          i.removeAttribute('open');
+          i.querySelector('.faq-trigger').setAttribute('aria-expanded', 'false');
+        });
+
+        if (!isOpen) {
+          item.setAttribute('open', '');
+          btn.setAttribute('aria-expanded', 'true');
+        }
+      });
+    });
+  });
+</script>
+
+{% schema %}
+{
+  "name": "FAQ Nike Style",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Textes"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Titre Principal",
+      "default": "AIDE"
+    },
+    {
+      "type": "text",
+      "id": "subtitle",
+      "label": "Sous-titre",
+      "default": "Obtenez des réponses rapides à vos questions"
+    },
+    {
+      "type": "text",
+      "id": "search_placeholder",
+      "label": "Placeholder barre de recherche",
+      "default": "Que recherchez-vous ? (ex: retour, taille...)"
+    },
+    {
+      "type": "header",
+      "content": "Couleurs"
+    },
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Fond de section",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Texte",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Couleur d'accent",
+      "default": "#000000"
+    },
+    {
+      "type": "range",
+      "id": "spacing_y",
+      "min": 20,
+      "max": 100,
+      "step": 5,
+      "label": "Espacement Vertical",
+      "default": 60
+    }
+  ],
+  "blocks": [
+    {
+      "type": "faq_item",
+      "name": "Question / Réponse",
+      "settings": [
+        {
+          "type": "text",
+          "id": "category",
+          "label": "Catégorie",
+          "default": "Commandes"
+        },
+        {
+          "type": "text",
+          "id": "question",
+          "label": "Question",
+          "default": "Question ici"
+        },
+        {
+          "type": "richtext",
+          "id": "answer",
+          "label": "Réponse",
+          "default": "<p>Réponse ici.</p>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ Complète Offside",
+      "blocks": [
+        {
+          "type": "faq_item",
+          "settings": {
+            "category": "Commandes",
+            "question": "Comment modifier ou annuler ma commande ?",
+            "answer": "<p>Nous traitons les commandes très rapidement. Si vous devez modifier un détail (taille, adresse), contactez-nous via WhatsApp ou email dans les <strong>30 minutes</strong> suivant l'achat. Une fois en production, aucune modification n'est possible.</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "category": "Commandes",
+            "question": "Où est ma commande ?",
+            "answer": "<p>Dès que votre commande est expédiée, vous recevrez un email avec un lien de suivi. Vous pouvez aussi consulter l'état de votre commande dans votre compte client.</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "category": "Livraison",
+            "question": "Quels sont les délais de livraison ?",
+            "answer": "<p>Pour les produits en stock : <strong>2-4 jours ouvrés</strong>.<br>Pour les maillots personnalisés : comptez <strong>7 à 12 jours ouvrés</strong> (temps de fabrication inclus).</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "category": "Livraison",
+            "question": "Livrez-vous à l'international ?",
+            "answer": "<p>Oui, nous livrons partout dans le monde. Les frais de port sont calculés automatiquement lors du passage à la caisse.</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "category": "Personnalisation",
+            "question": "Puis-je ajouter un flocage personnalisé ?",
+            "answer": "<p>Absolument. Sur la page produit, sélectionnez l'option 'Personnaliser' pour ajouter le nom et le numéro de votre choix. Nous utilisons les typographies officielles des clubs.</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "category": "Personnalisation",
+            "question": "Le flocage résiste-t-il au lavage ?",
+            "answer": "<p>Oui, nos flocages sont de qualité professionnelle. Pour une durée de vie maximale, nous recommandons de laver le maillot <strong>à l'envers à 30°C</strong> et d'éviter le sèche-linge.</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "category": "Retours",
+            "question": "Quelle est votre politique de retour ?",
+            "answer": "<p>Vous avez 14 jours après réception pour retourner un article non porté avec ses étiquettes. <br><strong>Attention :</strong> Les maillots personnalisés (avec votre nom) ne sont ni échangeables ni remboursables.</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "category": "Retours",
+            "question": "Les retours sont-ils gratuits ?",
+            "answer": "<p>Les frais de retour sont à votre charge, sauf en cas d'erreur de notre part (mauvaise taille envoyée, produit défectueux).</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "category": "Paiement",
+            "question": "Quels moyens de paiement acceptez-vous ?",
+            "answer": "<p>Nous acceptons les cartes bancaires (Visa, Mastercard, Amex), PayPal et Apple Pay. Tous les paiements sont 100% sécurisés.</p>"
+          }
+        },
+        {
+          "type": "faq_item",
+          "settings": {
+            "category": "Produits",
+            "question": "Comment choisir ma taille ?",
+            "answer": "<p>Nos maillots 'Supporter' taillent normalement. Pour les versions 'Player' (plus cintrés), nous conseillons de prendre une taille au-dessus si vous hésitez. Consultez notre guide des tailles sur chaque fiche produit.</p>"
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

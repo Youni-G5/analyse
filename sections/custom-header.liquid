@@ -1,0 +1,656 @@
+<style>
+/* --- STYLES GÉNÉRAUX HEADER --- */
+.goat-header { 
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif; 
+  font-size: 13px; line-height: 16px; -webkit-font-smoothing: antialiased; 
+  position: fixed; top: 0; left: 0; right: 0; height: 58px; 
+  background: {{ section.settings.bg_color }}; color: {{ section.settings.text_color }}; 
+  border-bottom: 1px solid {{ section.settings.border_color }}; 
+  z-index: 9999; display: flex; align-items: center; 
+}
+
+.goat-header__wrapper { width: 100%; max-width: {{ section.settings.max_width }}px; margin: 0 auto; padding: 0 24px; display: flex; align-items: center; justify-content: space-between; position: relative; }
+
+/* SEARCH DESKTOP */
+.goat-header__search-desktop { display: flex; align-items: center; position: relative; width: 260px; }
+.goat-header__search-form { width: 100%; position: relative; }
+.goat-header__search-input { width: 100%; border: 1px solid rgba(255,255,255,0.3); border-radius: 4px; background: rgba(255,255,255,0.1); padding: 8px 12px; color: {{ section.settings.text_color }}; }
+.goat-header__search-input:focus { outline: none; border-color: rgba(255,255,255,0.6); }
+.goat-header__search-results { position: absolute; top: 38px; left: 0; right: 0; background: {{ section.settings.bg_color }}; border: 1px solid rgba(255,255,255,0.3); border-radius: 4px; overflow: hidden; display: none; max-height: 340px; overflow-y: auto; z-index: 100; }
+.goat-header__search-results.active { display: block; }
+.goat-header__search-section { border-bottom: 1px solid rgba(255,255,255,0.1); padding: 8px 0; }
+.goat-header__search-section:last-child { border-bottom: none; }
+.goat-header__search-title { padding: 6px 12px; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: rgba(255,255,255,0.6); }
+.goat-header__search-item { display: flex; align-items: center; gap: 8px; padding: 8px 12px; text-decoration: none; color: {{ section.settings.text_color }}; transition: background 0.2s; }
+.goat-header__search-item:hover { background: rgba(255,255,255,0.1); }
+.goat-header__search-item img { width: 40px; height: 40px; object-fit: cover; border-radius: 3px; }
+
+/* LOGO */
+.goat-header__logo { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 10; cursor: pointer; }
+.goat-header__logo a { display: flex; align-items: center; text-decoration: none; }
+.goat-header__logo button { display: flex; align-items: center; background: none; border: none; padding: 0; cursor: pointer; }
+.goat-header__logo-img { max-height: {{ section.settings.logo_height_desktop }}px; width: auto; }
+
+/* RIGHT CONTAINER & NAV */
+.goat-header__right-container { display: flex; align-items: center; gap: 24px; }
+.goat-header__locale-container { margin-right: 40px; display: flex; align-items: center; } /* Marge pour écarter le bouton desktop */
+.goat-header__nav-inline { display: flex; }
+.goat-header__nav-list { display: flex; list-style: none; margin: 0; padding: 0; gap: 24px; align-items: center; }
+.goat-header__nav-link { color: {{ section.settings.text_color }}; text-decoration: none; font-weight: 500; transition: opacity 0.2s; white-space: nowrap; }
+.goat-header__nav-link:hover { opacity: 0.7; }
+.goat-header__account { color: {{ section.settings.text_color }}; text-decoration: none; font-weight: 500; white-space: nowrap; }
+.goat-header__account:hover { opacity: 0.7; }
+
+/* CART */
+.goat-header__cart { position: relative; display: flex; align-items: center; gap: 6px; color: {{ section.settings.text_color }}; text-decoration: none; font-weight: 500; transition: opacity 0.2s; cursor: pointer; }
+.goat-header__cart:hover { opacity: 0.7; }
+.goat-header__cart-icon { width: 22px; height: 22px; position: relative; }
+.goat-header__cart-icon svg { width: 100%; height: 100%; stroke: {{ section.settings.text_color }}; fill: none; }
+.goat-header__cart-count { position: absolute; top: -8px; right: -10px; background: {{ section.settings.text_color }}; color: {{ section.settings.bg_color }}; font-size: 10px; font-weight: 700; min-width: 18px; height: 18px; border-radius: 9px; display: none; align-items: center; justify-content: center; padding: 0 5px; line-height: 1; }
+.goat-header__cart-count.active { display: flex; }
+.goat-header__cart-text-only { position: relative; display: flex; align-items: center; gap: 8px; color: {{ section.settings.text_color }}; text-decoration: none; font-weight: 500; transition: opacity 0.2s; }
+.goat-header__cart-text-only:hover { opacity: 0.7; }
+.goat-header__cart-text-count { background: {{ section.settings.text_color }}; color: {{ section.settings.bg_color }}; font-size: 11px; font-weight: 700; min-width: 22px; height: 22px; border-radius: 11px; display: none; align-items: center; justify-content: center; padding: 0 6px; line-height: 1; }
+.goat-header__cart-text-count.active { display: flex; }
+
+/* MOBILE ELEMENTS */
+.goat-header__desktop-menu { display: none; }
+.goat-header__hamburger-button { background: none; border: none; padding: 8px; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 5px; cursor: pointer; width: 36px; height: 36px; position: relative; }
+.goat-header__hamburger-button:hover { opacity: 0.7; }
+.goat-header__hamburger-line { width: 22px; height: 2px; background: {{ section.settings.text_color }}; border-radius: 2px; transition: all 0.3s ease; position: absolute; }
+.goat-header__hamburger-line:nth-child(1) { top: 9px; }
+.goat-header__hamburger-line:nth-child(2) { top: 17px; }
+.goat-header__hamburger-line:nth-child(3) { top: 25px; }
+.goat-header__hamburger-button.active .goat-header__hamburger-line:nth-child(1) { top: 17px; transform: rotate(45deg); }
+.goat-header__hamburger-button.active .goat-header__hamburger-line:nth-child(2) { opacity: 0; }
+.goat-header__hamburger-button.active .goat-header__hamburger-line:nth-child(3) { top: 17px; transform: rotate(-45deg); }
+.goat-header__search-mobile { display: none; width: 100%; order: 2; position: relative; }
+.goat-header__search-mobile input { width: 100%; border: 1px solid rgba(255,255,255,0.3); border-radius: 4px; background: transparent; padding: 8px 12px; color: {{ section.settings.text_color }}; }
+.goat-header__menu { display: none; }
+
+/* --- DRAWER MOBILE (AMÉLIORÉ) --- */
+.goat-header__drawer { 
+  position: fixed; 
+  top: 58px; 
+  right: -100%; 
+  width: 280px; 
+  /* Hauteur dynamique pour mobile */
+  bottom: 0; 
+  height: auto;
+  background: {{ section.settings.bg_color }}; 
+  border-left: 1px solid {{ section.settings.border_color }}; 
+  transition: right 0.3s ease; 
+  z-index: 9998; 
+  display: flex;
+  flex-direction: column; /* Empilement vertical */
+  padding: 0; /* Reset padding pour gérer via flex */
+}
+
+.goat-header__drawer.active { right: 0; }
+
+/* Zone de contenu scrollable (Liens) */
+.goat-header__drawer-scroll-area {
+  flex-grow: 1; /* Prend tout l'espace disponible */
+  overflow-y: auto; /* Scroll uniquement ici */
+  padding: 24px 0;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Footer du Drawer (Bouton Sélecteur) - Fixé en bas */
+.goat-header__drawer-locale {
+  flex-shrink: 0; /* Ne jamais rétrécir */
+  padding: 24px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  background: {{ section.settings.bg_color }};
+  position: relative;
+  z-index: 10;
+  /* Fix pour les bugs d'affichage iOS */
+  transform: translate3d(0,0,0); 
+}
+
+.goat-header__drawer-overlay { position: fixed; top: 58px; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); opacity: 0; visibility: hidden; transition: opacity 0.3s ease, visibility 0.3s ease; z-index: 9997; }
+.goat-header__drawer-overlay.active { opacity: 1; visibility: visible; }
+.goat-header__drawer-nav { list-style: none; margin: 0; padding: 0; }
+.goat-header__drawer-link { display: block; padding: 16px 24px; color: {{ section.settings.text_color }}; text-decoration: none; font-weight: 500; border-bottom: 1px solid rgba(255,255,255,0.1); transition: background 0.2s; }
+.goat-header__drawer-link:hover { background: rgba(255,255,255,0.05); }
+.goat-header__drawer-account { display: block; padding: 16px 24px; color: {{ section.settings.text_color }}; text-decoration: none; font-weight: 600; margin-top: 8px; background: rgba(255,255,255,0.1); }
+.goat-header__drawer-account:hover { background: rgba(255,255,255,0.15); }
+.goat-header__drawer-cart { display: none; padding: 16px 24px; color: {{ section.settings.text_color }}; text-decoration: none; font-weight: 600; margin-top: 8px; background: rgba(255,255,255,0.1); align-items: center; justify-content: space-between; }
+.goat-header__drawer-cart:hover { background: rgba(255,255,255,0.15); }
+.goat-header__drawer-cart-badge { background: {{ section.settings.text_color }}; color: {{ section.settings.bg_color }}; font-size: 11px; font-weight: 700; min-width: 24px; height: 24px; border-radius: 12px; display: flex; align-items: center; justify-content: center; padding: 0 8px; }
+
+/* MEDIA QUERIES */
+{% if section.settings.desktop_menu_style == 'hamburger' %}@media (min-width: 991px) { .goat-header__nav-inline { display: none; } .goat-header__desktop-menu { display: block; } }{% endif %}
+{% if section.settings.cart_display_type == 'text' %}@media (min-width: 991px) { .goat-header__cart { display: none; } }{% else %}@media (min-width: 991px) { .goat-header__cart-text-only { display: none; } }{% endif %}
+
+/* Cacher le bouton du drawer mobile sur Desktop */
+@media (min-width: 991px) {
+  .goat-header__drawer-locale { display: none; }
+}
+
+@media (max-width: 990px) { 
+  .goat-header__wrapper { display: grid; grid-template-columns: auto 1fr auto; gap: 16px; padding: 0 16px; } 
+  .goat-header__logo { position: static; transform: none; order: 1; } 
+  .goat-header__logo-img { max-height: {{ section.settings.logo_height_mobile }}px; } 
+  .goat-header__search-desktop { display: none; } .goat-header__right-container { display: none; } 
+  .goat-header__search-mobile { display: block; } .goat-header__menu { display: block; order: 3; } 
+  .goat-header__drawer-cart { display: flex; } 
+}
+</style>
+
+
+<header class="goat-header">
+  <div class="goat-header__wrapper">
+
+    {% if section.settings.show_search %}
+    <div class="goat-header__search-desktop">
+      <form action="{{ routes.search_url }}" method="get" class="goat-header__search-form">
+        <input id="searchInputDesktop" type="search" name="q" placeholder="{{ section.settings.search_text }}" class="goat-header__search-input" autocomplete="off">
+        <div id="searchResultsDesktop" class="goat-header__search-results"></div>
+      </form>
+    </div>
+    {% endif %}
+
+    <div class="goat-header__logo">
+      {% if section.settings.logo_redirect_enabled %}
+        <button id="logoButton" class="goat-header__logo-btn" aria-label="Logo">
+          {% if section.settings.logo != blank %}
+          <img src="{{ section.settings.logo | image_url: width: 300 }}" alt="{{ shop.name }}" class="goat-header__logo-img" width="300" height="auto" loading="lazy">
+          {% else %}
+          <span>{{ shop.name }}</span>
+          {% endif %}
+        </button>
+      {% else %}
+        <a href="{{ routes.root_url }}">
+          {% if section.settings.logo != blank %}
+          <img src="{{ section.settings.logo | image_url: width: 300 }}" alt="{{ shop.name }}" class="goat-header__logo-img" width="300" height="auto" loading="lazy">
+          {% else %}
+          <span>{{ shop.name }}</span>
+          {% endif %}
+        </a>
+      {% endif %}
+    </div>
+
+    {% if section.settings.show_search %}
+    <div class="goat-header__search-mobile">
+      <form action="{{ routes.search_url }}" method="get">
+        <input id="searchInputMobile" type="search" name="q" placeholder="{{ section.settings.search_text }}" autocomplete="off">
+        <div id="searchResultsMobile" class="goat-header__search-results"></div>
+      </form>
+    </div>
+    {% endif %}
+
+    <div class="goat-header__right-container">
+      
+      <!-- BOUTON LOCALISATION DESKTOP -->
+      <div class="goat-header__locale-container">
+        {% render 'localization-modal', button_style: 'header' %}
+      </div>
+
+      <!-- Navigation inline (par défaut) -->
+      <nav class="goat-header__nav-inline">
+        <ul class="goat-header__nav-list">
+          {% for link in section.settings.menu.links %}
+          <li><a href="{{ link.url }}" class="goat-header__nav-link">{{ link.title }}</a></li>
+          {% endfor %}
+          {% if section.settings.show_account %}
+          <li><a href="{{ routes.account_url }}" class="goat-header__account">{{ section.settings.account_text }}</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+
+      <!-- Panier avec icône -->
+      {% if section.settings.show_cart %}
+        {% if section.settings.cart_action == 'drawer' %}
+          <button data-cart-drawer-open class="goat-header__cart" style="border: none; background: none;">
+            <div class="goat-header__cart-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <path d="M16 10a4 4 0 0 1-8 0"></path>
+              </svg>
+              <span class="goat-header__cart-count" data-cart-count id="cartCount">0</span>
+            </div>
+          </button>
+        {% else %}
+          <a href="{{ routes.cart_url }}" class="goat-header__cart">
+            <div class="goat-header__cart-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <path d="M16 10a4 4 0 0 1-8 0"></path>
+              </svg>
+              <span class="goat-header__cart-count" data-cart-count id="cartCount">0</span>
+            </div>
+          </a>
+        {% endif %}
+
+        <!-- Panier texte seulement -->
+        {% if section.settings.cart_action == 'drawer' %}
+          <button data-cart-drawer-open class="goat-header__cart-text-only" style="border: none; background: none;">
+            <span>{{ section.settings.cart_text }}</span>
+            <span class="goat-header__cart-text-count" data-cart-count id="cartCountText">0</span>
+          </button>
+        {% else %}
+          <a href="{{ routes.cart_url }}" class="goat-header__cart-text-only">
+            <span>{{ section.settings.cart_text }}</span>
+            <span class="goat-header__cart-text-count" data-cart-count id="cartCountText">0</span>
+          </a>
+        {% endif %}
+      {% endif %}
+
+      <!-- Menu hamburger desktop (optionnel, après le panier) -->
+      <div class="goat-header__desktop-menu">
+        <button id="desktopHamburgerButton" class="goat-header__hamburger-button" aria-label="Menu" aria-expanded="false">
+          <span class="goat-header__hamburger-line"></span>
+          <span class="goat-header__hamburger-line"></span>
+          <span class="goat-header__hamburger-line"></span>
+        </button>
+      </div>
+
+    </div>
+
+    <div class="goat-header__menu">
+      <button id="hamburgerButton" class="goat-header__hamburger-button" aria-label="Menu" aria-expanded="false">
+        <span class="goat-header__hamburger-line"></span>
+        <span class="goat-header__hamburger-line"></span>
+        <span class="goat-header__hamburger-line"></span>
+      </button>
+    </div>
+
+  </div>
+</header>
+
+
+<!-- Drawer Mobile -->
+<div id="drawerOverlay" class="goat-header__drawer-overlay"></div>
+<div id="mobileDrawer" class="goat-header__drawer">
+  
+  <!-- ZONE CONTENU SCROLLABLE (Liens + Cart Mobile) -->
+  <div class="goat-header__drawer-scroll-area">
+    <nav>
+      <ul class="goat-header__drawer-nav">
+        {% for link in section.settings.menu.links %}
+        <li><a href="{{ link.url }}" class="goat-header__drawer-link">{{ link.title }}</a></li>
+        {% endfor %}
+      </ul>
+    </nav>
+    
+    {% if section.settings.show_account %}
+    <a href="{{ routes.account_url }}" class="goat-header__drawer-account">{{ section.settings.account_text }}</a>
+    {% endif %}
+
+    {% if section.settings.show_cart %}
+      {% if section.settings.cart_action == 'drawer' %}
+        <button data-cart-drawer-open class="goat-header__drawer-cart" style="border: none; width: calc(100% - 48px); margin-left: 24px; cursor: pointer;">
+          <span>{{ section.settings.cart_text }}</span>
+          <span class="goat-header__drawer-cart-badge" data-cart-count id="cartCountMobile">0</span>
+        </button>
+      {% else %}
+        <a href="{{ routes.cart_url }}" class="goat-header__drawer-cart">
+          <span>{{ section.settings.cart_text }}</span>
+          <span class="goat-header__drawer-cart-badge" data-cart-count id="cartCountMobile">0</span>
+        </a>
+      {% endif %}
+    {% endif %}
+  </div>
+
+  <!-- ZONE FOOTER FIXE (Bouton Locale) -->
+  <div class="goat-header__drawer-locale">
+    {% render 'localization-modal', button_style: 'header' %}
+  </div>
+
+</div>
+
+
+<div style="height:58px;"></div>
+
+
+<script>
+  // Search functionality
+  async function fetchSuggestions(query, resultContainer) {
+    if (!query.trim()) {
+      resultContainer.innerHTML = "";
+      resultContainer.classList.remove("active");
+      return;
+    }
+
+    const endpoint = `/search/suggest.json?q=${encodeURIComponent(query)}&resources[type]=product,collection,page&resources[limit]=10`;
+    const response = await fetch(endpoint);
+    const data = await response.json();
+
+    let html = "";
+
+    const excludedTag = '{{ section.settings.excluded_tag }}';
+
+    let products = data.resources.results.products;
+    if (excludedTag) {
+      products = products.filter(p => !p.tags.includes(excludedTag));
+    }
+    products = products.slice(0, 4);
+
+    const collections = data.resources.results.collections;
+    const pages = data.resources.results.pages;
+
+    if (products.length) {
+      html += `<div class="goat-header__search-section"><div class="goat-header__search-title">Produits</div>`;
+      html += products.map(p => `
+        <a href="${p.url}" class="goat-header__search-item">
+          <img src="${p.image}" alt="${p.title}" width="40" height="40" loading="lazy">
+          <span>${p.title}</span>
+        </a>`).join('');
+      html += '</div>';
+    }
+
+    if (collections.length) {
+      html += `<div class="goat-header__search-section"><div class="goat-header__search-title">Collections</div>`;
+      html += collections.slice(0, 4).map(c => `
+        <a href="${c.url}" class="goat-header__search-item">
+          <span>${c.title}</span>
+        </a>`).join('');
+      html += '</div>';
+    }
+
+    if (pages.length) {
+      html += `<div class="goat-header__search-section"><div class="goat-header__search-title">Pages</div>`;
+      html += pages.slice(0, 4).map(pg => `
+        <a href="${pg.url}" class="goat-header__search-item">
+          <span>${pg.title}</span>
+        </a>`).join('');
+      html += '</div>';
+    }
+
+    if (!products.length && !collections.length && !pages.length) {
+      html = `<div class="goat-header__search-section"><div class="goat-header__search-item">Aucun résultat</div></div>`;
+    }
+
+    resultContainer.innerHTML = html;
+    resultContainer.classList.add('active');
+  }
+
+  function setupSearch(inputId, resultId) {
+    const input = document.getElementById(inputId);
+    const results = document.getElementById(resultId);
+    if (!input) return;
+
+    input.addEventListener('input', async () => {
+      await fetchSuggestions(input.value, results);
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!results.contains(e.target) && e.target !== input) {
+        results.classList.remove('active');
+      }
+    });
+  }
+
+  setupSearch('searchInputDesktop', 'searchResultsDesktop');
+  setupSearch('searchInputMobile', 'searchResultsMobile');
+
+  // Logo redirect functionality
+  const logoButton = document.getElementById('logoButton');
+  if (logoButton) {
+    logoButton.addEventListener('click', function() {
+      const redirectUrl = '{{ section.settings.logo_redirect_url }}';
+      if (redirectUrl) {
+        window.location.href = redirectUrl;
+      }
+    });
+  }
+
+  // Mobile menu functionality
+  const hamburgerButton = document.getElementById('hamburgerButton');
+  const desktopHamburgerButton = document.getElementById('desktopHamburgerButton');
+  const mobileDrawer = document.getElementById('mobileDrawer');
+  const drawerOverlay = document.getElementById('drawerOverlay');
+
+  function toggleMenu(button) {
+    button.classList.toggle('active');
+    mobileDrawer.classList.toggle('active');
+    drawerOverlay.classList.toggle('active');
+    
+    const isExpanded = button.classList.contains('active');
+    button.setAttribute('aria-expanded', isExpanded);
+    
+    document.body.style.overflow = isExpanded ? 'hidden' : '';
+  }
+
+  if (hamburgerButton) {
+    hamburgerButton.addEventListener('click', () => toggleMenu(hamburgerButton));
+  }
+
+  if (desktopHamburgerButton) {
+    desktopHamburgerButton.addEventListener('click', () => toggleMenu(desktopHamburgerButton));
+  }
+
+  drawerOverlay.addEventListener('click', () => {
+    if (hamburgerButton) hamburgerButton.classList.remove('active');
+    if (desktopHamburgerButton) desktopHamburgerButton.classList.remove('active');
+    mobileDrawer.classList.remove('active');
+    drawerOverlay.classList.remove('active');
+    document.body.style.overflow = '';
+  });
+
+  // Close menu when link is clicked
+  document.querySelectorAll('.goat-header__drawer-link, .goat-header__drawer-account, .goat-header__drawer-cart').forEach(link => {
+    link.addEventListener('click', () => {
+      if (mobileDrawer.classList.contains('active')) {
+        if (hamburgerButton) hamburgerButton.classList.remove('active');
+        if (desktopHamburgerButton) desktopHamburgerButton.classList.remove('active');
+        mobileDrawer.classList.remove('active');
+        drawerOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+    });
+  });
+
+  // Update cart count dynamically
+  function updateCartCount() {
+    fetch('/cart.js')
+      .then(response => response.json())
+      .then(cart => {
+        document.querySelectorAll('[data-cart-count]').forEach(el => {
+          el.textContent = cart.item_count || 0;
+          if (cart.item_count > 0) {
+            el.classList.add('active');
+          } else {
+            el.classList.remove('active');
+          }
+        });
+      });
+  }
+
+  document.addEventListener('DOMContentLoaded', updateCartCount);
+</script>
+
+
+{% schema %}
+{
+  "name": "Header Concept",
+  "settings": [
+    {
+      "type": "color",
+      "id": "bg_color",
+      "label": "Couleur de fond",
+      "default": "#000000"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Couleur du texte",
+      "default": "#FFFFFF"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Couleur de la bordure",
+      "default": "rgba(255,255,255,0.3)"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Largeur maximale",
+      "min": 1000,
+      "max": 1800,
+      "step": 50,
+      "default": 1400,
+      "unit": "px"
+    },
+    {
+      "type": "header",
+      "content": "Logo"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo",
+      "label": "Logo"
+    },
+    {
+      "type": "range",
+      "id": "logo_height_desktop",
+      "label": "Hauteur du logo (Desktop)",
+      "min": 20,
+      "max": 120,
+      "step": 5,
+      "default": 40,
+      "unit": "px"
+    },
+    {
+      "type": "range",
+      "id": "logo_height_mobile",
+      "label": "Hauteur du logo (Mobile)",
+      "min": 15,
+      "max": 80,
+      "step": 5,
+      "default": 30,
+      "unit": "px"
+    },
+    {
+      "type": "checkbox",
+      "id": "logo_redirect_enabled",
+      "label": "Activer la redirection personnalisée du logo",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "logo_redirect_url",
+      "label": "URL de redirection du logo",
+      "placeholder": "https://exemple.com"
+    },
+    {
+      "type": "header",
+      "content": "Navigation"
+    },
+    {
+      "type": "link_list",
+      "id": "menu",
+      "label": "Menu principal",
+      "default": "main-menu"
+    },
+    {
+      "type": "select",
+      "id": "desktop_menu_style",
+      "label": "Style menu desktop",
+      "options": [
+        {
+          "value": "inline",
+          "label": "Liens visibles"
+        },
+        {
+          "value": "hamburger",
+          "label": "Menu hamburger"
+        }
+      ],
+      "default": "inline"
+    },
+    {
+      "type": "header",
+      "content": "Recherche"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search",
+      "label": "Afficher la recherche",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "search_text",
+      "label": "Texte du champ de recherche",
+      "default": "Rechercher un produit..."
+    },
+    {
+      "type": "text",
+      "id": "excluded_tag",
+      "label": "Balise à exclure de la recherche",
+      "info": "Les produits avec cette balise ne seront pas affichés dans la recherche prédictive",
+      "placeholder": "concept"
+    },
+    {
+      "type": "header",
+      "content": "Compte"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_account",
+      "label": "Afficher le compte",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "account_text",
+      "label": "Texte du compte",
+      "default": "Mon compte"
+    },
+    {
+      "type": "header",
+      "content": "Panier"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_cart",
+      "label": "Afficher le panier",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "cart_action",
+      "label": "Action du panier",
+      "options": [
+        {
+          "value": "page",
+          "label": "Rediriger vers la page panier"
+        },
+        {
+          "value": "drawer",
+          "label": "Ouvrir le tiroir du panier"
+        }
+      ],
+      "default": "drawer",
+      "info": "Choisissez si cliquer sur le panier ouvre un tiroir ou redirige vers la page panier"
+    },
+    {
+      "type": "select",
+      "id": "cart_display_type",
+      "label": "Type d'affichage (Desktop)",
+      "options": [
+        {
+          "value": "icon",
+          "label": "Icône seulement"
+        },
+        {
+          "value": "text",
+          "label": "Texte avec compteur"
+        }
+      ],
+      "default": "icon"
+    },
+    {
+      "type": "text",
+      "id": "cart_text",
+      "label": "Texte du panier",
+      "default": "Panier"
+    }
+  ]
+}
+{% endschema %}

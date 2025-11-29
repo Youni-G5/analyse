@@ -1,0 +1,335 @@
+{% comment %}
+  Analytics & Tracking Snippet
+  Fichier centralisé pour tous les pixels et outils d'analytics
+  
+  Fonctionnalités:
+  - Google Analytics 4 avec e-commerce amélioré
+  - Facebook Pixel avec Advanced Matching
+  - Google Tag Manager
+  - TikTok Pixel
+  - Snapchat Pixel
+  - Conformité RGPD (anonymisation IP, DNT)
+{% endcomment %}
+
+{% liquid
+  # Vérifie si Do Not Track est activé
+  assign respect_dnt = settings.tracking_respect_dnt
+  assign dnt_enabled = false
+  if respect_dnt
+    # JavaScript détectera DNT côté client
+  endif
+%}
+
+{% comment %} ========== GOOGLE TAG MANAGER ========== {% endcomment %}
+{% if settings.enable_google_tag_manager and settings.google_tag_manager_id != blank %}
+  <!-- Google Tag Manager -->
+  <script>
+    (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','{{ settings.google_tag_manager_id }}');
+  </script>
+  <!-- End Google Tag Manager -->
+{% endif %}
+
+{% comment %} ========== GOOGLE ANALYTICS 4 ========== {% endcomment %}
+{% if settings.enable_google_analytics and settings.google_analytics_id != blank %}
+  <!-- Google Analytics 4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id={{ settings.google_analytics_id }}"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    
+    {% if settings.tracking_anonymize_ip %}
+      gtag('config', '{{ settings.google_analytics_id }}', {
+        'anonymize_ip': true,
+        'cookie_flags': 'SameSite=None;Secure'
+      });
+    {% else %}
+      gtag('config', '{{ settings.google_analytics_id }}');
+    {% endif %}
+    
+    {% if settings.ga4_enhanced_ecommerce %}
+      {% comment %} E-commerce amélioré - Events automatiques {% endcomment %}
+      
+      {% if template.name == 'product' %}
+        {% comment %} Vue produit {% endcomment %}
+        gtag('event', 'view_item', {
+          currency: '{{ cart.currency.iso_code }}',
+          value: {{ product.price | money_without_currency | remove: ',' }},
+          items: [{
+            item_id: '{{ product.id }}',
+            item_name: {{ product.title | json }},
+            item_brand: {{ product.vendor | json }},
+            item_category: {{ product.type | json }},
+            price: {{ product.price | money_without_currency | remove: ',' }},
+            quantity: 1
+          }]
+        });
+      {% endif %}
+      
+      {% if template.name == 'collection' %}
+        {% comment %} Vue liste produits {% endcomment %}
+        gtag('event', 'view_item_list', {
+          item_list_id: '{{ collection.id }}',
+          item_list_name: {{ collection.title | json }},
+          items: [
+            {% for product in collection.products limit: 20 %}
+              {
+                item_id: '{{ product.id }}',
+                item_name: {{ product.title | json }},
+                item_brand: {{ product.vendor | json }},
+                price: {{ product.price | money_without_currency | remove: ',' }},
+                index: {{ forloop.index }}
+              }{% unless forloop.last %},{% endunless %}
+            {% endfor %}
+          ]
+        });
+      {% endif %}
+      
+      {% if first_time_accessed %}
+        {% comment %} Première visite {% endcomment %}
+        gtag('event', 'first_visit', {
+          'timestamp': new Date().toISOString()
+        });
+      {% endif %}
+    {% endif %}
+  </script>
+{% endif %}
+
+{% comment %} ========== FACEBOOK PIXEL ========== {% endcomment %}
+{% if settings.enable_facebook_pixel and settings.facebook_pixel_id != blank %}
+  <!-- Facebook Pixel Code -->
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
+    
+    {% if settings.fb_advanced_matching and customer %}
+      fbq('init', '{{ settings.facebook_pixel_id }}', {
+        em: {{ customer.email | json }},
+        fn: {{ customer.first_name | json }},
+        ln: {{ customer.last_name | json }},
+        external_id: '{{ customer.id }}'
+      });
+    {% else %}
+      fbq('init', '{{ settings.facebook_pixel_id }}');
+    {% endif %}
+    
+    fbq('track', 'PageView');
+    
+    {% if template.name == 'product' %}
+      fbq('track', 'ViewContent', {
+        content_ids: ['{{ product.id }}'],
+        content_type: 'product',
+        content_name: {{ product.title | json }},
+        content_category: {{ product.type | json }},
+        value: {{ product.price | money_without_currency | remove: ',' }},
+        currency: '{{ cart.currency.iso_code }}'
+      });
+    {% endif %}
+    
+    {% if template.name == 'collection' %}
+      fbq('track', 'ViewCategory', {
+        content_name: {{ collection.title | json }},
+        content_category: {{ collection.handle | json }},
+        content_ids: [{% for product in collection.products limit: 10 %}'{{ product.id }}'{% unless forloop.last %},{% endunless %}{% endfor %}],
+        content_type: 'product_group'
+      });
+    {% endif %}
+    
+    {% if template.name == 'search' %}
+      fbq('track', 'Search', {
+        search_string: {{ search.terms | json }},
+        content_category: 'product'
+      });
+    {% endif %}
+  </script>
+  <noscript>
+    <img height="1" width="1" style="display:none" 
+         src="https://www.facebook.com/tr?id={{ settings.facebook_pixel_id }}&ev=PageView&noscript=1"/>
+  </noscript>
+  <!-- End Facebook Pixel Code -->
+{% endif %}
+
+{% comment %} ========== TIKTOK PIXEL ========== {% endcomment %}
+{% if settings.enable_tiktok_pixel and settings.tiktok_pixel_id != blank %}
+  <!-- TikTok Pixel Code -->
+  <script>
+    !function (w, d, t) {
+      w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var i="https://analytics.tiktok.com/i18n/pixel/events.js";ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=i,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};var o=document.createElement("script");o.type="text/javascript",o.async=!0,o.src=i+"?sdkid="+e+"&lib="+t;var a=document.getElementsByTagName("script")[0];a.parentNode.insertBefore(o,a)};
+      ttq.load('{{ settings.tiktok_pixel_id }}');
+      ttq.page();
+    }(window, document, 'ttq');
+    
+    {% if template.name == 'product' %}
+      ttq.track('ViewContent', {
+        content_id: '{{ product.id }}',
+        content_type: 'product',
+        content_name: {{ product.title | json }},
+        price: {{ product.price | money_without_currency | remove: ',' }},
+        currency: '{{ cart.currency.iso_code }}'
+      });
+    {% endif %}
+  </script>
+  <!-- End TikTok Pixel Code -->
+{% endif %}
+
+{% comment %} ========== SNAPCHAT PIXEL ========== {% endcomment %}
+{% if settings.enable_snapchat_pixel and settings.snapchat_pixel_id != blank %}
+  <!-- Snapchat Pixel Code -->
+  <script type='text/javascript'>
+    (function(e,t,n){if(e.snaptr)return;var a=e.snaptr=function()
+    {a.handleRequest?a.handleRequest.apply(a,arguments):a.queue.push(arguments)};
+    a.queue=[];var s='script';r=t.createElement(s);r.async=!0;
+    r.src=n;var u=t.getElementsByTagName(s)[0];
+    u.parentNode.insertBefore(r,u);})(window,document,
+    'https://sc-static.net/scevent.min.js');
+    
+    snaptr('init', '{{ settings.snapchat_pixel_id }}', {
+      {% if customer %}
+        'user_email': {{ customer.email | json }}
+      {% endif %}
+    });
+    snaptr('track', 'PAGE_VIEW');
+    
+    {% if template.name == 'product' %}
+      snaptr('track', 'VIEW_CONTENT', {
+        'item_ids': ['{{ product.id }}'],
+        'item_category': {{ product.type | json }},
+        'currency': '{{ cart.currency.iso_code }}',
+        'price': {{ product.price | money_without_currency | remove: ',' }}
+      });
+    {% endif %}
+  </script>
+  <!-- End Snapchat Pixel Code -->
+{% endif %}
+
+{% comment %} ========== FONCTION DE TRACKING CART ========== {% endcomment %}
+<script>
+  // Fonctions globales pour le tracking du panier
+  window.trackAddToCart = function(product, quantity) {
+    quantity = quantity || 1;
+    
+    {% if settings.enable_google_analytics and settings.ga4_enhanced_ecommerce %}
+    if (typeof gtag !== 'undefined') {
+      gtag('event', 'add_to_cart', {
+        currency: '{{ cart.currency.iso_code }}',
+        value: parseFloat(product.price) * quantity,
+        items: [{
+          item_id: product.id,
+          item_name: product.title,
+          item_brand: product.vendor,
+          price: parseFloat(product.price),
+          quantity: quantity
+        }]
+      });
+    }
+    {% endif %}
+    
+    {% if settings.enable_facebook_pixel %}
+    if (typeof fbq !== 'undefined') {
+      fbq('track', 'AddToCart', {
+        content_ids: [product.id],
+        content_type: 'product',
+        content_name: product.title,
+        value: parseFloat(product.price) * quantity,
+        currency: '{{ cart.currency.iso_code }}'
+      });
+    }
+    {% endif %}
+    
+    {% if settings.enable_tiktok_pixel %}
+    if (typeof ttq !== 'undefined') {
+      ttq.track('AddToCart', {
+        content_id: product.id,
+        content_type: 'product',
+        content_name: product.title,
+        price: parseFloat(product.price),
+        quantity: quantity,
+        currency: '{{ cart.currency.iso_code }}'
+      });
+    }
+    {% endif %}
+    
+    {% if settings.enable_snapchat_pixel %}
+    if (typeof snaptr !== 'undefined') {
+      snaptr('track', 'ADD_CART', {
+        'item_ids': [product.id],
+        'currency': '{{ cart.currency.iso_code }}',
+        'price': parseFloat(product.price) * quantity
+      });
+    }
+    {% endif %}
+  };
+  
+  window.trackBeginCheckout = function(cartData) {
+    {% if settings.enable_google_analytics and settings.ga4_enhanced_ecommerce %}
+    if (typeof gtag !== 'undefined') {
+      gtag('event', 'begin_checkout', {
+        currency: '{{ cart.currency.iso_code }}',
+        value: cartData.total_price / 100,
+        items: cartData.items.map(function(item) {
+          return {
+            item_id: item.product_id,
+            item_name: item.product_title,
+            price: item.price / 100,
+            quantity: item.quantity
+          };
+        })
+      });
+    }
+    {% endif %}
+    
+    {% if settings.enable_facebook_pixel %}
+    if (typeof fbq !== 'undefined') {
+      fbq('track', 'InitiateCheckout', {
+        content_ids: cartData.items.map(function(i) { return i.product_id; }),
+        content_type: 'product',
+        value: cartData.total_price / 100,
+        currency: '{{ cart.currency.iso_code }}',
+        num_items: cartData.item_count
+      });
+    }
+    {% endif %}
+    
+    {% if settings.enable_tiktok_pixel %}
+    if (typeof ttq !== 'undefined') {
+      ttq.track('InitiateCheckout', {
+        content_type: 'product',
+        quantity: cartData.item_count,
+        value: cartData.total_price / 100,
+        currency: '{{ cart.currency.iso_code }}'
+      });
+    }
+    {% endif %}
+    
+    {% if settings.enable_snapchat_pixel %}
+    if (typeof snaptr !== 'undefined') {
+      snaptr('track', 'START_CHECKOUT', {
+        'currency': '{{ cart.currency.iso_code }}',
+        'price': cartData.total_price / 100
+      });
+    }
+    {% endif %}
+  };
+  
+  // Respect Do Not Track si activé
+  {% if settings.tracking_respect_dnt %}
+  if (navigator.doNotTrack === '1' || window.doNotTrack === '1') {
+    console.log('[Analytics] Do Not Track détecté - Tracking désactivé');
+    // Désactive tous les trackers
+    window['ga-disable-{{ settings.google_analytics_id }}'] = true;
+    if (typeof fbq !== 'undefined') fbq = function() {};
+    if (typeof ttq !== 'undefined') ttq = function() {};
+    if (typeof snaptr !== 'undefined') snaptr = function() {};
+  }
+  {% endif %}
+</script>

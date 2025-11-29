@@ -1,0 +1,531 @@
+{%- liquid
+  assign product_card_product = product
+  assign featured_media = product_card_product.featured_media
+  assign card_style = section.settings.product_card_style | default: 'light'
+-%}
+
+<style>
+  .final-product-card {
+    text-align: left;
+    text-decoration: none;
+    display: block;
+    position: relative;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  /* --- IMAGE CONTAINER FULL --- */
+  .final-card__image-wrapper {
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 16px;
+    background: #f9f9f9;
+    aspect-ratio: 1;
+    border-radius: 0;
+  }
+
+  .final-card__image-link {
+    display: block;
+    position: relative;
+    width: 100%;
+    height: 100%;
+  }
+
+  .final-card__image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .final-card__image-placeholder { 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    width: 100%; 
+    height: 100%;
+    background: #f9f9f9; 
+  }
+  
+  .final-card__placeholder-svg { 
+    width: 40%; 
+    height: 40%; 
+    color: #ddd; 
+  }
+
+  /* --- BADGES OVERLAY --- */
+  .final-card__badges {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    z-index: 5;
+  }
+
+  .final-card__badge {
+    background-color: #000;
+    color: #fff;
+    padding: 6px 12px;
+    border-radius: 2px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    font-family: "Helvetica Now Text Medium", Helvetica, Arial, sans-serif;
+  }
+
+  .final-card__badge--accent {
+    background-color: #F49335;
+    color: #fff;
+  }
+
+  /* --- WISHLIST BUTTON - BLACK & WHITE ONLY --- */
+  .wishlist-sig-btn {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    z-index: 6;
+    background-color: rgba(255, 255, 255, 0.95);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #000;
+    transition: all 0.3s ease;
+  }
+
+  .wishlist-sig-btn:hover {
+    background-color: #fff;
+    border-color: #000;
+    transform: scale(1.1);
+  }
+
+  .wishlist-sig-btn[aria-pressed="true"] {
+    background-color: #fff;
+    border-color: #000;
+  }
+
+  .wishlist-sig-btn[aria-pressed="true"] .wishlist-sig-heart {
+    fill: #000;
+    stroke: #000;
+  }
+
+  /* --- ADD TO CART BUTTON - HIDE ON DESKTOP --- */
+  .final-card__form { 
+    position: absolute; 
+    bottom: 12px; 
+    right: 12px; 
+    z-index: 5;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+
+  .final-product-card:hover .final-card__form {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .final-card__add-to-cart-btn { 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    background: #000; 
+    color: #fff; 
+    border: none; 
+    border-radius: 50%; 
+    width: 40px;
+    height: 40px;
+    padding: 0; 
+    cursor: pointer; 
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    font-weight: 600;
+  }
+
+  .final-card__add-to-cart-btn:hover:not(:disabled) { 
+    background: #333;
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
+  }
+
+  .final-card__add-to-cart-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .final-card__add-to-cart-icon {
+    width: 18px;
+    height: 18px;
+    stroke-width: 2.5;
+  }
+
+  .final-card__add-to-cart-text { 
+    position: absolute; 
+    overflow: hidden; 
+    clip: rect(0 0 0 0); 
+    height: 1px; 
+    width: 1px; 
+    margin: -1px; 
+    padding: 0; 
+    border: 0; 
+  }
+
+  /* --- CONTENT SECTION --- */
+  .final-card__content {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* --- TITLE FIRST --- */
+  .final-card__title {
+    font-size: 0.95rem;
+    font-weight: 500;
+    margin: 0 0 4px 0;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    order: 1;
+  }
+
+  .final-card__title a {
+    color: #000;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .final-card__title a:hover {
+    color: #666;
+  }
+
+  /* --- VENDOR SECOND --- */
+  .final-card__vendor {
+    font-size: 0.75rem;
+    color: #888;
+    margin-bottom: 8px;
+    display: block;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+    text-transform: uppercase;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    order: 2;
+  }
+
+  /* --- PRICE SECTION LAST --- */
+  .final-card__price-wrapper {
+    margin-top: 4px;
+    order: 3;
+  }
+
+  .final-card__price-wrapper .price {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+  }
+
+  .final-card__price-wrapper .price__regular {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #000;
+    font-family: "Helvetica Now Text Medium", Helvetica, Arial, sans-serif;
+    letter-spacing: 0;
+  }
+
+  .final-card__price-wrapper .price__was {
+    font-size: 0.8rem;
+    color: #999;
+    text-decoration: line-through;
+    font-weight: 400;
+    font-family: "Helvetica Now Text Medium", Helvetica, Arial, sans-serif;
+  }
+
+  /* --- REMOVE RED COLOR ON SALE --- */
+  .final-card__price-wrapper .price--on-sale .price__regular {
+    color: #000;
+  }
+
+  /* --- DARK THEME --- */
+  .final-product-card--dark .final-card__image-wrapper {
+    background: #1a1a1a;
+  }
+
+  .final-product-card--dark .final-card__image-placeholder {
+    background: #1a1a1a;
+  }
+
+  .final-product-card--dark .final-card__placeholder-svg {
+    color: #444;
+  }
+
+  .final-product-card--dark .final-card__title a {
+    color: #fff;
+  }
+
+  .final-product-card--dark .final-card__title a:hover {
+    color: #ccc;
+  }
+
+  .final-product-card--dark .final-card__vendor {
+    color: #999;
+  }
+
+  .final-product-card--dark .final-card__price-wrapper .price__regular {
+    color: #fff;
+  }
+
+  .final-product-card--dark .final-card__price-wrapper .price__was {
+    color: #666;
+  }
+
+  .final-product-card--dark .wishlist-sig-btn {
+    background-color: rgba(0, 0, 0, 0.9);
+    border-color: rgba(255, 255, 255, 0.3);
+    color: #fff;
+  }
+
+  .final-product-card--dark .wishlist-sig-btn:hover {
+    background-color: #000;
+    border-color: #fff;
+  }
+
+  .final-product-card--dark .wishlist-sig-btn[aria-pressed="true"] {
+    background-color: #000;
+    border-color: #fff;
+  }
+
+  .final-product-card--dark .wishlist-sig-btn[aria-pressed="true"] .wishlist-sig-heart {
+    fill: #fff;
+    stroke: #fff;
+  }
+
+  .final-product-card--dark .final-card__add-to-cart-btn {
+    background: #fff;
+    color: #000;
+    box-shadow: 0 2px 8px rgba(255, 255, 255, 0.2);
+  }
+
+  .final-product-card--dark .final-card__add-to-cart-btn:hover:not(:disabled) {
+    background: #e5e5e5;
+  }
+
+  /* --- DESKTOP (MIN 768PX) - HIDE ATC BUTTON BY DEFAULT --- */
+  @media (min-width: 768px) {
+    .final-card__vendor {
+      font-size: 0.7rem;
+    }
+
+    .final-card__title {
+      font-size: 0.9rem;
+    }
+
+    .final-card__price-wrapper .price__regular {
+      font-size: 1rem;
+    }
+
+    .wishlist-sig-btn {
+      width: 36px;
+      height: 36px;
+    }
+
+    .final-card__form {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .final-product-card:hover .final-card__form {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+
+  /* --- MOBILE (MAX 767PX) - ALWAYS VISIBLE & SMALLER --- */
+  @media (max-width: 767px) {
+    .final-card__image-wrapper {
+      margin-bottom: 12px;
+    }
+
+    .wishlist-sig-btn {
+      width: 30px;
+      height: 30px;
+      top: 8px;
+      right: 8px;
+      opacity: 1;
+    }
+
+    .final-card__form {
+      opacity: 1;
+      visibility: visible;
+      bottom: 8px;
+      right: 8px;
+    }
+
+    .final-card__add-to-cart-btn {
+      width: 30px;
+      height: 30px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .final-card__add-to-cart-btn:hover:not(:disabled) {
+      transform: scale(1.05);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    .final-card__add-to-cart-icon {
+      width: 14px;
+      height: 14px;
+      stroke-width: 2.5;
+    }
+
+    .final-card__title {
+      font-size: 0.85rem;
+    }
+
+    .final-card__vendor {
+      font-size: 0.65rem;
+    }
+
+    .final-card__price-wrapper .price__regular {
+      font-size: 0.95rem;
+    }
+
+    .final-card__price-wrapper .price__was {
+      font-size: 0.75rem;
+    }
+  }
+</style>
+
+<div class="final-product-card final-product-card--{{ card_style }}" data-product-card data-product-id="{{ product_card_product.id }}">
+  <div class="final-card__image-wrapper">
+    <a href="{{ product_card_product.url | default: '#' }}" class="final-card__image-link">
+      {%- if featured_media != blank -%}
+        <img 
+          src="{{ featured_media | image_url: width: 600 }}"
+          alt="{{ featured_media.alt | escape }}"
+          class="final-card__image"
+          width="600"
+          height="600"
+          loading="lazy"
+        >
+      {%- else -%}
+        <div class="final-card__image-placeholder">
+          {{ 'product-1' | placeholder_svg_tag: 'final-card__placeholder-svg' }}
+        </div>
+      {%- endif -%}
+    </a>
+
+    <div class="final-card__badges">
+      {%- if product_card_product.tags contains 'CAN 2025' -%}
+        <span class="final-card__badge final-card__badge--accent">CAN 2025</span>
+      {%- endif -%}
+    </div>
+
+    <button
+      type="button"
+      class="wishlist-sig-btn"
+      aria-pressed="false"
+      aria-label="Ajouter à la wishlist"
+      data-product-handle="{{ product_card_product.handle | default: '' | escape }}"
+      data-product-id="{{ product_card_product.id | default: '' }}">
+      <svg class="wishlist-sig-icon" width="16" height="16" viewBox="0 0 24 24" fill="none">
+        <path class="wishlist-sig-heart"
+          d="M12.2,21.7l-1.2-1.1C5.1,15.1,2,12.3,2,8.9s2.9-6.2,6.2-6.2c1.8,0,3.5,0.8,4.7,2C14.3,3.5,16,2.7,17.8,2.7C21.1,2.7,24,5.5,24,8.9c0,3.4-3.1,6.2-8.8,11.7L12.2,21.7z"
+          stroke="currentColor" stroke-width="1.2" fill="none"/>
+      </svg>
+    </button>
+    
+    {%- if product_card_product.available -%}
+      {%- form 'product', product_card_product, class: 'final-card__form', data-product-form: '', onsubmit: 'return false' -%}
+        <input type="hidden" name="id" value="{{ product_card_product.selected_or_first_available_variant.id }}">
+        <input type="hidden" name="quantity" value="1">
+        <button type="button" name="add" class="final-card__add-to-cart-btn" data-card-atc aria-label="Ajouter au panier">
+          <svg class="final-card__add-to-cart-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          <span class="final-card__add-to-cart-text">Ajouter au panier</span>
+        </button>
+      {%- endform -%}
+    {%- endif -%}
+  </div>
+
+  <div class="final-card__content">
+    <h3 class="final-card__title">
+      <a href="{{ product_card_product.url | default: '#' }}">{{ product_card_product.title }}</a>
+    </h3>
+
+    <span class="final-card__vendor">{{ product_card_product.vendor }}</span>
+    
+    <div class="final-card__price-wrapper">
+      <div class="price {% if product_card_product.compare_at_price > product_card_product.price %}price--on-sale{% else %}price--regular{% endif %}">
+        <span class="price__regular">
+          {{ product_card_product.price | money }}
+        </span>
+        {%- if product_card_product.compare_at_price > product_card_product.price -%}
+          <span class="price__was">
+            {{ product_card_product.compare_at_price | money }}
+          </span>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function(){
+    const root = document.currentScript.closest('[data-product-card]') || document.querySelector(`[data-product-card][data-product-id="{{ product_card_product.id }}"]`);
+    if(!root) return;
+    const btn = root.querySelector('[data-card-atc]');
+    const form = root.querySelector('[data-product-form]');
+
+    async function addToCartAjax(variantId, qty){
+      const res = await fetch('/cart/add.js',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','Accept':'application/json'},
+        body: JSON.stringify({ id: variantId, quantity: qty })
+      });
+      if(!res.ok){
+        const err = await res.json().catch(()=>({}));
+        throw new Error(err.description || 'Impossible d\'ajouter au panier.');
+      }
+      return res.json();
+    }
+
+    btn && btn.addEventListener('click', async ()=>{
+      if(!form) return;
+      const variantId = form.querySelector('input[name="id"]')?.value;
+      const qty = parseInt(form.querySelector('input[name="quantity"]')?.value || '1', 10) || 1;
+
+      btn.disabled = true;
+      btn.style.opacity = '0.7';
+
+      try{
+        await addToCartAjax(Number(variantId), qty);
+        
+        // Mise à jour du compteur du panier
+        if (typeof updateCartCount === 'function') {
+          updateCartCount();
+        }
+        
+        // Ouvrir le drawer cart si disponible
+        if (window.cartDrawerInstance) {
+          await window.cartDrawerInstance.refreshDrawer();
+          window.cartDrawerInstance.open();
+        }
+        
+        setTimeout(()=>{ btn.style.opacity = ''; btn.disabled = false; }, 400);
+      }catch(e){
+        console.error(e);
+        btn.style.opacity = '';
+        btn.disabled = false;
+        alert(e.message || 'Erreur lors de l\'ajout au panier.');
+      }
+    }, { passive:true });
+  })();
+</script>

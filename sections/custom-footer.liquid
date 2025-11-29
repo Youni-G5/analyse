@@ -1,0 +1,699 @@
+<footer class="footer-pogba">
+  <div class="footer-grid">
+    {% for block in section.blocks %}
+      {% case block.type %}
+
+        {% when 'preorder' %}
+          {% if block.settings.preorder_title != blank or block.settings.preorder_text != blank %}
+          <div class="footer-box footer-preorder">
+            {% if block.settings.preorder_title != blank %}
+              <h3 class="footer-box-title">{{ block.settings.preorder_title }}</h3>
+            {% endif %}
+            {% if block.settings.preorder_text != blank %}
+              <p class="footer-box-text">{{ block.settings.preorder_text }}</p>
+            {% endif %}
+          </div>
+          {% endif %}
+
+        {% when 'support' %}
+          {% if block.settings.support_title != blank or block.settings.support_text != blank %}
+          <div class="footer-box footer-support">
+            {% if block.settings.support_title != blank %}
+              <h3 class="footer-box-title">{{ block.settings.support_title }}</h3>
+            {% endif %}
+            {% if block.settings.support_text != blank %}
+              <p class="footer-box-text">
+                {{ block.settings.support_text }}<br>
+                <a href="mailto:{{ shop.email }}" class="footer-link">{{ shop.email }}</a>
+              </p>
+            {% endif %}
+          </div>
+          {% endif %}
+
+        {% when 'policy_menu' %}
+          {% assign links = linklists[block.settings.policy_menu] %}
+          {% if links != nil and links.links.size > 0 %}
+          <div class="footer-box footer-policy">
+            {% if block.settings.policy_title != blank %}
+              <h3 class="footer-box-title">{{ block.settings.policy_title }}</h3>
+            {% endif %}
+            <nav>
+              <ul class="footer-links-list">
+                {% for link in links.links %}
+                  <li><a href="{{ link.url }}" class="footer-link">{{ link.title }}</a></li>
+                {% endfor %}
+              </ul>
+            </nav>
+          </div>
+          {% endif %}
+
+        {% when 'shop_menu' %}
+          {% assign links = linklists[block.settings.shop_menu] %}
+          {% if links != nil and links.links.size > 0 %}
+          <div class="footer-box footer-shop">
+            {% if block.settings.shop_title != blank %}
+              <h3 class="footer-box-title">{{ block.settings.shop_title }}</h3>
+            {% endif %}
+            <nav>
+              <ul class="footer-links-list">
+                {% for link in links.links %}
+                  <li><a href="{{ link.url }}" class="footer-link">{{ link.title }}</a></li>
+                {% endfor %}
+              </ul>
+            </nav>
+          </div>
+          {% endif %}
+
+        {% when 'social_and_logo' %}
+          {% comment %} Compter les réseaux sociaux remplis {% endcomment %}
+          {% assign social_count = 0 %}
+          {% if block.settings.instagram_url != blank %}
+            {% assign social_count = social_count | plus: 1 %}
+          {% endif %}
+          {% if block.settings.tiktok_url != blank %}
+            {% assign social_count = social_count | plus: 1 %}
+          {% endif %}
+          {% if block.settings.facebook_url != blank %}
+            {% assign social_count = social_count | plus: 1 %}
+          {% endif %}
+
+          {% comment %} Appliquer la classe dynamique selon le nombre de réseaux {% endcomment %}
+          <div class="footer-social-grid footer-social-grid--{{ social_count }}">
+            <div class="social-grid-item footer-logo-item">
+              {% if block.settings.logo != blank %}
+                <img src="{{ block.settings.logo | img_url: '200x' }}" alt="{{ shop.name }}" class="footer-logo-image">
+              {% else %}
+                <div class="footer-logo-text">
+                  <span class="logo-pogba">OFFSIDE</span>
+                  <span class="logo-mdx">CONCEPT</span>
+                </div>
+              {% endif %}
+            </div>
+
+            {% if block.settings.instagram_url != blank %}
+              <div class="social-grid-item footer-instagram-item">
+                <a href="{{ block.settings.instagram_url }}" target="_blank" rel="noopener noreferrer" class="footer-social-link" aria-label="Instagram">
+                  <svg class="social-icon" viewBox="0 0 200 200"><path d="M135.258 56.075c4.409 0 8 3.583 8 8s-3.591 8-8 8c-4.416 0-8.008-3.583-8.008-8s3.592-8 8.008-8ZM99.667 77.442c-12.275 0-22.217 9.95-22.217 22.216 0 12.275 9.942 22.225 22.217 22.225 12.275 0 22.225-9.95 22.225-22.225 0-12.266-9.95-22.216-22.225-22.216Zm0-12.009c18.908 0 34.233 15.317 34.233 34.225 0 18.917-15.325 34.242-34.233 34.242-18.909 0-34.234-15.325-34.234-34.242 0-18.908 15.325-34.225 34.234-34.225Zm5.975-20.425h-11.95c-7.692.017-11.542.05-14.817.142l-1.475.05c-1.467.05-2.917.117-4.675.2-6.492.292-10.025 1.375-12.375 2.292-3.108 1.208-5.333 2.658-7.667 4.983-2.333 2.342-3.775 4.558-4.991 7.667-.909 2.35-1.992 5.883-2.292 12.383-.083 1.75-.142 3.208-.2 4.675l-.05 1.475c-.083 3.275-.125 7.117-.133 14.808v11.959c.008 7.691.05 11.541.133 14.808l.05 1.483c.058 1.459.117 2.909.2 4.667.3 6.5 1.383 10.033 2.292 12.383 1.216 3.109 2.666 5.334 4.991 7.667 2.334 2.325 4.559 3.775 7.667 4.983 2.35.917 5.883 2 12.375 2.3 1.467.059 2.717.117 3.942.167l1.475.05c3.441.108 7.266.15 15.55.167h11.95c7.7-.009 11.541-.05 14.816-.15l1.475-.042c1.467-.05 2.917-.117 4.675-.192 6.5-.3 10.025-1.383 12.375-2.3 3.109-1.208 5.334-2.658 7.667-4.983 2.333-2.333 3.775-4.558 4.992-7.667.908-2.35 1.991-5.883 2.291-12.383.084-1.758.15-3.208.2-4.667l.05-1.483c.084-3.267.125-7.117.134-14.808V93.683c-.009-7.691-.05-11.533-.134-14.808l-.05-1.475a332.99 332.99 0 0 0-.2-4.675c-.3-6.5-1.383-10.033-2.291-12.383-1.217-3.109-2.659-5.325-4.992-7.667-2.333-2.325-4.558-3.775-7.667-4.983-2.35-.917-5.875-2-12.375-2.292-1.758-.083-3.208-.15-4.675-.2l-1.475-.05c-3.275-.092-7.116-.125-14.816-.142ZM107.5 33c7.258.017 10.883.067 14.15.167l2.258.091c1.009.042 2.067.084 3.242.142 7.1.317 11.95 1.45 16.192 3.092 4.375 1.708 8.091 3.983 11.808 7.691 3.7 3.709 5.975 7.425 7.692 11.809 1.641 4.241 2.775 9.091 3.091 16.183.067 1.483.125 2.75.167 4l.058 1.5c.109 3.275.159 6.9.175 14.158v15.659c-.016 7.258-.066 10.883-.175 14.158l-.058 1.5c-.042 1.25-.1 2.517-.167 4-.316 7.092-1.45 11.942-3.091 16.183-1.717 4.384-3.992 8.1-7.692 11.809-3.717 3.708-7.433 5.983-11.808 7.691-4.242 1.642-9.092 2.775-16.192 3.1-1.475.059-2.75.117-3.992.167l-1.508.05c-3.267.108-6.892.158-14.15.175H91.842c-7.259-.017-10.892-.067-14.159-.175l-1.5-.05c-1.25-.05-2.525-.108-4-.167-7.1-.325-11.941-1.458-16.191-3.1-4.375-1.708-8.092-3.983-11.809-7.691-3.7-3.709-5.975-7.425-7.683-11.809-1.65-4.241-2.775-9.091-3.1-16.183-.05-1.183-.1-2.233-.142-3.25l-.083-2.25c-.108-3.275-.158-6.9-.175-14.158V91.833c.017-7.258.067-10.883.175-14.158l.083-2.25c.042-1.017.092-2.067.142-3.25.325-7.092 1.45-11.942 3.1-16.183 1.708-4.384 3.983-8.1 7.683-11.809 3.717-3.708 7.434-5.983 11.809-7.691 4.25-1.642 9.091-2.775 16.191-3.092 1.184-.058 2.234-.1 3.242-.142l2.258-.091c3.267-.1 6.9-.15 14.159-.167H107.5Z" fill="#fff"/></svg>
+                </a>
+              </div>
+            {% endif %}
+
+            {% if block.settings.tiktok_url != blank %}
+              <div class="social-grid-item footer-tiktok-item">
+                <a href="{{ block.settings.tiktok_url }}" target="_blank" rel="noopener noreferrer" class="footer-social-link" aria-label="TikTok">
+                  <svg class="social-icon" viewBox="0 0 200 200"><path d="M158.665 73.083v15.75a54.882 54.882 0 0 1-21.442-4.325 54.616 54.616 0 0 1-12.175-7.1l.108 48.459c-.042 10.916-4.367 21.166-12.175 28.883-6.358 6.292-14.416 10.292-23.15 11.583a42.038 42.038 0 0 1-6.25.459c-9.358 0-18.225-3.025-25.492-8.617a42.203 42.203 0 0 1-3.916-3.425c-8.467-8.367-12.834-19.708-12.092-31.642.55-9.083 4.2-17.75 10.25-24.541 8.017-8.984 19.25-13.967 31.25-13.967 2.108 0 4.192.158 6.25.458v22.025a19.479 19.479 0 0 0-6.192-1.008c-10.958 0-19.833 8.95-19.658 19.925.092 7.008 3.934 13.15 9.583 16.525a19.48 19.48 0 0 0 8.976 2.758 19.88 19.88 0 0 0 7.291-.958c7.834-2.592 13.475-9.95 13.475-18.625l.033-32.458V34h21.675c.025 2.142.242 4.242.65 6.275 1.634 8.217 6.267 15.35 12.717 20.217a33.477 33.477 0 0 0 20.217 6.758s.075 0 .067-.008v5.841Z" fill="#fff"/></svg>
+                </a>
+              </div>
+            {% endif %}
+
+            {% if block.settings.facebook_url != blank %}
+              <div class="social-grid-item footer-facebook-item">
+                <a href="{{ block.settings.facebook_url }}" target="_blank" rel="noopener noreferrer" class="footer-social-link" aria-label="Facebook">
+                  <svg class="social-icon" viewBox="0 0 200 200"><path d="M166.667 100.667C166.667 63.85 136.817 34 100 34s-66.667 29.85-66.667 66.667c0 33.275 24.384 60.858 56.25 65.858v-46.583H72.658v-19.275h16.925V85.983c0-16.708 9.95-25.941 25.184-25.941 7.291 0 14.925 1.3 14.925 1.3V77.75h-8.409c-8.283 0-10.866 5.142-10.866 10.417v12.5h18.491l-2.958 19.275h-15.533v46.583c31.875-5 56.25-32.583 56.25-65.858Z" fill="#fff"/></svg>
+                </a>
+              </div>
+            {% endif %}
+          </div>
+
+        {% when 'newsletter' %}
+          {% if block.settings.newsletter_title != blank %}
+          <div class="footer-box footer-newsletter-box">
+            <div class="newsletter-wrapper">
+              <h3 class="newsletter-title">{{ block.settings.newsletter_title }}</h3>
+              <form action="/contact#newsletter-form" method="post" id="newsletter-form" accept-charset="UTF-8" class="newsletter-form">
+                <input type="hidden" name="form_type" value="customer">
+                <input type="hidden" name="utf8" value="✓">
+                <input type="hidden" name="contact[tags]" value="newsletter">
+                <div class="newsletter-field-group">
+                  <label for="newsletter-email" class="newsletter-label">
+                    {{ block.settings.email_label }}<span class="required-star">*</span>
+                  </label>
+                  <input type="email" id="newsletter-email" name="contact[email]" class="newsletter-input" required aria-required="true" autocomplete="email">
+                </div>
+                {% if block.settings.show_checkbox %}
+                <div class="newsletter-checkbox-group">
+                  <input type="checkbox" id="newsletter-consent" class="newsletter-checkbox" required>
+                  <label for="newsletter-consent" class="newsletter-checkbox-label">
+                    <span class="checkbox-custom"></span>
+                    <span class="checkbox-text">{{ block.settings.checkbox_text }}</span>
+                  </label>
+                </div>
+                {% endif %}
+                <button type="submit" class="newsletter-submit">{{ block.settings.submit_text }}</button>
+                <div class="newsletter-message" style="display: none;"></div>
+              </form>
+            </div>
+          </div>
+          {% endif %}
+      {% endcase %}
+    {% endfor %}
+  </div>
+</footer>
+
+<style>
+/* Base styles */
+.footer-pogba { 
+  background: #000; 
+  color: #fff; 
+  width: 100%; 
+}
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0;
+  width: 100%;
+  align-items: stretch;
+}
+
+.footer-box { 
+  background: transparent; 
+  border: 1px solid #fff; 
+  padding: 40px; 
+  min-height: 320px; 
+  display: flex; 
+  flex-direction: column; 
+  justify-content: flex-start;
+}
+
+.footer-preorder { grid-column: span 2; }
+.footer-newsletter-box { grid-column: span 3; }
+.footer-box-title { font-size: 16px; font-weight: 700; margin: 0 0 20px 0; }
+.footer-box-text { font-size: 16px; font-weight: 400; color: #fff; }
+.footer-links-list { list-style: none; margin: 0; padding: 0; }
+.footer-links-list li { margin-bottom: 8px; }
+.footer-link { 
+  font-size: 16px; 
+  font-weight: 400; 
+  color: #fff; 
+  text-decoration: none; 
+  display: block; 
+  transition: opacity 0.3s; 
+  line-height: 1.6; 
+}
+.footer-link:hover { opacity: 0.7; }
+
+/* Social Grid - Layout dynamique selon le nombre de réseaux */
+.footer-social-grid {
+  grid-column: span 2;
+  display: grid;
+  gap: 0;
+  min-height: 320px;
+  background: transparent;
+}
+
+/* 3 réseaux sociaux = grid 2x2 */
+.footer-social-grid--3 {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+
+/* 2 réseaux sociaux = logo + 1er réseau en haut, 2e réseau en bas pleine largeur */
+.footer-social-grid--2 {
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+
+.footer-social-grid--2 .footer-logo-item {
+  grid-column: 1 / 2;
+  grid-row: 1 / 2;
+}
+
+.footer-social-grid--2 .social-grid-item:nth-child(2) {
+  grid-column: 2 / 3;
+  grid-row: 1 / 2;
+}
+
+.footer-social-grid--2 .social-grid-item:nth-child(3) {
+  grid-column: 1 / -1;
+  grid-row: 2 / 3;
+}
+
+/* 1 réseau social = logo en haut pleine largeur, réseau en bas pleine largeur */
+.footer-social-grid--1 {
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr 1fr;
+}
+
+.footer-social-grid--1 .footer-logo-item {
+  grid-column: 1 / -1;
+  grid-row: 1 / 2;
+}
+
+.footer-social-grid--1 .social-grid-item:nth-child(2) {
+  grid-column: 1 / -1;
+  grid-row: 2 / 3;
+}
+
+/* 0 réseau social = logo seul centré */
+.footer-social-grid--0 {
+  grid-template-columns: 1fr;
+  grid-template-rows: 1fr;
+}
+
+.footer-social-grid--0 .footer-logo-item {
+  grid-column: 1 / -1;
+  grid-row: 1 / -1;
+}
+
+.social-grid-item { 
+  border: 1px solid #fff; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  padding: 0; 
+  min-height: 160px; 
+  background: transparent; 
+  height: 100%; 
+}
+
+.footer-logo-image { 
+  max-width: 100%; 
+  max-height: 96px; 
+  width: auto; 
+  object-fit: contain; 
+}
+
+.footer-logo-text { 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  color: #fff; 
+  font-weight: 700; 
+}
+
+.logo-pogba { font-size: 40px; letter-spacing: 2px; }
+.logo-mdx { font-size: 18px; letter-spacing: 4px; margin-top: 4px; }
+
+.footer-social-link { 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  width: 100%; 
+  height: 100%; 
+  transition: opacity 0.3s; 
+}
+.footer-social-link:hover { opacity: 0.7; }
+
+.social-icon { width: 48px; height: 48px; fill: #fff; }
+
+/* Newsletter styles */
+.newsletter-wrapper { width: 100%; display: flex; flex-direction: column; }
+.newsletter-title { font-size: 14px; font-weight: 700; margin: 0 0 20px 0; text-transform: uppercase; }
+.newsletter-form { display: flex; flex-direction: column; gap: 20px; }
+.newsletter-field-group { display: flex; flex-direction: column; }
+.newsletter-label { font-size: 14px; font-weight: 600; margin-bottom: 8px; color: #fff;}
+.required-star { color: #ff0000; margin-left: 2px;}
+.newsletter-input { 
+  width: 100%; 
+  padding: 14px; 
+  background: #000; 
+  border: 1px solid #fff; 
+  color: #fff;
+}
+.newsletter-input:focus { outline: none; border-color: #fff;}
+
+.newsletter-checkbox-group { display: flex; align-items: flex-start; gap: 10px;}
+.newsletter-checkbox { position: absolute; opacity: 0; width: 0; height: 0;}
+.newsletter-checkbox-label { 
+  display: flex; 
+  align-items: center; 
+  gap: 10px; 
+  cursor: pointer; 
+  font-size: 14px; 
+  color: #fff;
+}
+
+.checkbox-custom { 
+  width: 18px; 
+  height: 18px; 
+  border: 1px solid #fff; 
+  background: #000; 
+  border-radius: 2px; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  position: relative;
+}
+
+.newsletter-checkbox:checked ~ .newsletter-checkbox-label .checkbox-custom::after,
+.newsletter-checkbox:checked + .newsletter-checkbox-label .checkbox-custom::after {
+  content: '';
+  width: 6px; 
+  height: 10px; 
+  border: solid #fff; 
+  border-width: 0 2px 2px 0; 
+  transform: rotate(45deg); 
+  position: absolute; 
+  top: 3px; 
+  left: 5px;
+}
+
+.checkbox-text { flex: 1; }
+
+.newsletter-submit { 
+  width: 100%; 
+  padding: 16px; 
+  background: #000; 
+  border: 1px solid #fff; 
+  border-radius: 25px; 
+  font-size: 16px; 
+  font-weight: 600; 
+  color: #fff; 
+  cursor: pointer; 
+}
+.newsletter-submit:hover { background: #333; }
+
+.newsletter-message { 
+  padding: 12px; 
+  border-radius: 4px; 
+  text-align: center; 
+  font-size: 14px;
+}
+.newsletter-message.success { 
+  background: rgba(76, 175, 80, 0.1); 
+  color:#4caf50; 
+  border:1px solid #4caf50;
+}
+.newsletter-message.error { 
+  background: rgba(244, 67, 54, 0.1); 
+  color: #f44336; 
+  border:1px solid #f44336;
+}
+
+/* Tablet */
+@media screen and (max-width: 1024px) {
+  .footer-grid { 
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .footer-preorder, 
+  .footer-social-grid, 
+  .footer-newsletter-box {
+    grid-column: span 2;
+  }
+}
+
+/* Mobile */
+@media screen and (max-width: 768px) {
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    grid-auto-flow: dense;
+    border-top: 1px solid #fff;
+  }
+
+  .footer-box {
+    padding: 24px;
+    min-height: auto;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: 1px solid #fff;
+  }
+
+  /* Preorder et Support blocks */
+  .footer-preorder, 
+  .footer-support {
+    grid-column: 1 / -1;
+  }
+
+  /* Navigation blocks côte à côte */
+  .footer-policy,
+  .footer-shop {
+    grid-column: span 1;
+    padding: 24px;
+    min-height: auto;
+    border: none;
+    border-right: 1px solid #fff;
+    border-bottom: 1px solid #fff;
+  }
+
+  .footer-policy {
+    grid-column: 1 / 2;
+  }
+
+  .footer-shop {
+    grid-column: 2 / 3;
+    border-right: none;
+  }
+
+  /* Newsletter prend toute la largeur */
+  .footer-newsletter-box {
+    grid-column: 1 / -1;
+  }
+
+  /* Social Grid mobile - Layout dynamique */
+  .footer-social-grid {
+    grid-column: 1 / -1;
+    min-height: auto;
+    width: 100%;
+  }
+
+  /* 3 réseaux = grid 2x2 en mobile */
+  .footer-social-grid--3 {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+  }
+
+  .footer-social-grid--3 .social-grid-item {
+    min-height: 100px;
+  }
+
+  /* 2 réseaux = logo + 1er réseau en haut, 2e réseau en bas */
+  .footer-social-grid--2 {
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
+  }
+
+  .footer-social-grid--2 .footer-logo-item {
+    grid-column: 1 / 2;
+    grid-row: 1 / 2;
+    min-height: 100px;
+  }
+
+  .footer-social-grid--2 .social-grid-item:nth-child(2) {
+    grid-column: 2 / 3;
+    grid-row: 1 / 2;
+    min-height: 100px;
+  }
+
+  .footer-social-grid--2 .social-grid-item:nth-child(3) {
+    grid-column: 1 / -1;
+    grid-row: 2 / 3;
+    min-height: 100px;
+  }
+
+  /* 1 réseau = logo en haut, réseau en bas - hauteur réduite */
+  .footer-social-grid--1 {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+  }
+
+  .footer-social-grid--1 .footer-logo-item {
+    grid-column: 1 / -1;
+    grid-row: 1 / 2;
+    min-height: 120px;
+  }
+
+  .footer-social-grid--1 .social-grid-item:nth-child(2) {
+    grid-column: 1 / -1;
+    grid-row: 2 / 3;
+    min-height: 100px;
+  }
+
+  /* 0 réseau = logo seul - hauteur réduite */
+  .footer-social-grid--0 {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto;
+  }
+
+  .footer-social-grid--0 .footer-logo-item {
+    min-height: 120px;
+  }
+
+  .social-grid-item {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    justify-content: center;
+    border: none;
+    border-bottom: 1px solid #fff;
+    border-right: 1px solid #fff;
+    padding: 20px;
+  }
+
+  /* Bordure droite pour les éléments en 2 colonnes */
+  .footer-social-grid--3 .social-grid-item:nth-child(2n),
+  .footer-social-grid--2 .social-grid-item:nth-child(2) {
+    border-right: none;
+  }
+
+  /* Pas de bordure droite pour éléments pleine largeur */
+  .footer-social-grid--2 .social-grid-item:nth-child(3),
+  .footer-social-grid--1 .social-grid-item:nth-child(2),
+  .footer-social-grid--0 .footer-logo-item {
+    border-right: none;
+  }
+
+  /* Typography mobile */
+  .social-icon { 
+    width: 36px; 
+    height: 36px;
+  }
+
+  .logo-pogba {
+    font-size: 28px;
+  }
+
+  .logo-mdx {
+    font-size: 14px;
+  }
+
+  .footer-box-title,
+  .footer-box-text,
+  .footer-link {
+    font-size: 14px;
+  }
+}
+</style>
+
+<script>
+if (!window.footerNewsletterInitialized) {
+  window.footerNewsletterInitialized = true;
+  document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('newsletter-form');
+    if (!form) return;
+    
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const emailInput = form.querySelector('#newsletter-email');
+      const submitButton = form.querySelector('.newsletter-submit');
+      const messageDiv = form.querySelector('.newsletter-message');
+      const checkbox = form.querySelector('#newsletter-consent');
+      
+      if (checkbox && {{ section.blocks[0].settings.show_checkbox | json }}) {
+        if (!checkbox.checked) {
+          showMessage('{{ section.blocks[0].settings.error_checkbox | default: "Please accept the newsletter subscription." }}', 'error');
+          return;
+        }
+      }
+      
+      const originalText = submitButton.textContent;
+      submitButton.disabled = true;
+      submitButton.textContent = '{{ section.blocks[0].settings.submitting_text }}';
+      
+      const formData = new FormData(form);
+      
+      try {
+        const response = await fetch('/contact#newsletter-form', {
+          method: 'POST',
+          body: formData,
+          headers: { 'Accept': 'application/json' }
+        });
+        
+        if (response.ok) {
+          showMessage('{{ section.blocks[0].settings.success_message }}', 'success');
+          form.reset();
+        } else {
+          showMessage('{{ section.blocks[0].settings.error_message }}', 'error');
+        }
+      } catch (error) {
+        showMessage('{{ section.blocks[0].settings.error_message }}', 'error');
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = originalText;
+      }
+      
+      function showMessage(message, type) {
+        messageDiv.textContent = message;
+        messageDiv.className = `newsletter-message ${type}`;
+        messageDiv.style.display = 'block';
+        setTimeout(() => {
+          messageDiv.style.display = 'none';
+        }, 5000);
+      }
+    });
+  });
+}
+</script>
+
+{% schema %}
+{
+  "name": "Footer Concept",
+  "tag": "footer",
+  "class": "section-footer-pogba",
+  "blocks": [
+    {
+      "type": "preorder",
+      "name": "Preorder Section",
+      "settings": [
+        { "type": "text", "id": "preorder_title", "label": "Title", "default": "OFFSIDE X CONCEPT" },
+        { "type": "textarea", "id": "preorder_text", "label": "Text", "default": "We collect your orders over a 15-day period, and you will receive your delivery within 6 to 8 weeks." }
+      ]
+    },
+    {
+      "type": "support",
+      "name": "Customer Support",
+      "settings": [
+        { "type": "text", "id": "support_title", "label": "Title", "default": "Customer Support" },
+        { "type": "textarea", "id": "support_text", "label": "Text", "default": "For any questions or inquiries please contact us at" }
+      ]
+    },
+    {
+      "type": "policy_menu",
+      "name": "Policy Menu",
+      "settings": [
+        { "type": "text", "id": "policy_title", "label": "Title", "default": "Policy" },
+        { "type": "link_list", "id": "policy_menu", "label": "Policy Menu", "info": "Create a menu in Navigation with your policy links" }
+      ]
+    },
+    {
+      "type": "shop_menu",
+      "name": "Shop Menu",
+      "settings": [
+        { "type": "text", "id": "shop_title", "label": "Title", "default": "Shop" },
+        { "type": "link_list", "id": "shop_menu", "label": "Shop Menu", "info": "Create a menu in Navigation with your shop links" }
+      ]
+    },
+    {
+      "type": "social_and_logo",
+      "name": "Social & Logo",
+      "settings": [
+        { "type": "image_picker", "id": "logo", "label": "Logo Image", "info":"If no image, text logo will be displayed" },
+        { "type": "url", "id": "instagram_url", "label": "Instagram URL" },
+        { "type": "url", "id": "tiktok_url", "label": "TikTok URL" },
+        { "type": "url", "id": "facebook_url", "label": "Facebook URL" }
+      ]
+    },
+    {
+      "type": "newsletter",
+      "name": "Newsletter",
+      "settings": [
+        { "type": "text", "id": "newsletter_title", "label": "Title", "default": "SIGN UP FOR OUR NEWSLETTER" },
+        { "type": "text", "id": "email_label", "label": "Email Label", "default": "Your email" },
+        { "type": "checkbox", "id": "show_checkbox", "label":"Afficher la checkbox d'inscription", "default": true },
+        { "type": "text", "id": "checkbox_text", "label": "Checkbox Text", "default": "Yes, subscribe me to your newsletter." },
+        { "type": "text", "id": "submit_text", "label": "Submit Button Text", "default": "Submit" },
+        { "type": "text", "id": "submitting_text", "label": "Submitting Text", "default": "Submitting..." },
+        { "type": "text", "id": "success_message", "label": "Success Message", "default": "Thank you for subscribing!" },
+        { "type": "text", "id": "error_message", "label": "Error Message", "default": "Something went wrong. Please try again." },
+        { "type": "text", "id": "error_checkbox", "label": "Checkbox Error Message", "default": "Please accept the newsletter subscription." }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Footer Concept",
+      "category": "Footer",
+      "blocks": [
+        { "type": "preorder" },
+        { "type": "support" },
+        { "type": "policy_menu" },
+        { "type": "shop_menu" },
+        { "type": "social_and_logo" },
+        { "type": "newsletter" }
+      ]
+    }
+  ]
+}
+{% endschema %}

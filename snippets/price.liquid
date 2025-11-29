@@ -1,0 +1,193 @@
+{% comment %}
+  Snippet: Price
+  Description: Affichage standardisé et accessible des prix
+  
+  Usage:
+    {% render 'price', product: product, use_variant: true %}
+    {% render 'price', product: product, price: variant.price, compare_at_price: variant.compare_at_price %}
+  
+  Params:
+    - product: objet produit (optionnel si price fourni)
+    - price: prix à afficher (optionnel si product fourni)
+    - compare_at_price: prix comparé (optionnel)
+    - use_variant: utiliser le variant sélectionné (défaut: false)
+    - show_badges: afficher les badges promo (défaut: true)
+{% endcomment %}
+
+{%- liquid
+  assign show_badges = show_badges | default: true
+  assign use_variant = use_variant | default: false
+  
+  if product and use_variant
+    assign target = product.selected_or_first_available_variant
+  elsif product
+    assign target = product
+  endif
+  
+  if price
+    assign money_price = price
+  elsif target
+    assign money_price = target.price
+  endif
+  
+  if compare_at_price
+    assign money_compare_price = compare_at_price
+  elsif target
+    assign money_compare_price = target.compare_at_price
+  endif
+  
+  assign has_discount = false
+  if money_compare_price > money_price
+    assign has_discount = true
+    assign discount_percentage = money_compare_price | minus: money_price | times: 100.0 | divided_by: money_compare_price | round
+  endif
+  
+  assign price_min = product.price_min
+  assign price_max = product.price_max
+  assign available = false
+  if product
+    assign available = product.available
+  elsif target
+    assign available = target.available
+  endif
+-%}
+
+<div class="price
+  {%- if available == false %} price--sold-out{% endif -%}
+  {%- if has_discount %} price--on-sale{% endif -%}
+  {%- if product.price_varies == false and product.compare_at_price_varies %} price--no-compare{% endif -%}
+">
+  <div class="price__container">
+    {%- comment -%} Prix régulier ou en promo {%- endcomment -%}
+    <div class="price__regular">
+      <span class="visually-hidden visually-hidden--inline">
+        {%- if has_discount -%}
+          {{ 'products.product.price.sale_price' | t }}
+        {%- else -%}
+          {{ 'products.product.price.regular_price' | t }}
+        {%- endif -%}
+      </span>
+      <span class="price-item price-item--regular" data-price="{{ money_price }}">
+        {{ money_price | money }}
+      </span>
+    </div>
+
+    {%- comment -%} Prix comparé (barré) {%- endcomment -%}
+    {%- if has_discount -%}
+      <div class="price__compare">
+        <span class="visually-hidden visually-hidden--inline">
+          {{ 'products.product.price.regular_price' | t }}
+        </span>
+        <s class="price-item price-item--compare" data-compare-price="{{ money_compare_price }}">
+          {{ money_compare_price | money }}
+        </s>
+      </div>
+    {%- endif -%}
+
+    {%- comment -%} Badge de réduction {%- endcomment -%}
+    {%- if has_discount and show_badges -%}
+      <span class="badge price__badge-sale">
+        -{{ discount_percentage }}%
+      </span>
+    {%- endif -%}
+  </div>
+
+  {%- comment -%} Prix variable ("À partir de...") {%- endcomment -%}
+  {%- if product and product.price_varies -%}
+    <small class="price__from">
+      <span aria-hidden="true">{{ 'products.product.price.from_price_html' | t: price: price_min | money }}</span>
+      <span class="visually-hidden">{{ 'products.product.price.from_price_html' | t: price: price_min | money }}</span>
+    </small>
+  {%- endif -%}
+
+  {%- comment -%} Unit price (prix unitaire) {%- endcomment -%}
+  {%- if target.unit_price_measurement -%}
+    <div class="price__unit">
+      <span class="visually-hidden">{{ 'products.product.price.unit_price' | t }}</span>
+      <span class="price-item price-item--unit">
+        {{ target.unit_price | money }}
+      </span>
+      <span aria-hidden="true">/</span>
+      <span class="visually-hidden">&nbsp;{{ 'accessibility.unit_price_separator' | t }}&nbsp;</span>
+      {%- if target.unit_price_measurement.reference_value != 1 -%}
+        {{ target.unit_price_measurement.reference_value }}
+      {%- endif -%}
+      {{ target.unit_price_measurement.reference_unit }}
+    </div>
+  {%- endif -%}
+</div>
+
+<style>
+  .price {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .price__container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .price__regular {
+    display: flex;
+    align-items: baseline;
+  }
+
+  .price-item {
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .price-item--compare {
+    color: rgba(var(--foreground-color), 0.5);
+    font-size: 16px;
+    font-weight: 400;
+  }
+
+  .price--on-sale .price-item--regular {
+    color: #d82c0d;
+  }
+
+  .price__badge-sale {
+    background: #d82c0d;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .price__from {
+    color: rgba(var(--foreground-color), 0.7);
+    font-size: 14px;
+  }
+
+  .price__unit {
+    color: rgba(var(--foreground-color), 0.6);
+    font-size: 13px;
+  }
+
+  .price--sold-out .price-item {
+    opacity: 0.5;
+  }
+
+  .visually-hidden {
+    position: absolute !important;
+    overflow: hidden;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    clip: rect(0 0 0 0);
+    word-wrap: normal !important;
+  }
+
+  .visually-hidden--inline {
+    margin: 0;
+    height: 1em;
+  }
+</style>

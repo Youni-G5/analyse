@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}">
+  <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="{{ settings.background_color }}">
+  
+  {% comment %} MOBILE OPTIMIZATIONS - Critical inline CSS + Font optimization {% endcomment %}
+  {% render 'mobile-optimizations' %}
+  
+  {% comment %} Performance: Preload Critical Resources {% endcomment %}
+  {% render 'performance-preload' %}
+  
+  {% comment %} Inlined CSS Variables {% endcomment %}
+  {% render 'css-variables' %}
+  
+  {% comment %} Social, title, etc. {% endcomment %}
+  {% render 'meta-tags' %}
+  
+  {% comment %} Structured Data {% endcomment %}
+  {% render 'structured-data' %}
+
+  {% comment %} Feuilles de style globales {% endcomment %}
+  {{ 'base.css' | asset_url | stylesheet_tag }}
+  {{ 'accessibility.css' | asset_url | stylesheet_tag }}
+
+  {% comment %} Favicon avec différentes tailles {% endcomment %}
+  {% if settings.favicon %}
+  <link rel="shortcut icon" href="{{ settings.favicon | image_url: width: 32, height: 32 }}" type="image/png">
+  <link rel="icon" type="image/png" sizes="16x16" href="{{ settings.favicon | image_url: width: 16, height: 16 }}">
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+  <link rel="apple-touch-icon" sizes="180x180" href="{{ settings.favicon | image_url: width: 180, height: 180 }}">
+  {% endif %}
+
+  {% comment %} L'objet Shopify doit toujours être en dernier du head {% endcomment %}
+  {{ content_for_header }}
+</head>
+
+  <body class="template-{{ template.name }} {% if customer %}customer-logged-in{% endif %}">
+  
+    {% comment %} GTM noscript (requis immédiatement après body) {% endcomment %}
+    {% if settings.enable_google_tag_manager and settings.google_tag_manager_id != blank %}
+    <noscript>
+      <iframe src="https://www.googletagmanager.com/ns.html?id={{ settings.google_tag_manager_id }}"
+              height="0" width="0" style="display:none;visibility:hidden" aria-hidden="true"></iframe>
+    </noscript>
+    {% endif %}
+    
+    {% comment %} Skip to content pour accessibilité {% endcomment %}
+    <a href="#MainContent" class="skip-to-content-link visually-hidden-focusable" tabindex="0">
+      {{ 'accessibility.skip_to_text' | t }}
+    </a>
+
+    {% if settings.enable_signature_preloader %}
+  <div id="signature-preloader-sig-main"
+    class="signature-preloader-sig-overlay"
+    style="display:none; padding-top:{{ settings.signature_preloader_padding_top }}px; padding-bottom:{{ settings.signature_preloader_padding_bottom }}px;">
+    <div class="signature-preloader-sig-box" role="alert" aria-live="polite">
+      {% if settings.signature_preloader_logo != blank %}
+        <img src="{{ settings.signature_preloader_logo | image_url: width: 400 }}"
+             alt="{{ shop.name }}"
+             class="signature-preloader-sig-logo"
+             width="400"
+             height="auto"
+             loading="eager"
+             style="width:{{ settings.signature_preloader_logo_size }}px; max-width:98vw;" />
+      {% endif %}
+      {% if settings.signature_preloader_text != blank %}
+        <div class="signature-preloader-sig-text"
+             style="color:{{ settings.signature_preloader_text_color }};">{{ settings.signature_preloader_text }}</div>
+      {% endif %}
+      <div class="signature-preloader-sig-loader">
+        {% case settings.signature_preloader_loader_style %}
+          {% when 'line' %}
+            <div class="signature-preloader-sig-bar">
+              <div class="signature-preloader-sig-bar-inner"></div>
+            </div>
+          {% when 'spinner' %}
+            <svg class="signature-preloader-sig-spinner" width="54" height="54" viewBox="0 0 54 54" focusable="false" aria-hidden="true">
+              <circle class="sig-spinner-bg" cx="27" cy="27" r="24"></circle>
+              <circle class="sig-spinner-fg" cx="27" cy="27" r="24"></circle>
+            </svg>
+          {% when 'dots' %}
+            <div class="signature-preloader-sig-dots">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+        {% endcase %}
+      </div>
+    </div>
+  </div>
+{% endif %}
+
+    {%- if page.handle == 'concept' or collection.handle == 'concept-store' or template.suffix == 'concept' -%}
+    {% section 'custom-header' %}
+    {% section 'store-switcher' %}
+    {% section 'cart-drawer-concept' %}
+{%- endif -%}
+
+{%- if request.page_type != 'password' and page.handle != 'concept' and collection.handle != 'concept-store' and template.suffix != 'concept' -%}
+    {% section 'announcement-bar' %}  
+    {% section 'header-test' %}
+    {% section 'store-switcher' %}
+    {% section 'cart-drawer' %}
+{%- endif -%}
+
+<main id="MainContent" role="main" tabindex="-1">
+  {{ content_for_layout }}
+</main>
+
+{%- if page.handle == 'concept' or collection.handle == 'concept-store' or template.suffix == 'concept' -%}
+    {% sections 'footer-group' %}
+{%- endif -%}
+
+{%- if request.page_type != 'password' and page.handle != 'concept' and collection.handle != 'concept-store' and template.suffix != 'concept' -%}
+    {% sections 'footer-group' %}
+{%- endif -%}
+
+
+  {% comment %} JavaScript avec defer pour performance {% endcomment %}
+  <script src="{{ 'theme.js' | asset_url }}" defer></script>
+
+  {% comment %} Analytics chargé via mobile-optimizations (defer jusqu'à interaction) {% endcomment %}
+
+    {% if settings.enable_signature_preloader %}
+<script>
+(function(){  var showMobile = {{ settings.signature_preloader_show_mobile | json }};
+  var force = {{ settings.signature_preloader_force | json }};
+  var duration = {{ settings.signature_preloader_duration | json }};
+  function isMobile() { return window.innerWidth <= 540; }
+  var alreadySeen = window.localStorage.getItem('sig_preloader_seen');
+
+  if((!force && alreadySeen)|| (!showMobile && isMobile())) return;
+
+  var el = document.getElementById('signature-preloader-sig-main');
+  if(!el) return;
+
+  el.classList.remove('bg-solid','bg-gradient','bg-fade');
+  var bgType = "{{ settings.signature_preloader_bg }}";
+  el.classList.add('bg-' + bgType);
+  el.style.setProperty('--preloaderBg','{{ settings.signature_preloader_bg_color }}');
+  el.style.setProperty('--preloaderBg2','{{ settings.signature_preloader_bg_color2 }}');
+
+  var bgColor = "{{ settings.signature_preloader_bg_color }}".toUpperCase();
+  function colorIsLight(hex) {
+    if(hex[0]==="#") hex=hex.substr(1);
+    if(hex.length===3) hex=hex[0]+hex[0]+hex[1]+hex[1]+hex[2]+hex[2];
+    var r=parseInt(hex.substr(0,2),16),g=parseInt(hex.substr(2,2),16),b=parseInt(hex.substr(4,2),16);
+    return (0.299*r+0.587*g+0.114*b) > 186;
+  }
+  var explicitAccent = "{{ settings.signature_preloader_accent }}";
+  var loaderAccent;
+  if(colorIsLight(bgColor)){
+    loaderAccent = (explicitAccent.toLowerCase() === '#fff' || explicitAccent.toLowerCase() === '#ffffff')
+      ? '#24262e'
+      : explicitAccent;
+  }else{
+    loaderAccent = explicitAccent;
+  }
+  el.style.setProperty('--preloaderAccent', loaderAccent);
+
+  var elements = el.querySelectorAll('.signature-preloader-sig-bar-inner, .sig-spinner-fg, .signature-preloader-sig-dots span');
+  for(var i=0;i<elements.length;i++){
+    elements[i].style.setProperty('--duration', duration + 'ms');
+  }
+
+  var logo = el.querySelector('.signature-preloader-sig-logo');
+  if(logo) {
+    logo.classList.remove('ani-fadein','ani-soft_pulse','ani-subtle_slide','ani-spin_smooth');
+    var ani = "{{ settings.signature_preloader_logo_anim }}";
+    logo.classList.add('ani-'+ani);
+  }
+
+  el.style.display='flex';
+  document.body.style.overflow='hidden';
+  window.addEventListener('load',function(){
+    setTimeout(function(){
+      el.classList.add('hide');
+      document.body.style.overflow='';
+      setTimeout(function(){
+        el.style.display='none';
+        if(!force){ window.localStorage.setItem('sig_preloader_seen','1'); }
+      },700);
+    },duration);
+  });
+})();
+</script>
+{% endif %}
+
+  </body>
+</html>

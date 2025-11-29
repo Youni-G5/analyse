@@ -1,0 +1,261 @@
+<div class="error-404-page">
+  <div class="error-404-page__container">
+    
+    <div class="error-404-page__content">
+      <span class="error-404-page__code">404</span>
+      <h1 class="error-404-page__title">{{ section.settings.error_title }}</h1>
+      <p class="error-404-page__message">{{ section.settings.error_message }}</p>
+      
+      {% if section.settings.show_search %}
+      <div class="error-404-page__search">
+        <form action="{{ routes.search_url }}" method="get" role="search">
+          <div class="error-404-page__search-wrapper">
+            <svg class="error-404-page__search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <circle cx="11" cy="11" r="8" stroke="currentColor" stroke-width="2"/>
+              <path d="M21 21l-4.35-4.35" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <input type="search" name="q" placeholder="{{ section.settings.search_placeholder }}" class="error-404-page__search-input" autocomplete="off">
+            <button type="submit" class="error-404-page__search-submit">
+              <span>{{ section.settings.search_button }}</span>
+            </button>
+          </div>
+        </form>
+      </div>
+      {% endif %}
+      
+      <div class="error-404-page__actions">
+        <a href="{{ routes.root_url }}" class="error-404-page__btn-primary">
+          <span>{{ section.settings.primary_button }}</span>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+        <a href="{{ section.settings.secondary_button_link }}" class="error-404-page__btn-secondary">
+          {{ section.settings.secondary_button }}
+        </a>
+      </div>
+    </div>
+    
+    {% if section.settings.show_quick_links %}
+    <div class="error-404-page__links">
+      <h3 class="error-404-page__links-heading">{{ section.settings.links_heading }}</h3>
+      <div class="error-404-page__links-grid">
+        {% for block in section.blocks %}
+          <a href="{{ block.settings.link }}" class="error-404-page__quick-link" {{ block.shopify_attributes }}>
+            {{ block.settings.icon }}
+            <span>{{ block.settings.label }}</span>
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+    
+  </div>
+</div>
+
+<style>
+.error-404-page{min-height:80vh;display:flex;align-items:center;justify-content:center;padding:80px 20px;background-color:{{ section.settings.background_color }}}
+.error-404-page__container{max-width:1200px;width:100%;margin:0 auto}
+.error-404-page__content{text-align:center;margin-bottom:80px}
+.error-404-page__code{display:block;font-size:140px;font-weight:900;line-height:1;letter-spacing:-0.05em;color:{{ section.settings.primary_color }};margin-bottom:24px}
+.error-404-page__title{font-size:56px;font-weight:700;margin:0 0 16px 0;color:{{ section.settings.primary_color }};letter-spacing:-0.02em}
+.error-404-page__message{font-size:20px;color:{{ section.settings.secondary_color }};margin:0 0 48px 0;line-height:1.6;max-width:600px;margin-left:auto;margin-right:auto}
+.error-404-page__search{max-width:600px;margin:0 auto 40px}
+.error-404-page__search-wrapper{display:flex;align-items:center;border:2px solid {{ section.settings.border_color }};border-radius:0;padding:4px 4px 4px 20px;transition:border-color 0.3s ease;background:#f5f5f5}
+.error-404-page__search-wrapper:focus-within{border-color:{{ section.settings.primary_color }};background:#ffffff}
+.error-404-page__search-icon{flex-shrink:0;color:{{ section.settings.secondary_color }};margin-right:12px}
+.error-404-page__search-input{flex:1;border:none;background:transparent;font-size:16px;padding:16px 0;color:{{ section.settings.primary_color }};outline:none}
+.error-404-page__search-input::placeholder{color:{{ section.settings.secondary_color }}}
+.error-404-page__search-submit{background:{{ section.settings.button_bg }};color:{{ section.settings.button_text }};border:none;padding:16px 32px;font-size:15px;font-weight:600;cursor:pointer;transition:all 0.3s ease;text-transform:uppercase;letter-spacing:0.05em}
+.error-404-page__search-submit:hover{background:{{ section.settings.button_bg_hover }}}
+.error-404-page__actions{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.error-404-page__btn-primary{display:inline-flex;align-items:center;gap:12px;padding:18px 40px;font-size:16px;font-weight:700;text-decoration:none;border-radius:0;transition:all 0.3s ease;text-transform:uppercase;letter-spacing:0.05em;background:{{ section.settings.button_bg }};color:{{ section.settings.button_text }};border:2px solid {{ section.settings.button_bg }}}
+.error-404-page__btn-primary:hover{background:transparent;color:{{ section.settings.button_bg }}}
+.error-404-page__btn-primary svg{transition:transform 0.3s ease}
+.error-404-page__btn-primary:hover svg{transform:translateX(4px)}
+.error-404-page__btn-secondary{display:inline-flex;align-items:center;gap:12px;padding:18px 40px;font-size:16px;font-weight:700;text-decoration:none;border-radius:0;transition:all 0.3s ease;text-transform:uppercase;letter-spacing:0.05em;background:transparent;color:{{ section.settings.button_bg }};border:2px solid {{ section.settings.button_bg }}}
+.error-404-page__btn-secondary:hover{background:{{ section.settings.button_bg }};color:{{ section.settings.button_text }}}
+.error-404-page__links{text-align:center}
+.error-404-page__links-heading{font-size:28px;font-weight:700;margin:0 0 40px 0;color:{{ section.settings.primary_color }};letter-spacing:-0.02em}
+.error-404-page__links-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;max-width:900px;margin:0 auto}
+.error-404-page__quick-link{display:flex;flex-direction:column;align-items:center;gap:16px;padding:32px 24px;background:#f5f5f5;text-decoration:none;color:{{ section.settings.primary_color }};transition:all 0.3s ease;border:2px solid transparent}
+.error-404-page__quick-link:hover{background:#ffffff;border-color:{{ section.settings.primary_color }};transform:translateY(-4px)}
+.error-404-page__quick-link svg{color:{{ section.settings.primary_color }}}
+.error-404-page__quick-link span{font-size:14px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em}
+@media (max-width:768px){
+.error-404-page{padding:60px 16px;min-height:70vh}
+.error-404-page__code{font-size:96px}
+.error-404-page__title{font-size:40px}
+.error-404-page__message{font-size:18px;margin-bottom:40px}
+.error-404-page__links-grid{grid-template-columns:repeat(2,1fr);gap:16px}
+.error-404-page__links-heading{font-size:24px;margin-bottom:32px}
+.error-404-page__actions{flex-direction:column}
+.error-404-page__btn-primary,.error-404-page__btn-secondary{width:100%;max-width:400px;justify-content:center}
+.error-404-page__search-wrapper{flex-direction:column;padding:12px;gap:12px}
+.error-404-page__search-input{width:100%;padding:12px;text-align:center}
+.error-404-page__search-submit{width:100%}
+.error-404-page__search-icon{display:none}
+.error-404-page__quick-link{padding:24px 16px}
+}
+@media (max-width:480px){
+.error-404-page__code{font-size:72px}
+.error-404-page__title{font-size:32px}
+.error-404-page__message{font-size:16px}
+.error-404-page__links-heading{font-size:20px}
+}
+</style>
+
+{% schema %}
+{
+  "name": "Page 404",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Contenu"
+    },
+    {
+      "type": "text",
+      "id": "error_title",
+      "label": "Titre",
+      "default": "Page Introuvable"
+    },
+    {
+      "type": "textarea",
+      "id": "error_message",
+      "label": "Message",
+      "default": "La page que vous recherchez n'existe pas ou a été déplacée."
+    },
+    {
+      "type": "header",
+      "content": "Recherche"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_search",
+      "label": "Afficher la barre de recherche",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "search_placeholder",
+      "label": "Placeholder",
+      "default": "Rechercher un produit..."
+    },
+    {
+      "type": "text",
+      "id": "search_button",
+      "label": "Texte du bouton",
+      "default": "Rechercher"
+    },
+    {
+      "type": "header",
+      "content": "Boutons"
+    },
+    {
+      "type": "text",
+      "id": "primary_button",
+      "label": "Bouton principal",
+      "default": "Retour à l'accueil"
+    },
+    {
+      "type": "text",
+      "id": "secondary_button",
+      "label": "Bouton secondaire",
+      "default": "Découvrir nos produits"
+    },
+    {
+      "type": "url",
+      "id": "secondary_button_link",
+      "label": "Lien du bouton secondaire",
+      "default": "/collections/all"
+    },
+    {
+      "type": "header",
+      "content": "Liens rapides"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_quick_links",
+      "label": "Afficher les liens rapides",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "links_heading",
+      "label": "Titre",
+      "default": "Liens Utiles"
+    },
+    {
+      "type": "header",
+      "content": "Couleurs"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Arrière-plan",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "primary_color",
+      "label": "Couleur principale",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "secondary_color",
+      "label": "Couleur secondaire",
+      "default": "#757575"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Bordures",
+      "default": "#e5e5e5"
+    },
+    {
+      "type": "color",
+      "id": "button_bg",
+      "label": "Fond des boutons",
+      "default": "#111111"
+    },
+    {
+      "type": "color",
+      "id": "button_bg_hover",
+      "label": "Fond des boutons (survol)",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "button_text",
+      "label": "Texte des boutons",
+      "default": "#ffffff"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "quick_link",
+      "name": "Lien rapide",
+      "settings": [
+        {
+          "type": "text",
+          "id": "label",
+          "label": "Libellé",
+          "default": "Contact"
+        },
+        {
+          "type": "url",
+          "id": "link",
+          "label": "Lien"
+        },
+        {
+          "type": "html",
+          "id": "icon",
+          "label": "Icône SVG",
+          "default": "<svg width='24' height='24' viewBox='0 0 24 24' fill='none'><path d='M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
