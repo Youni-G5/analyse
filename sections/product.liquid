@@ -90,6 +90,106 @@
   .add-to-cart-btn-{{ section.id }}.loading .btn-feedback.loading, .add-to-cart-btn-{{ section.id }}.success .btn-feedback.success { opacity: 1; }
   @keyframes spin-{{ section.id }} { to { transform: rotate(360deg); } }
 
+  /* ========== BLOCS PERSONNALISÉS ========== */
+  .product-blocks-container-{{ section.id }} {
+    margin-top: 30px;
+  }
+
+  .custom-block-{{ section.id }} {
+    border: 1px solid rgba(var(--text-color-rgb-{{ section.id }}), 0.1);
+    border-radius: 8px;
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+
+  .custom-block-header-{{ section.id }} {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    padding: 20px;
+    background-color: rgba(var(--text-color-rgb-{{ section.id }}), 0.02);
+    transition: background-color 0.2s ease;
+  }
+
+  .custom-block-header-{{ section.id }}:hover {
+    background-color: rgba(var(--text-color-rgb-{{ section.id }}), 0.05);
+  }
+
+  .custom-block-title-{{ section.id }} {
+    font-weight: 500;
+    font-size: var(--heading-font-size-{{ section.id }});
+    margin: 0;
+    flex: 1;
+  }
+
+  .custom-block-icon-{{ section.id }} {
+    font-size: 1.6rem;
+    line-height: 1;
+    transition: transform 0.3s ease-out;
+    margin-left: 15px;
+  }
+
+  .custom-block-header-{{ section.id }}[aria-expanded="true"] .custom-block-icon-{{ section.id }} {
+    transform: rotate(45deg);
+  }
+
+  .custom-block-content-{{ section.id }} {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease-out, padding 0.4s ease-out;
+    font-size: var(--body-font-size-{{ section.id }});
+    line-height: 1.7;
+    opacity: 0.8;
+  }
+
+  .custom-block-content-{{ section.id }}.open {
+    max-height: 1000px;
+    padding: 0 20px 20px 20px;
+  }
+
+  .custom-block-content-{{ section.id }} h3,
+  .custom-block-content-{{ section.id }} h4 {
+    font-size: var(--heading-font-size-{{ section.id }});
+    font-weight: 500;
+    margin-top: 0;
+    margin-bottom: 12px;
+    color: var(--text-color-{{ section.id }});
+  }
+
+  .custom-block-content-{{ section.id }} p,
+  .custom-block-content-{{ section.id }} ul,
+  .custom-block-content-{{ section.id }} ol {
+    margin-bottom: 15px;
+  }
+
+  .custom-block-content-{{ section.id }} ul,
+  .custom-block-content-{{ section.id }} ol {
+    padding-left: 20px;
+  }
+
+  .custom-block-content-{{ section.id }} li {
+    margin-bottom: 8px;
+  }
+
+  .custom-block-content-{{ section.id }} strong {
+    font-weight: 600;
+  }
+
+  .custom-block-content-{{ section.id }} em {
+    font-style: italic;
+  }
+
+  .custom-block-content-{{ section.id }} a {
+    color: var(--accent-color-{{ section.id }});
+    text-decoration: underline;
+  }
+
+  .custom-block-content-{{ section.id }} a:hover {
+    text-decoration: none;
+  }
+
+  /* ========== RESPONSIVE ========== */
   @media (max-width: 1024px) {
     .product-layout-{{ section.id }} { grid-template-columns: 1fr; min-height: unset; }
     .product-image-section-{{ section.id }} { order: 1 !important; height: auto; padding: 20px 20px 10px 20px; flex-direction: column; gap: 0; }
@@ -110,6 +210,28 @@
     .pagination-dot-{{ section.id }}.active { background-color: var(--accent-color-{{ section.id }}); width: 24px; border-radius: 4px; }
     .pagination-dot-{{ section.id }}:hover { background-color: rgba(var(--text-color-rgb-{{ section.id }}), 0.4); }
     .pagination-dot-{{ section.id }}.active:hover { background-color: var(--accent-color-{{ section.id }}); }
+
+    .custom-block-header-{{ section.id }} {
+      padding: 16px;
+    }
+
+    .custom-block-content-{{ section.id }}.open {
+      padding: 0 16px 16px 16px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .sidebar-content-{{ section.id }} {
+      padding: 20px 15px;
+    }
+
+    .custom-block-header-{{ section.id }} {
+      padding: 14px;
+    }
+
+    .custom-block-content-{{ section.id }}.open {
+      padding: 0 14px 14px 14px;
+    }
   }
 </style>
 
@@ -213,7 +335,7 @@
                 <button type="button" class="quantity-btn-{{ section.id }}" data-action="increase">+</button>
               </div>
               {% endif %}
-              <button type="submit" class="add-to-cart-btn-{{ section.id }}" id="add-to-cart-btn-{{ section.id }}" {% unless current_variant.available %}disabled{% endunless %}>
+              <button type="submit" class="add-to-cart-btn-{{ section.id }}" id="add-to-cart-btn-{{ section.id }}" {% unless current_variant.available %}disabled{% endunless %}">
                 <span class="btn-content add-to-cart-text-{{ section.id }}">{% if current_variant.available %}{{ section.settings.add_to_cart_text }}{% else %}{{ section.settings.sold_out_text }}{% endif %}</span>
                 <div class="btn-feedback loading"><div class="loading-spinner-{{ section.id }}"></div></div>
                 <div class="btn-feedback success"><svg class="checkmark-{{ section.id }}" width="24" height="24" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></div>
@@ -254,6 +376,31 @@
           </div>
         </div>
         {%- endif -%}
+        
+        {%- comment -%} BLOCS PERSONNALISÉS {%- endcomment -%}
+        <div class="product-blocks-container-{{ section.id }}">
+          {%- for block in section.blocks -%}
+            {%- case block.type -%}
+              {%- when 'custom_block' -%}
+                <div class="custom-block-{{ section.id }}" {{ block.shopify_attributes }}>
+                  <div class="custom-block-header-{{ section.id }}" data-accordion="block-{{ block.id }}" aria-expanded="false" role="button" tabindex="0">
+                    <div style="display: flex; align-items: center;">
+                      <h3 class="custom-block-title-{{ section.id }}">{{ block.settings.title }}</h3>
+                      {%- if block.settings.icon != blank -%}
+                        <span class="custom-block-icon-{{ section.id }}">{{ block.settings.icon }}</span>
+                      {%- else -%}
+                        <span class="custom-block-icon-{{ section.id }}">+</span>
+                      {%- endif -%}
+                    </div>
+                  </div>
+                  <div class="custom-block-content-{{ section.id }}" data-content="block-{{ block.id }}" aria-hidden="true">
+                    {{ block.settings.content }}
+                  </div>
+                </div>
+            {%- endcase -%}
+          {%- endfor -%}
+        </div>
+
         <div class="details-block-redesigned-{{ section.id }}">
           <div class="details-header-redesigned-{{ section.id }}" data-accordion="details" aria-expanded="false" role="button" tabindex="0">
             <span class="details-title-redesigned-{{ section.id }}">{{ section.settings.details_title }}</span>
@@ -437,15 +584,32 @@
 
   if ({{ section.settings.show_delivery_date | default: false }}) { calculateDeliveryDateRange(); }
 
-  const detailsHeader = sectionEl.querySelector('.details-header-redesigned-' + sectionId);
-  if (detailsHeader) {
-    const content = sectionEl.querySelector('.details-content-redesigned-' + sectionId);
-    detailsHeader.addEventListener('click', () => {
-      const isExpanded = detailsHeader.getAttribute('aria-expanded') === 'true';
-      detailsHeader.setAttribute('aria-expanded', !isExpanded);
-      content.classList.toggle('open');
+  // Gestion des accordéons (description + blocs personnalisés)
+  function initAccordions() {
+    const detailsHeader = sectionEl.querySelector('.details-header-redesigned-' + sectionId);
+    if (detailsHeader) {
+      const content = sectionEl.querySelector('.details-content-redesigned-' + sectionId);
+      detailsHeader.addEventListener('click', () => {
+        const isExpanded = detailsHeader.getAttribute('aria-expanded') === 'true';
+        detailsHeader.setAttribute('aria-expanded', !isExpanded);
+        content.classList.toggle('open');
+      });
+    }
+
+    // Blocs personnalisés
+    sectionEl.querySelectorAll('.custom-block-header-' + sectionId).forEach(header => {
+      const content = header.parentElement.querySelector('.custom-block-content-' + sectionId);
+      if (!content) return;
+      
+      header.addEventListener('click', () => {
+        const isExpanded = header.getAttribute('aria-expanded') === 'true';
+        header.setAttribute('aria-expanded', !isExpanded);
+        content.classList.toggle('open');
+      });
     });
   }
+
+  initAccordions();
 
   const qtyWrapper = sectionEl.querySelector('.quantity-selector-' + sectionId);
   if (qtyWrapper) {
@@ -655,6 +819,63 @@
     { "type": "header", "content": "Contenu" },
     { "type": "text", "id": "details_title", "label": "Titre du bloc Détails", "default": "Détails du produit" },
     { "type": "collection", "id": "related_collection", "label": "Collection similaire" }
+  ],
+  "blocks": [
+    {
+      "type": "custom_block",
+      "name": "Bloc personnalisé",
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Titre du bloc",
+          "default": "Informations supplémentaires"
+        },
+        {
+          "type": "select",
+          "id": "icon",
+          "label": "Icône",
+          "options": [
+            { "value": "", "label": "Aucune" },
+            { "value": "+", "label": "Plus" },
+            { "value": "ℹ", "label": "Info" },
+            { "value": "⚡", "label": "Éclair" },
+            { "value": "🔥", "label": "Feu" },
+            { "value": "⭐", "label": "Étoile" },
+            { "value": "💡", "label": "Ampoule" }
+          ],
+          "default": ""
+        },
+        {
+          "type": "richtext",
+          "id": "content",
+          "label": "Contenu du bloc",
+          "default": "<p>Ajoutez ici les informations supplémentaires sur votre produit. Vous pouvez utiliser du HTML pour formater le texte.</p><ul><li>Caractéristiques techniques</li><li>Conseils d'utilisation</li><li>Garantie</li><li>Materiaux utilisés</li></ul>"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Produit",
+      "blocks": [
+        {
+          "type": "custom_block",
+          "settings": {
+            "title": "Spécifications techniques",
+            "content": "<h4>Dimensions :</h4><p>Largeur : 25cm, Hauteur : 30cm</p><h4>Poids :</h4><p>350g</p><h4>Couleurs disponibles :</h4><p>Noir, Blanc, Rouge</p>"
+          }
+        },
+        {
+          "type": "custom_block",
+          "settings": {
+            "title": "Entretien",
+            "icon": "ℹ",
+            "content": "<p><strong>Lavage :</strong> À 30°C maximum</p><p><strong>Repassage :</strong> Température modérée</p><p><strong>Séchage :</strong> Ne pas mettre au sèche-linge</p>"
+          }
+        }
+      ]
+    }
   ]
 }
 {% endschema %}
