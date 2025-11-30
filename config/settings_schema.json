@@ -171,41 +171,132 @@
     ]
   },
   {
-  "name": "Favicon",
-  "settings": [
-    {
-      "type": "image_picker",
-      "id": "favicon",
-      "label": "Favicon",
-      "info": "Choisissez une image carrée de 32x32 pixels ou plus. Formats supportés : JPG, PNG, GIF"
-    }
-  ]
+    "name": "Favicon & Métadonnées",
+    "settings": [
+      {
+        "type": "header",
+        "content": "🎨 Favicon - Navigateurs"
+      },
+      {
+        "type": "image_picker",
+        "id": "favicon",
+        "label": "Favicon Principal",
+        "info": "⚡ Image carrée 512x512px minimum. Format PNG avec fond transparent recommandé. S'affiche dans l'onglet du navigateur."
+      },
+      {
+        "type": "image_picker",
+        "id": "favicon_svg",
+        "label": "Favicon SVG (Optionnel)",
+        "info": "🎯 Format vectoriel moderne pour une netteté parfaite sur tous les écrans. Prioritaire si fourni."
+      },
+      {
+        "type": "header",
+        "content": "📱 Apple Touch Icon"
+      },
+      {
+        "type": "image_picker",
+        "id": "favicon_apple_touch",
+        "label": "Icône Apple Touch",
+        "info": "🍎 Image 180x180px pour les appareils iOS (iPhone, iPad). S'affiche quand l'utilisateur ajoute votre site à l'écran d'accueil."
+      },
+      {
+        "type": "header",
+        "content": "🪟 Windows Metro Tile"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_windows_tile",
+        "label": "Activer la tuile Windows",
+        "default": false,
+        "info": "Active la personnalisation de la tuile Windows 10/11"
+      },
+      {
+        "type": "image_picker",
+        "id": "favicon_windows_tile",
+        "label": "Icône Windows Tile",
+        "info": "🎨 Image 270x270px pour Windows 10/11. Utilisée dans le menu Démarrer."
+      },
+      {
+        "type": "color",
+        "id": "windows_tile_color",
+        "label": "Couleur de fond de la tuile",
+        "default": "#000000",
+        "info": "Couleur de fond derrière l'icône dans le menu Démarrer Windows"
+      },
+      {
+        "type": "header",
+        "content": "🎨 Couleurs de thème navigateur"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_theme_color",
+        "label": "Activer la couleur de thème",
+        "default": true,
+        "info": "Colore la barre d'adresse sur mobile (Android Chrome, Safari iOS 15+)"
+      },
+      {
+        "type": "color",
+        "id": "theme_color",
+        "label": "Couleur de thème navigateur",
+        "default": "#000000",
+        "info": "🎯 Couleur de la barre d'adresse mobile. Utilisez la couleur principale de votre marque."
+      },
+      {
+        "type": "color",
+        "id": "theme_color_dark",
+        "label": "Couleur de thème (mode sombre)",
+        "default": "#1a1a1a",
+        "info": "Couleur pour les utilisateurs en mode sombre"
+      },
+      {
+        "type": "header",
+        "content": "🔧 Options avancées"
+      },
+      {
+        "type": "checkbox",
+        "id": "favicon_cache_bust",
+        "label": "Forcer le rafraîchissement du favicon",
+        "default": false,
+        "info": "⚡ Active uniquement si votre favicon ne se met pas à jour. Désactiver après mise à jour."
+      },
+      {
+        "type": "text",
+        "id": "site_name_short",
+        "label": "Nom court du site",
+        "default": "Site",
+        "info": "📝 Nom raccourci (12 caractères max) pour les PWA et écrans d'accueil mobile"
+      },
+      {
+        "type": "paragraph",
+        "content": "💡 **Bonnes pratiques** : Utilisez PNG transparent 512x512px pour le favicon principal, SVG pour la netteté maximale, et 180x180px pour Apple. Les couleurs de thème doivent correspondre à votre identité visuelle."
+      }
+    ]
   },
   {
     "name": "Cartes Produits",
     "settings": [
-    {
-      "type": "checkbox",
-      "id": "show_wishlist_btn",
-      "label": "Afficher le bouton wishlist"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_quick_add_btn",
-      "label": "Afficher le bouton ajout rapide"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_vendor",
-      "label": "Afficher le fournisseur"
-    },
-    {
-      "type": "checkbox",
-      "id": "show_color_swatches",
-      "label": "Afficher les nuanciers de couleurs"
-    }
-  ]
-},
+      {
+        "type": "checkbox",
+        "id": "show_wishlist_btn",
+        "label": "Afficher le bouton wishlist"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_quick_add_btn",
+        "label": "Afficher le bouton ajout rapide"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_vendor",
+        "label": "Afficher le fournisseur"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_color_swatches",
+        "label": "Afficher les nuanciers de couleurs"
+      }
+    ]
+  },
   {
     "name": "t:general.colors",
     "settings": [
@@ -234,79 +325,203 @@
     ]
   },
   {
-  "name": "Réseaux sociaux",
-  "settings": [
-    {
-      "type": "header",
-      "content": "Profils sociaux"
-    },
-    {
-      "type": "text",
-      "id": "social_facebook_link",
-      "label": "Facebook",
-      "info": "ex: https://facebook.com/shopify"
-    },
-    {
-      "type": "text",
-      "id": "social_instagram_link",
-      "label": "Instagram",
-      "info": "ex: https://instagram.com/shopify"
-    },
-    {
-      "type": "text",
-      "id": "social_x_link",
-      "label": "X (Twitter)",
-      "info": "ex: https://x.com/shopify"
-    },
-    {
-      "type": "text",
-      "id": "social_tiktok_link",
-      "label": "TikTok"
-    },
-    {
-      "type": "text",
-      "id": "social_pinterest_link",
-      "label": "Pinterest"
-    },
-    {
-      "type": "text",
-      "id": "social_youtube_link",
-      "label": "YouTube"
-    }
-  ]
-},
+    "name": "Réseaux sociaux",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Profils sociaux"
+      },
+      {
+        "type": "text",
+        "id": "social_facebook_link",
+        "label": "Facebook",
+        "info": "ex: https://facebook.com/shopify"
+      },
+      {
+        "type": "text",
+        "id": "social_instagram_link",
+        "label": "Instagram",
+        "info": "ex: https://instagram.com/shopify"
+      },
+      {
+        "type": "text",
+        "id": "social_x_link",
+        "label": "X (Twitter)",
+        "info": "ex: https://x.com/shopify"
+      },
+      {
+        "type": "text",
+        "id": "social_tiktok_link",
+        "label": "TikTok"
+      },
+      {
+        "type": "text",
+        "id": "social_pinterest_link",
+        "label": "Pinterest"
+      },
+      {
+        "type": "text",
+        "id": "social_youtube_link",
+        "label": "YouTube"
+      }
+    ]
+  },
   {
-  "name": "Préchargement Signature",
-  "settings": [
-    { "type": "checkbox", "id": "enable_signature_preloader", "label": "Activer le préchargement", "default": true },
-    { "type": "checkbox", "id": "signature_preloader_force", "label": "Forcer l'affichage (dev)", "default": true },
-    { "type": "image_picker", "id": "signature_preloader_logo", "label": "Logo (SVG recommandé)" },
-    { "type": "range", "id": "signature_preloader_logo_size", "label": "Taille du logo (px)", "min": 64, "max": 240, "step": 8, "default": 152 },
-    { "type": "text", "id": "signature_preloader_text", "label": "Texte sous le logo", "default": "Chargement..." },
-    { "type": "color", "id": "signature_preloader_text_color", "label": "Couleur du texte de chargement", "default": "#24262e" },
-    { "type": "range", "id": "signature_preloader_duration", "label": "Durée de l'animation (ms)", "min": 1000, "max": 7000, "step": 500, "default": 5000 },
-    { "type": "select", "id": "signature_preloader_bg", "label": "Fond", "options": [
-      { "value": "solid", "label": "Uni" },
-      { "value": "gradient", "label": "Dégradé" },
-      { "value": "fade", "label": "Fondu" }
-    ], "default": "solid" },
-    { "type": "color", "id": "signature_preloader_bg_color", "label": "Couleur principale de fond", "default": "#ffffff" },
-    { "type": "color", "id": "signature_preloader_bg_color2", "label": "Couleur secondaire", "default": "#f1f3f6" },
-    { "type": "select", "id": "signature_preloader_logo_anim", "label": "Animation du logo", "options": [
-      { "value": "fadein", "label": "Apparition fluide" },
-      { "value": "soft_pulse", "label": "Pulse doux" },
-      { "value": "subtle_slide", "label": "Léger slide vertical" },
-      { "value": "spin_smooth", "label": "Rotation soyeuse" }
-    ], "default": "fadein" },
-    { "type": "select", "id": "signature_preloader_loader_style", "label": "Style du loader", "options": [
-      { "value": "line", "label": "Ligne carrée élégante" },
-      { "value": "spinner", "label": "Cercle fluide" },
-      { "value": "dots", "label": "Points raffinés" }
-    ], "default": "line" },
-    { "type": "color", "id": "signature_preloader_accent", "label": "Couleur du loader", "default": "#fff" },
-    { "type": "range", "id": "signature_preloader_padding_top", "label": "Espacement haut", "min": 0, "max": 120, "step": 4, "default": 56 },
-    { "type": "range", "id": "signature_preloader_padding_bottom", "label": "Espacement bas", "min": 0, "max": 120, "step": 4, "default": 56 },
-    { "type": "checkbox", "id": "signature_preloader_show_mobile", "label": "Afficher sur mobile", "default": true }
-  ]
-}
+    "name": "Préchargement Signature",
+    "settings": [
+      {
+        "type": "checkbox",
+        "id": "enable_signature_preloader",
+        "label": "Activer le préchargement",
+        "default": true
+      },
+      {
+        "type": "checkbox",
+        "id": "signature_preloader_force",
+        "label": "Forcer l'affichage (dev)",
+        "default": true
+      },
+      {
+        "type": "image_picker",
+        "id": "signature_preloader_logo",
+        "label": "Logo (SVG recommandé)"
+      },
+      {
+        "type": "range",
+        "id": "signature_preloader_logo_size",
+        "label": "Taille du logo (px)",
+        "min": 64,
+        "max": 240,
+        "step": 8,
+        "default": 152
+      },
+      {
+        "type": "text",
+        "id": "signature_preloader_text",
+        "label": "Texte sous le logo",
+        "default": "Chargement..."
+      },
+      {
+        "type": "color",
+        "id": "signature_preloader_text_color",
+        "label": "Couleur du texte de chargement",
+        "default": "#24262e"
+      },
+      {
+        "type": "range",
+        "id": "signature_preloader_duration",
+        "label": "Durée de l'animation (ms)",
+        "min": 1000,
+        "max": 7000,
+        "step": 500,
+        "default": 5000
+      },
+      {
+        "type": "select",
+        "id": "signature_preloader_bg",
+        "label": "Fond",
+        "options": [
+          {
+            "value": "solid",
+            "label": "Uni"
+          },
+          {
+            "value": "gradient",
+            "label": "Dégradé"
+          },
+          {
+            "value": "fade",
+            "label": "Fondu"
+          }
+        ],
+        "default": "solid"
+      },
+      {
+        "type": "color",
+        "id": "signature_preloader_bg_color",
+        "label": "Couleur principale de fond",
+        "default": "#ffffff"
+      },
+      {
+        "type": "color",
+        "id": "signature_preloader_bg_color2",
+        "label": "Couleur secondaire",
+        "default": "#f1f3f6"
+      },
+      {
+        "type": "select",
+        "id": "signature_preloader_logo_anim",
+        "label": "Animation du logo",
+        "options": [
+          {
+            "value": "fadein",
+            "label": "Apparition fluide"
+          },
+          {
+            "value": "soft_pulse",
+            "label": "Pulse doux"
+          },
+          {
+            "value": "subtle_slide",
+            "label": "Léger slide vertical"
+          },
+          {
+            "value": "spin_smooth",
+            "label": "Rotation soyeuse"
+          }
+        ],
+        "default": "fadein"
+      },
+      {
+        "type": "select",
+        "id": "signature_preloader_loader_style",
+        "label": "Style du loader",
+        "options": [
+          {
+            "value": "line",
+            "label": "Ligne carrée élégante"
+          },
+          {
+            "value": "spinner",
+            "label": "Cercle fluide"
+          },
+          {
+            "value": "dots",
+            "label": "Points raffinés"
+          }
+        ],
+        "default": "line"
+      },
+      {
+        "type": "color",
+        "id": "signature_preloader_accent",
+        "label": "Couleur du loader",
+        "default": "#fff"
+      },
+      {
+        "type": "range",
+        "id": "signature_preloader_padding_top",
+        "label": "Espacement haut",
+        "min": 0,
+        "max": 120,
+        "step": 4,
+        "default": 56
+      },
+      {
+        "type": "range",
+        "id": "signature_preloader_padding_bottom",
+        "label": "Espacement bas",
+        "min": 0,
+        "max": 120,
+        "step": 4,
+        "default": 56
+      },
+      {
+        "type": "checkbox",
+        "id": "signature_preloader_show_mobile",
+        "label": "Afficher sur mobile",
+        "default": true
+      }
+    ]
+  }
 ]
