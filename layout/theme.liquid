@@ -27,7 +27,7 @@
   
   {%- comment -%} Web App Manifest for PWA {%- endcomment -%}
   {%- if settings.favicon != blank -%}
-    <link rel="manifest" href="{{ 'manifest.json' | asset_url }}">
+    <link rel="manifest" href="{{ 'manifest.json' | within: pages }}">
   {%- endif -%}
   
   {%- comment -%} MOBILE OPTIMIZATIONS - Critical inline CSS + Font optimization {%- endcomment -%}
