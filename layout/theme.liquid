@@ -3,42 +3,59 @@
   <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="theme-color" content="{{ settings.background_color }}">
   
-  {% comment %} MOBILE OPTIMIZATIONS - Critical inline CSS + Font optimization {% endcomment %}
+  {%- comment -%} Theme color for mobile browsers {%- endcomment -%}
+  {%- if settings.enable_theme_color and settings.theme_color != blank -%}
+    <meta name="theme-color" content="{{ settings.theme_color }}">
+  {%- else -%}
+    <meta name="theme-color" content="{{ settings.background_color }}">
+  {%- endif -%}
+  
+  {%- comment -%} Favicon system - Standard sizes {%- endcomment -%}
+  {%- if settings.favicon != blank -%}
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ settings.favicon | image_url: width: 16, height: 16 }}">
+    <link rel="shortcut icon" href="{{ settings.favicon | image_url: width: 32, height: 32 }}" type="image/png">
+  {%- endif -%}
+  
+  {%- comment -%} Apple Touch Icon {%- endcomment -%}
+  {%- if settings.favicon_apple != blank -%}
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ settings.favicon_apple | image_url: width: 180, height: 180 }}">
+  {%- elsif settings.favicon != blank -%}
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ settings.favicon | image_url: width: 180, height: 180 }}">
+  {%- endif -%}
+  
+  {%- comment -%} Web App Manifest for PWA {%- endcomment -%}
+  {%- if settings.favicon != blank -%}
+    <link rel="manifest" href="{{ 'manifest.json' | asset_url }}">
+  {%- endif -%}
+  
+  {%- comment -%} MOBILE OPTIMIZATIONS - Critical inline CSS + Font optimization {%- endcomment -%}
   {% render 'mobile-optimizations' %}
   
-  {% comment %} Performance: Preload Critical Resources {% endcomment %}
+  {%- comment -%} Performance: Preload Critical Resources {%- endcomment -%}
   {% render 'performance-preload' %}
   
-  {% comment %} Inlined CSS Variables {% endcomment %}
+  {%- comment -%} Inlined CSS Variables {%- endcomment -%}
   {% render 'css-variables' %}
   
-  {% comment %} Social, title, etc. {% endcomment %}
+  {%- comment -%} Social, title, etc. {%- endcomment -%}
   {% render 'meta-tags' %}
   
-  {% comment %} Structured Data {% endcomment %}
+  {%- comment -%} Structured Data {%- endcomment -%}
   {% render 'structured-data' %}
 
-  {% comment %} Feuilles de style globales {% endcomment %}
+  {%- comment -%} Feuilles de style globales {%- endcomment -%}
   {{ 'base.css' | asset_url | stylesheet_tag }}
   {{ 'accessibility.css' | asset_url | stylesheet_tag }}
 
-  {% comment %} Favicon avec différentes tailles {% endcomment %}
-  {% if settings.favicon %}
-  <link rel="shortcut icon" href="{{ settings.favicon | image_url: width: 32, height: 32 }}" type="image/png">
-  <link rel="icon" type="image/png" sizes="16x16" href="{{ settings.favicon | image_url: width: 16, height: 16 }}">
-  <link rel="icon" type="image/png" sizes="32x32" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
-  <link rel="apple-touch-icon" sizes="180x180" href="{{ settings.favicon | image_url: width: 180, height: 180 }}">
-  {% endif %}
-
-  {% comment %} L'objet Shopify doit toujours être en dernier du head {% endcomment %}
+  {%- comment -%} L'objet Shopify doit toujours être en dernier du head {%- endcomment -%}
   {{ content_for_header }}
 </head>
 
   <body class="template-{{ template.name }} {% if customer %}customer-logged-in{% endif %}">
   
-    {% comment %} GTM noscript (requis immédiatement après body) {% endcomment %}
+    {%- comment -%} GTM noscript (requis immédiatement après body) {%- endcomment -%}
     {% if settings.enable_google_tag_manager and settings.google_tag_manager_id != blank %}
     <noscript>
       <iframe src="https://www.googletagmanager.com/ns.html?id={{ settings.google_tag_manager_id }}"
@@ -46,7 +63,7 @@
     </noscript>
     {% endif %}
     
-    {% comment %} Skip to content pour accessibilité {% endcomment %}
+    {%- comment -%} Skip to content pour accessibilité {%- endcomment -%}
     <a href="#MainContent" class="skip-to-content-link visually-hidden-focusable" tabindex="0">
       {{ 'accessibility.skip_to_text' | t }}
     </a>
@@ -118,10 +135,10 @@
 {%- endif -%}
 
 
-  {% comment %} JavaScript avec defer pour performance {% endcomment %}
+  {%- comment -%} JavaScript avec defer pour performance {%- endcomment -%}
   <script src="{{ 'theme.js' | asset_url }}" defer></script>
 
-  {% comment %} Analytics chargé via mobile-optimizations (defer jusqu'à interaction) {% endcomment %}
+  {%- comment -%} Analytics chargé via mobile-optimizations (defer jusqu'à interaction) {%- endcomment -%}
 
     {% if settings.enable_signature_preloader %}
 <script>
