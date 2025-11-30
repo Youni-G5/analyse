@@ -1,0 +1,29 @@
+{
+  "name": {{ shop.name | json }},
+  "short_name": {% if settings.site_name_short != blank %}{{ settings.site_name_short | json }}{% else %}{{ shop.name | truncate: 12, '' | json }}{% endif %},
+  "description": {{ shop.description | default: shop.name | json }},
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": {{ settings.background_color | default: '#ffffff' | json }},
+  "theme_color": {% if settings.enable_theme_color and settings.theme_color != blank %}{{ settings.theme_color | json }}{% else %}{{ settings.background_color | default: '#000000' | json }}{% endif %},
+  "icons": [
+    {% if settings.favicon != blank %}
+    {
+      "src": {{ settings.favicon | image_url: width: 192, height: 192 | json }},
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": {{ settings.favicon | image_url: width: 512, height: 512 | json }},
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+    {% else %}
+    {
+      "src": "/favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+    {% endif %}
+  ]
+}
