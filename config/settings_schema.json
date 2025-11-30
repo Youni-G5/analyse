@@ -171,104 +171,55 @@
     ]
   },
   {
-    "name": "Favicon & Métadonnées",
+    "name": "Favicon et icônes",
     "settings": [
       {
         "type": "header",
-        "content": "🎨 Favicon - Navigateurs"
+        "content": "Favicon principal"
       },
       {
         "type": "image_picker",
         "id": "favicon",
-        "label": "Favicon Principal",
-        "info": "⚡ Image carrée 512x512px minimum. Format PNG avec fond transparent recommandé. S'affiche dans l'onglet du navigateur."
-      },
-      {
-        "type": "image_picker",
-        "id": "favicon_svg",
-        "label": "Favicon SVG (Optionnel)",
-        "info": "🎯 Format vectoriel moderne pour une netteté parfaite sur tous les écrans. Prioritaire si fourni."
+        "label": "Image favicon",
+        "info": "Image carrée minimum 512x512px. Format PNG avec fond transparent recommandé."
       },
       {
         "type": "header",
-        "content": "📱 Apple Touch Icon"
+        "content": "Apple Touch Icon"
       },
       {
         "type": "image_picker",
-        "id": "favicon_apple_touch",
-        "label": "Icône Apple Touch",
-        "info": "🍎 Image 180x180px pour les appareils iOS (iPhone, iPad). S'affiche quand l'utilisateur ajoute votre site à l'écran d'accueil."
+        "id": "favicon_apple",
+        "label": "Icône Apple (iOS)",
+        "info": "Image carrée 180x180px pour iPhone et iPad. Apparaît quand le site est ajouté à l'écran d'accueil."
       },
       {
         "type": "header",
-        "content": "🪟 Windows Metro Tile"
-      },
-      {
-        "type": "checkbox",
-        "id": "enable_windows_tile",
-        "label": "Activer la tuile Windows",
-        "default": false,
-        "info": "Active la personnalisation de la tuile Windows 10/11"
-      },
-      {
-        "type": "image_picker",
-        "id": "favicon_windows_tile",
-        "label": "Icône Windows Tile",
-        "info": "🎨 Image 270x270px pour Windows 10/11. Utilisée dans le menu Démarrer."
-      },
-      {
-        "type": "color",
-        "id": "windows_tile_color",
-        "label": "Couleur de fond de la tuile",
-        "default": "#000000",
-        "info": "Couleur de fond derrière l'icône dans le menu Démarrer Windows"
-      },
-      {
-        "type": "header",
-        "content": "🎨 Couleurs de thème navigateur"
+        "content": "Couleur de thème mobile"
       },
       {
         "type": "checkbox",
         "id": "enable_theme_color",
         "label": "Activer la couleur de thème",
         "default": true,
-        "info": "Colore la barre d'adresse sur mobile (Android Chrome, Safari iOS 15+)"
+        "info": "Colore la barre d'adresse sur Android Chrome et Safari iOS 15+"
       },
       {
         "type": "color",
         "id": "theme_color",
-        "label": "Couleur de thème navigateur",
-        "default": "#000000",
-        "info": "🎯 Couleur de la barre d'adresse mobile. Utilisez la couleur principale de votre marque."
-      },
-      {
-        "type": "color",
-        "id": "theme_color_dark",
-        "label": "Couleur de thème (mode sombre)",
-        "default": "#1a1a1a",
-        "info": "Couleur pour les utilisateurs en mode sombre"
+        "label": "Couleur de la barre d'adresse",
+        "default": "#000000"
       },
       {
         "type": "header",
-        "content": "🔧 Options avancées"
-      },
-      {
-        "type": "checkbox",
-        "id": "favicon_cache_bust",
-        "label": "Forcer le rafraîchissement du favicon",
-        "default": false,
-        "info": "⚡ Active uniquement si votre favicon ne se met pas à jour. Désactiver après mise à jour."
+        "content": "Informations PWA"
       },
       {
         "type": "text",
         "id": "site_name_short",
         "label": "Nom court du site",
         "default": "Site",
-        "info": "📝 Nom raccourci (12 caractères max) pour les PWA et écrans d'accueil mobile"
-      },
-      {
-        "type": "paragraph",
-        "content": "💡 **Bonnes pratiques** : Utilisez PNG transparent 512x512px pour le favicon principal, SVG pour la netteté maximale, et 180x180px pour Apple. Les couleurs de thème doivent correspondre à votre identité visuelle."
+        "info": "Maximum 12 caractères. Utilisé pour les Progressive Web Apps."
       }
     ]
   },
